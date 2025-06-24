@@ -1,0 +1,86 @@
+\RequirePackage{xspace}
+
+\RequirePackage{xcolor}
+
+\RequirePackage{hyperref}
+
+%------------------------------------------------------------
+
+\makeatletter
+\DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
+\def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
+
+\def\eg{\emph{e.g}\onedot}
+\def\ie{\emph{i.e}\onedot}
+\def\etc{\emph{etc}\onedot}
+
+%------------------------------------------------------------
+
+\newcommand{\C}{\textsc{C}\xspace}
+\newcommand{\OCaml}{\textsc{OCaml}\xspace}
+\newcommand{\Flambda}{\href{https://ocaml.org/manual/5.3/flambda.html}{\textsc{Flambda}}\xspace}
+\newcommand{\Rust}{\textsc{Rust}\xspace}
+\newcommand{\Go}{\textsc{Go}\xspace}
+\newcommand{\Saturn}{\href{https://github.com/ocaml-multicore/saturn}{\texttt{Saturn}}\xspace}
+\newcommand{\Eio}{\href{https://github.com/ocaml-multicore/eio}{\texttt{Eio}}\xspace}
+\newcommand{\Kcas}{\href{https://github.com/ocaml-multicore/kcas}{\texttt{Kcas}}\xspace}
+\newcommand{\Rocq}{\href{https://rocq-prover.org/}{\textsc{Rocq}}\xspace}
+\newcommand{\Lean}{\href{https://lean-lang.org/}{\textsc{Lean}}\xspace}
+\newcommand{\Iris}{\href{https://iris-project.org/}{\textsc{Iris}}\xspace}
+\newcommand{\Zoo}{\textsc{Zoo}\xspace}
+\newcommand{\ZooLang}{\textsc{ZooLang}\xspace}
+\newcommand{\HeapLang}{\href{https://gitlab.mpi-sws.org/iris/iris/blob/master/docs/heap_lang.md}{\textsc{HeapLang}}\xspace}
+\newcommand{\WhyThree}{\href{https://www.why3.org/}{\textsc{Why3}}\xspace}
+\newcommand{\Gospel}{\href{https://ocaml-gospel.github.io/gospel/}{\textsc{Gospel}}\xspace}
+\newcommand{\Cameleer}{\href{https://mariojppereira.github.io/cameleer.html}{\textsc{Cameleer}}\xspace}
+\newcommand{\CFML}{\href{https://gitlab.inria.fr/charguer/cfml2}{\textsc{CFML}}\xspace}
+\newcommand{\Osiris}{\href{https://gitlab.inria.fr/fpottier/osiris}{\textsc{Osiris}}\xspace}
+\newcommand{\Diaframe}{\href{https://gitlab.mpi-sws.org/iris/diaframe}{\textsc{Diaframe}}\xspace}
+\newcommand{\Perennial}{\href{https://github.com/mit-pdos/perennial}{\textsc{Perennial}}\xspace}
+
+%------------------------------------------------------------
+
+\newcommand{\mathhyphen}{{\hbox{-}}}
+
+\newcommand\doubleplus{+\kern-1.3ex+\kern0.8ex}
+\newcommand\mdoubleplus{\ensuremath{\mathbin{+\mkern-10mu+}}}
+
+%------------------------------------------------------------
+
+\newcommand{\Prop}{%
+    \mathrm{Prop}%
+}
+
+\newcommand{\iProp}{%
+    \mathrm{iProp}%
+}
+\newcommand{\iSep}{%
+    \ast%
+}
+\newcommand{\iBigSep}{%
+    \scalerel*{\iSep}{\sum}%
+}
+\newcommand{\iWand}{%
+    \mathrel{-\mkern-6mu\iSep}%
+}
+\newcommand{\iBupd}{%
+    |\!\!\!\Rrightarrow%
+}
+\newcommand{\iPersistent}{%
+    \square%
+}
+\newcommand{\iTrue}{%
+    \mathrm{True}%
+}
+\newcommand{\iFalse}{%
+    \mathrm{False}%
+}
+\newcommand{\iPointsto}{%
+    \mapsto%
+}
+\newcommand{\iPred}{%
+    \Phi%
+}
+\newcommand{\iPredTwo}{%
+    \Psi%
+}

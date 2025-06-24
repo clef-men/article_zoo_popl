@@ -1,0 +1,106 @@
+\documentclass[acmsmall,screen,review,anonymous]{acmart}
+
+\settopmatter{printfolios=true,printccs=false,printacmref=false}
+
+\renewcommand\footnotetextcopyrightpermission[1]{}
+
+% ------------------------------------------------
+
+% Loading 'url' here ensures that URLs are broken into several lines in the bibliography (see natbib documentation).
+\usepackage{url}
+
+\bibliographystyle{ACM-Reference-Format}
+\citestyle{acmnumeric}
+
+% ------------------------------------------------
+
+\usepackage[capitalize,noabbrev,nameinlink]{cleveref}
+
+% ------------------------------------------------
+
+\usepackage{minted}
+
+\DeclareUnicodeCharacter{3B9}{$\iota$}
+\DeclareUnicodeCharacter{2200}{$\forall$}
+\DeclareUnicodeCharacter{2203}{$\exists$}
+\DeclareUnicodeCharacter{2260}{$\neq$}
+\DeclareUnicodeCharacter{3A3}{$\Sigma$}
+\DeclareUnicodeCharacter{2217}{$\ast$}
+\DeclareUnicodeCharacter{231C}{$\ulcorner$}
+\DeclareUnicodeCharacter{231D}{$\urcorner$}
+\DeclareUnicodeCharacter{2248}{$\approx$}
+\DeclareUnicodeCharacter{2249}{$\not\approx$}
+
+% ------------------------------------------------
+
+\usepackage{mathtools}
+
+% ------------------------------------------------
+
+\usepackage{macros}
+
+\usepackage{mycomments}
+
+\newcommand{\urlAnonymous}[1]{%
+  Non-anonymous link: \href{#1}{https://<clickable>}%
+}
+\newcommand{\citeAnonymous}[1]{%
+  [anonymous]%
+}
+
+% ------------------------------------------------
+
+\acmJournal{PACMPL}
+\acmVolume{1}
+\acmNumber{POPL}
+\acmArticle{1}
+\acmYear{2026}
+\acmMonth{1}
+\acmDOI{} % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+\startPage{1}
+
+\setcopyright{none}
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\copyrightyear{2018}           %% If different from \acmYear
+
+% ------------------------------------------------
+% ------------------------------------------------
+
+\begin{document}
+
+% ------------------------------------------------
+
+\title{
+  \Zoo: A framework for the verification of concurrent \OCaml~5 programs using separation logic
+}
+
+\author{Clément Allain}
+\affiliation{
+  \institution{Inria}
+  \city{Paris}
+  \country{France}
+}
+\email{clement.allain@inria.fr}
+
+\author{Gabriel Scherer}
+\affiliation{
+  \institution{Inria}
+  \city{Paris}
+  \country{France}
+}
+\email{gabriel.scherer@inria.fr}
+
+\begin{abstract}
+    \input{abstract}
+\end{abstract}
+
+\maketitle
+
+% ------------------------------------------------
+
+\hbadness=10000
+\bibliography{main}
+
+\end{document}

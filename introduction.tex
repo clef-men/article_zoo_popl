@@ -1,0 +1,57 @@
+\section{Introduction}
+\label{sec:introduction}
+
+OCaml 5.0 was released on December 15th 2022, the first version of the
+OCaml programming language to support parallel execution of \OCaml
+threads by merging the \MulticoreOCaml
+runtime~\citep*{multicore-ocaml}. It provided basic support in the
+language runtime to start and stop coarse-grained threads (``domains''
+in \OCaml parlance) and support for strongly sequential atomic
+references in the standard library. The third-party library
+\texttt{domainslib} offered a simple scheduler for a pool of tasks,
+used to benchmark the parallel runtime. A world of parallel and
+concurrent software was waiting to be invented.
+
+Shared-memory concurrency is a difficult programming domain, and
+existing ecosystems (C++, Java, Haskell, Rust, Go...) took decades to
+evolve comprehensive libraries of concurrent abstractions and data
+structures. In the last couple years, a handful of contributors to the
+OCaml system have been implementing basic libraries for concurrent and
+parallel programs in \OCaml, in particular \Saturn~\citep*{saturn},
+a library of lock-free thread-safe data structures (stacks, queues,
+a work-stealing dequeue, a skip list, a bag and a hash table),
+\Eio~\citep*{eio}, a library of asynchronous IO and structured
+concurrency, and \Kcas~\citep*{kcas}, a library offering
+a software-transactional-memory abstraction for users to build safe
+yet efficient thread-safe data structures.
+
+Concurrent algorithms and data structures are extremely difficult to
+reason about. Their implementations tend to be fairly short, a few
+dozens of lines. There is only a handful of experts able to write such
+code, and many potential users. They are difficult to test
+comprehensively. These characteristics make them ideally suited for
+mechanized program verification.
+
+We embarked on a mission to mechanize correctness proofs of \OCaml
+concurrent algorithms and data structures as they are being written,
+in contact with their authors, rather than years later. In the
+process, we not only gained confidence in these complex new building
+blocks, but we also improved the \OCaml language and its verification
+ecosystem.
+
+\paragraph{Verification tools for concurrent programs.}
+
+\paragraph{\OCaml language features} When studying the new codebases
+of concurrent and parallel data structures, we found a variety of
+unsafe idioms, working around expressivity or performance limitations
+with the \OCaml language support for lock-free concurrent data
+structures. In particular, the support for \emph{atomic references} in
+the \OCaml library proved inadequate, as idiomatic concurrent
+data-structures need the more expressive feature of \emph{atomic
+  record fields}. We designed an extension of \OCaml with atomic
+record fields, implemented it as a an experimental compiler variant,
+and succeeded in getting it integrated in the upstream \OCaml
+compiler: it should be available as part of OCaml 5.4, which is not
+yet released at the time of writing.
+
+\paragraph{Specified \OCaml semantics}

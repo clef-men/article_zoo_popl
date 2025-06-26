@@ -1,0 +1,68 @@
+\section{\Saturn: A library of standard lock-free data structures}
+\label{sec:saturn}
+
+% Saturn
+% Eio
+% Picos
+% Domainslib
+
+% stacks
+% queues (list-based, array-based, stack-based)
+% bags
+% work-stealing queues
+
+\subsection{Stacks}
+
+% Treiber stack
+% iris-examples
+% generative constructors
+
+% MPMC stack, closable variant
+% MPMC bounded stack
+
+\subsection{List-based queues}
+
+% Michael-Scott
+% Vindum & Birkedal
+
+% relaxed version (front-back-last order not enforced)
+
+% no indirection
+% atomic fields
+% clear values to avoid memory leak
+
+% external linearization in [is_empty]
+% invariant with waiters
+
+% explicit chain instead of accessibility
+% more natural as nodes are mutable
+% easier to manipulate & extend (cf. bounded variant)
+
+% MPMC queue
+% MPMC bounded queue
+% MPSC queue (used in Picos & Eio)
+% SPMC queue (used to implement relaxed queue)
+
+\subsection{Stack-based queues}
+
+% novel algorithm by Vesa Karvonen
+
+% stabilization
+
+% MPMC queue
+% MPSC queue, closable variant
+
+\subsection{Work-stealing queues}
+\label{sec:ws_queue}
+
+% Domainslib
+% Taskflow
+
+% stabilization
+
+% idealized: infinite array
+% bounded: one finite array
+% original: many finite arrays
+
+% wise prophet
+% multiplexed prophets

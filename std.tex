@@ -1,2 +1,32 @@
 \section{Standard data structures}
 \label{sec:std}
+
+To save users from reinventing the wheel, we provide a library of verified standard data structures --- more or less a subset of the \OCaml standard library.
+Most of these data structures%
+\footnote{
+For practical reasons, to make them completely opaque, we chose to axiomatize a few functions from the \texttt{Domain} and \texttt{Random} modules.
+They could trivially be realized in \Zoo.
+}
+are completely reimplemented in \Zoo and axiom-free, including the \texttt{Array}%
+\footnote{
+Our implementation of the \texttt{Array} module is compatible with the standard one.
+In particular, it uses the same low-level value representation.
+}
+module.
+
+\paragraph{Sequential data structures.}
+
+We provide verified implementations of various sequential data structures: array, dynamic array (vector), list, stack, queue (bounded and unbounded), double-ended queue.
+We claim that the proven specifications are modular and practical.
+In fact, most of these data structures have already been used to verify more complex ones --- we present some in \cref{sec:persistent} and \cref{sec:saturn}.
+Especially, we developed an extensive collection of flexible specifications for the iterators of the \texttt{Array} and \texttt{List} modules.
+Remarkably, our formalization of \texttt{Array} features different (fractional) predicates to express the ownership of either an entire array, a slice or even a circular slice --- we use it to verify algorithms involving circular arrays, \eg Chase-Lev working-stealing queue~\citep*{DBLP:conf/spaa/ChaseL05} as presented in \cref{sec:ws_queue}.
+
+\paragraph{Concurrent data structures.}
+
+We provide verified implementations of various concurrent data structures: domain%
+\footnote{
+Domains are the units of parallelism in \OCamlFive.
+}
+(including domain-local storage), mutex, semaphore, condition variable, write-once variable (also known as \emph{ivar}), atomic array.
+Note that there is currently no \texttt{Atomic\_array} module in the \OCaml standard library, but we are planning to propose it.

@@ -1039,6 +1039,45 @@ numpages = {30},
 keywords = {concurrent garbage collection, backwards compatibility}
 }
 
+@inproceedings{10.1145/3192366.3192421,
+author = {Dolan, Stephen and Sivaramakrishnan, KC and Madhavapeddy, Anil},
+title = {Bounding data races in space and time},
+year = {2018},
+isbn = {9781450356985},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3192366.3192421},
+doi = {10.1145/3192366.3192421},
+abstract = {We propose a new semantics for shared-memory parallel programs that gives strong guarantees even in the presence of data races. Our local data race freedom property guarantees that all data-race-free portions of programs exhibit sequential semantics. We provide a straightforward operational semantics and an equivalent axiomatic model, and evaluate an implementation for the OCaml programming language. Our evaluation demonstrates that it is possible to balance a comprehensible memory model with a reasonable (no overhead on x86, ~0.6\% on ARM) sequential performance trade-off in a mainstream programming language.},
+booktitle = {Proceedings of the 39th ACM SIGPLAN Conference on Programming Language Design and Implementation},
+pages = {242–255},
+numpages = {14},
+keywords = {operational semantics, weak memory models},
+location = {Philadelphia, PA, USA},
+series = {PLDI 2018}
+}
+
+@article{ocaml-memory-model,
+author = {Dolan, Stephen and Sivaramakrishnan, KC and Madhavapeddy, Anil},
+title = {Bounding data races in space and time},
+year = {2018},
+issue_date = {April 2018},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {53},
+number = {4},
+issn = {0362-1340},
+url = {https://doi.org/10.1145/3296979.3192421},
+doi = {10.1145/3296979.3192421},
+abstract = {We propose a new semantics for shared-memory parallel programs that gives strong guarantees even in the presence of data races. Our local data race freedom property guarantees that all data-race-free portions of programs exhibit sequential semantics. We provide a straightforward operational semantics and an equivalent axiomatic model, and evaluate an implementation for the OCaml programming language. Our evaluation demonstrates that it is possible to balance a comprehensible memory model with a reasonable (no overhead on x86, ~0.6\% on ARM) sequential performance trade-off in a mainstream programming language.},
+journal = {SIGPLAN Not.},
+month = jun,
+pages = {242–255},
+numpages = {14},
+keywords = {operational semantics, weak memory models}
+}
+
+
 @misc{saturn,
   title = {Saturn},
   author = {Vesa Karvonen and Carine Morel},

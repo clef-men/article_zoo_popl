@@ -32,14 +32,14 @@ code, and many potential users. They are difficult to test
 comprehensively. These characteristics make them ideally suited for
 mechanized program verification.
 
+\subsection{\OCaml and \ZooLang}
+
 We embarked on a mission to mechanize correctness proofs of \OCaml
 concurrent algorithms and data structures as they are being written,
 in contact with their authors, rather than years later. In the
 process, we not only gained confidence in these complex new building
 blocks, but we also improved the \OCaml language and its verification
 ecosystem.
-
-\paragraph{Verification tools for concurrent programs.}
 
 \paragraph{\OCaml language features} When studying the new codebases
 of concurrent and parallel data structures, we found a variety of
@@ -54,4 +54,35 @@ and succeeded in getting it integrated in the upstream \OCaml
 compiler: it should be available as part of OCaml 5.4, which is not
 yet released at the time of writing.
 
-\paragraph{Specified \OCaml semantics}
+\paragraph{Verification tools for concurrent programs.} The state-of-the-art approach for mechanized verification of fine-grained concurrent algorithms is to use \Iris~\citep*{DBLP:journals/jfp/JungKJBBD18}, a state-of-the-art mechanized \emph{higher-order} concurrent separation logic with \emph{user-defined ghost state}. Its expressivity allows to precisely capture delicate invariants, and to reason about the linearization points of fine-grained concurrent algorithms (including external~\citep*{DBLP:conf/cpp/VindumFB22} and future-dependent~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/osdi/Chang0STKZ23} linearization). \Iris provides a generic mechanism to define programming languages and program logics for them. Much of the existing \Iris concurrent verification work has been performed in \HeapLang, the exemplar \Iris language; a concurrent, imperative, untyped, call-by-value functional language.
+
+To the best of our knowledge, it is currently the closest language to \OCaml~5 in the \Iris ecosystem---we review the existing frameworks in \cref{sec:related}. We started our verification effort in \HeapLang, but it eventually proved impractical to verify realistic \OCaml libraries.
+Indeed, it lacks basic abstractions such as algebraic data types (tuples, mutable and immutable records, variants) and mutually recursive functions.
+Verifying \OCaml programs in \HeapLang requires difficult translation choices and introduces various encodings, to the point that the relation between the source and verified programs can become difficult to maintain and reason about.
+It also has very few standard data structures that can be directly reused.
+This view, we believe, is shared by many people in the \Iris community.
+
+We created a new \Iris language, \ZooLang, that can better express concurrent \OCaml programs. Its feature set grew over time as we applied it to more verification scenarios, and we now believe that it allows practical verification of fine-grained concurrent \OCaml~5 programs -- including the use of our atomic record fields which were co-designed with \ZooLang.
+We were influenced by the \Perennial framework~\citep*{DBLP:conf/sosp/ChajedTKZ19}, which achieved similar goals for the \Go language with a focus on crash-safety.
+As in \Perennial, we also provide a translator from (a subset of) \OCaml to \ZooLang: \texttt{ocaml2zoo}. We start from \OCaml code and call our translator to obtain a deep \ZooLang embedding inside \Rocq; we can use lightweight annotations to guide the translation. Inside \Rocq we define specifications using \Iris, and prove them correct with respect to the \ZooLang version, which is syntactically very close to the original \OCaml source.
+We call the resulting framework \Zoo.
+
+One notable current limitation of \ZooLang is that it assumes a sequentially-consistent memory model, whereas \OCaml offers a weaker memory model~\citep*{ocaml-memory-model}. We made the choice to ensure that we supported practical verification in a sequentially-consistent setting first; in the future we plan to equip \ZooLang with the \OCaml memory model as formalized in \Cosmo~\citep*{DBLP:journals/pacmpl/MevelJP20}. We discuss the impact of this difference in \cref{sec:memory-model}.
+
+% The formal verification of fine-grained concurrent algorithms involves finding and reasoning about non-trivial linearization points~\cite{DBLP:journals/csur/DongolD15,DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/cpp/VindumFB22,DBLP:conf/osdi/Chang0STKZ23}. In recent years, concurrent separation logic~\cite{DBLP:journals/siglog/BrookesO16} has enabled significant progress in this area.
+% In particular, the development of \Iris~\cite{DBLP:journals/jfp/JungKJBBD18}, a state-of-the-art mechanized \emph{higher-order} concurrent separation logic with \emph{user-defined ghost state}, has nourished a rich and successful line of works~\cite{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/cpp/VindumFB22,DBLP:conf/osdi/Chang0STKZ23,DBLP:conf/cpp/CarbonneauxZKON22,DBLP:journals/pacmpl/JungLCKPK23,DBLP:journals/pacmpl/SomersK24,DBLP:journals/pacmpl/MevelJP20,DBLP:journals/pacmpl/MevelJ21,DBLP:conf/pldi/DangJCNMKD22,DBLP:journals/pacmpl/ParkKMJLKK24,DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}, dealing with external~\cite{DBLP:conf/cpp/VindumFB22} and future-dependent~\cite{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/osdi/Chang0STKZ23} linearization points, relaxed memory~\cite{DBLP:journals/pacmpl/MevelJP20,DBLP:journals/pacmpl/MevelJ21,DBLP:conf/pldi/DangJCNMKD22,DBLP:journals/pacmpl/ParkKMJLKK24} and automation~\cite{DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}.
+
+\paragraph{Specified \OCaml semantics} Our \Iris mechanization of \ZooLang defines an operational semantics and a corresponding program logic. Our users on the other hand run their program through the standard \OCaml implementation, which is not verified and does not have a precise formal specification. To bridge this formal-informal gap as well as reasonably possible, we carefully audit our \ZooLang semantics to ensure that they coincide with \OCaml's.
+
+In doing so we discovered a hole in state-of-the-art language semantics for program verification (not just for \OCaml), which is the treatment of \emph{physical equality} (pointer quality). Physical equality is typically exposed to language users as an efficient but under-specified equality check, as the physical identity of objects may or may not be preserved by various compiler transformations. It is an essential aspect of concurrent programs, as it underlies the semantics of important atomic instructions such as \texttt{compare\_and\_set}. We found that the current informal semantics in \OCaml is incomplete, it does not allow to reason on programs that use structured data which mix mutable and immutable constructors. Existing formalizations of physical equality in verification frameworks typically restrict it to primitive datatypes, but idiomatic concurrent programs do not fit within this restriction. We propose a precise specification of physical equality in \Zoo that scales to the verification of all the concurrent programs we encountered.
+
+Worse, our discussions with the maintainers of the \OCaml implementation showed that implementors guarantee weaker properties of physical equalities than users assume, in particular they may allow \emph{unsharing}, which makes some existing concurrent programs incorrect. We propose a small new language feature for \OCaml, per-constructor unsharing control, which we also integrate in our \ZooLang translation, to fix affected programs and verify them. Finally, we discussed these subtleties with authors who axiomatize physical equality within Rocq for the purpose of efficient extraction, and we found out that some subtleties we discovered could translate into incorrectness in their axiomatization, requiring careful restrictions.
+
+\subsection{Verification results}
+
+\subsection{Contributions}
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "main"
+%%% End:

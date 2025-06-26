@@ -1,10 +1,9 @@
 \section{Persistent data structures}
 \label{sec:persistent}
 
-% pstack
-% pqueue
-% parray
-% pstore
-% puf
+To further demonstrate the practicality of \Zoo, we verified a collection of persistent data structures.
+This includes purely functional data structures such as persistent stack and queue, but also efficient imperative implementations of persistent array~\citep*{DBLP:conf/ml/ConchonF07}, store~\citep*{DBLP:journals/pacmpl/AllainC0S24} and union-find~\citep*{DBLP:journals/pacmpl/AllainC0S24}.
 
-% envision more convenient way to verify pure programs
+Currently, verification of purely functional programs is conducted in \ZooLang, which is deeply embedded inside \Rocq.
+However, in the future, it would be desirable to be able to verify them directly in \Rocq, through a translation to \Gallina.
+Similarly to \Hacspec~\citep*{DBLP:conf/cpp/HaselwarterHHWH24}, these two translations would come with a generated proof of equivalence.

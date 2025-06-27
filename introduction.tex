@@ -80,7 +80,35 @@ Worse, our discussions with the maintainers of the \OCaml implementation showed 
 
 \paragraph{Contributions} In summary, we claim the following contributions:
 \begin{enumerate}
-\item 
+\item \Zoo, a program verification framework aimed at practical
+  verification of concurrent \OCaml programs, mechanized in Rocq. The
+  language \ZooLang comes with a program logic expressed in the \Iris
+  concurrent separation logic. A translator \texttt{ocaml2zoo}
+  generates the Rocq embedding from source \OCaml programs, and works
+  well with \OCaml tooling (\texttt{dune} support).
+
+\item The verification (in a sequentially-consistent model) of
+  important structures coming from \Saturn, the \OCamlFive library of
+  lock-free data structures. In particular we present a precise
+  concurrent invariant for the Chase-Lev work-stealing queue, which gives
+  stronger specifications than its previous formalizations.
+
+  \Xgabriel{It would be nice to emphasize here a ``proof technique''
+    for concurrent verification that is novel in Clément's
+    work. (Some novel usage setup for prophecy variables?)}
+
+\item The extension of \OCaml with atomic record fields, which after
+  significant design, implementation and discussion work have now been
+  integrated into upstream \OCaml.
+
+\item The identification of blind spots in existing specifications of
+  \emph{physical equality} and a new specification that is precise
+  enough to reason about \texttt{compare-and-set} in the various
+  programs we considered.
+
+  In the process we identified a potential bug in existing \OCaml
+  programs related to \emph{unsharing}, and we propose a small
+  language extension to let users selectively disable unsharing.
 \end{enumerate}
 
 %%% Local Variables:

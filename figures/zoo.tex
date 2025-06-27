@@ -1,0 +1,123 @@
+\begin{figure}[t!]
+\centering
+\begin{tabular}{llcl}
+    \Rocq term &
+    $t$
+  \\
+    constructor &
+    $C$
+  \\
+    projection &
+    $\mathit{proj}$
+  \\
+    record field &
+    $\mathit{fld}$
+  \\
+    identifier &
+    $s, f$
+    & $\in$ &
+    $\mathrm{String}$
+  \\
+    integer &
+    $n$
+    & $\in$ &
+    $\mathbb{Z}$
+  \\
+    boolean &
+    $b$
+    & $\in$ &
+    $\mathbb{B}$
+  \\
+    binder &
+    $x$
+    & $\Coloneqq$ &
+    $\texttt{<>} \mid s$
+  \\
+    unary operator &
+    $\oplus$
+    & $\Coloneqq$ &
+    $\texttt{\raisebox{0.5ex}{\texttildelow}} \mid \texttt{-}$
+  \\
+    binary operator &
+    $\otimes$
+    & $\Coloneqq$ &
+    $\texttt{+} \mid \texttt{-} \mid \texttt{*} \mid \texttt{`quot`} \mid \texttt{`rem`} \mid \texttt{`land`} \mid \texttt{`lor`} \mid \texttt{`lsl`} \mid \texttt{`lsr`}$
+  \\
+    && | &
+    $\texttt{<=} \mid \texttt{<} \mid \texttt{>=} \mid \texttt{>} \mid \texttt{=} \mid \texttt{≠} \mid \texttt{==} \mid \texttt{!=}$
+  \\
+    && | &
+    $\texttt{and} \mid \texttt{or}$
+  \\
+    expression &
+    $e$
+    & $\Coloneqq$ &
+    $t \mid s \mid \texttt{\#} n \mid \texttt{\#} b$
+  \\
+    && | &
+    $\texttt{fun:}\ x_1 \dots x_n\ \texttt{=>}\ e \mid \texttt{rec:}\ f\ x_1 \dots x_n\ \texttt{=>}\ e \mid e_1\ e_2$
+  \\
+   && | &
+   $\texttt{let:}\ x\ \texttt{:=}\ e_1\ \texttt{in}\ e_2 \mid e_1\ \texttt{;;}\ e_2$
+  \\
+    && | &
+    $\texttt{let:}\ f\ x_1 \dots x_n\ \texttt{:=}\ e_1\ \texttt{in}\ e_2 \mid \texttt{letrec:}\ f\ x_1 \dots x_n\ \texttt{:=}\ e_1\ \texttt{in}\ e_2$
+  \\
+    && | &
+    $\texttt{let:}\ \texttt{‘} C\ x_1 \dots x_n\ \texttt{:=}\ e_1\ \texttt{in}\ e_2 \mid \texttt{let:}\ x_1 \texttt{,} \dots \texttt{,} x_n\ \texttt{:=}\ e_1\ \texttt{in}\ e_2$
+  \\
+    && | &
+    $\oplus e \mid e_1 \otimes e_2$
+  \\
+    && | &
+    $\texttt{if:}\ e_0\ \texttt{then}\ e_1\ (\texttt{else}\ e_2)^?$
+  \\
+    && | &
+    $\texttt{for:}\ x\ \texttt{:=}\ e_1\ \texttt{to}\ e_2\ \texttt{begin}\ e_3\ \texttt{end}$
+  \\
+    && | &
+    $\texttt{§}C \mid \texttt{‘} C\ \texttt{(} e_1 \texttt{,} \dots \texttt{,} e_n \texttt{)} \mid \texttt{(} e_1 \texttt{,} \dots \texttt{,} e_n \texttt{)} \mid e \texttt{.<} \mathit{proj} \texttt{>}$
+  \\
+    && | &
+    $\texttt{[]} \mid e_1\ \texttt{::}\ e_2$
+  \\
+    && | &
+    $\texttt{‘} C\ \texttt{\{} e_1 \texttt{,} \dots \texttt{,} e_n \texttt{\}} \mid \texttt{\{} e_1 \texttt{,} \dots \texttt{,} e_n \texttt{\}} \mid e \texttt{.\{} \mathit{fld} \texttt{\}} \mid e_1\ \texttt{<-\{} \mathit{fld} \texttt{\}}\ e_2$
+  \\
+    && | &
+    $\texttt{ref}\ e \mid \texttt{!} e \mid e_1\ \texttt{<-}\ e_2$
+  \\
+    && | &
+    $\texttt{match:}\ e_0\ \texttt{with}\ \mathit{br}_1 \texttt{|} \dots \texttt{|}\ \mathit{br}_n\ (\texttt{|\_}\ (\texttt{as}\ s)^?\ \texttt{=>}\ e)^?\ \texttt{end}$
+  \\
+    && | &
+    $e \texttt{.[} \mathit{fld} \texttt{]} \mid \texttt{Xchg}\ e_1\ e_2 \mid \texttt{CAS}\ e_1\ e_2\ e_3 \mid \texttt{FAA}\ e_1\ e_2$
+  \\
+    && | &
+    $\texttt{Proph} \mid \texttt{Resolve}\ e_0\ e_1\ e_2$
+  \\
+    branch &
+    $\mathit{br}$
+    & $\Coloneqq$ &
+    $C\ (x_1 \dots x_n)^?\ (\texttt{as}\ s)^?\ \texttt{=>}\ e$
+  \\
+    && | &
+    $\texttt{[]}\ (\texttt{as}\ s)^?\ \texttt{=>}\ e \mid x_1\ \texttt{::}\ x_2\ (\texttt{as}\ s)^?\ \texttt{=>}\ e$
+  \\
+    toplevel value &
+    $v$
+    & $\Coloneqq$ &
+    $t \mid \texttt{\#} n \mid \texttt{\#} b$
+  \\
+    && | &
+    $\texttt{fun:}\ x_1 \dots x_n\ \texttt{=>}\ e \mid \texttt{rec:}\ f\ x_1 \dots x_n\ \texttt{=>}\ e$
+  \\
+    && | &
+    $\texttt{§}C \mid \texttt{‘} C\ \texttt{(} v_1 \texttt{,} \dots \texttt{,} v_n \texttt{)} \mid \texttt{(} v_1 \texttt{,} \dots \texttt{,} v_n \texttt{)}$
+  \\
+    && | &
+    $\texttt{[]} \mid v_1\ \texttt{::}\ v_2$
+\end{tabular}
+\caption{\ZooLang syntax (omitting mutually recursive toplevel functions)}
+\label{fig:zoo}
+\end{figure}

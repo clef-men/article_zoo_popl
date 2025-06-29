@@ -1,0 +1,28 @@
+\begin{figure}[t!]
+\begin{minted}{ocaml}
+type state =
+  | Open of Unix.file_descr
+  | Closing of (unit -> unit)
+
+type t =
+  { mutable ops: int [@atomic];
+    mutable state: state [@atomic]; }
+
+let make fd = { ops = 0; state = Open fd }
+
+let closed = Closing (fun () -> ())
+let close t =
+  match t.state with
+  | Closing _ -> false
+  | Open fd as prev ->
+      let next = Closing (fun () -> Unix.close fd) in
+      if Atomic.Loc.compare_and_set [%atomic.loc t.state] prev next then (
+        if t.ops == 0
+        && Atomic.Loc.compare_and_set [%atomic.loc t.state] next closed
+        then close () ;
+        true
+      ) else false
+\end{minted}
+\caption{\mintinline{ocaml}{Rcfd} module from \Eio~\cite{eio} (excerpt)}
+\label{fig:rcfd}
+\end{figure}

@@ -1,0 +1,35 @@
+\section{Structural equality}
+\label{sec:structural_equality}
+
+Structural equality is also supported.
+More precisely, it is not part of the semantics of the language but axiomatized on top of it\footnote{We could also have implemented it in \ZooLang, but that would require more low-level primitives.}.
+The reason is that it is in fact difficult to specify for arbitrary values.
+In general, we have to compare graphs---which implies structural comparison may diverge.
+
+Accordingly, the specification of $v_1\ \texttt{=}\ v_2$ requires the (partial) ownership of a \emph{memory footprint} corresponding to the union of the two compared graphs, giving the permission to traverse them safely.
+If it terminates, the comparison decides whether the two graphs are isomorphic (modulo representation conflicts, as described in \cref{sec:physical_equality}).
+In \Iris, this gives:
+
+\begin{minted}{coq}
+Axiom structeq_spec : ∀ v1 v2 footprint,
+  val_traversable footprint v1 →
+  val_traversable footprint v2 →
+  {{{ structeq_footprint footprint }}}
+    v1 = v2
+  {{{ b, RET #b;
+      structeq_footprint footprint ∗
+      ⌜(if b then val_structeq else val_structneq) footprint v1 v2⌝ }}}.
+\end{minted}
+
+Obviously, this general specification is not very convenient to work with.
+Fortunately, for abstract values (without any mutable part), we can prove a much simpler variant saying that structural equality boils down to physical equality:
+
+\begin{minted}{coq}
+Lemma structeq_spec_abstract v1 v2 :
+  val_abstract v1 →
+  val_abstract v2 →
+  {{{ True }}}
+    v1 = v2
+  {{{ b, RET #b; ⌜(if b then val_physeq else val_physneq) v1 v2⌝ }}}
+Proof. ... Qed.
+\end{minted}

@@ -14,7 +14,7 @@ As mentioned in \cref{sec:physical_equality}, the \ocamlinline{Rcfd} module from
 Not only does it justify the introduction of generative constructors in \OCaml, but it also demonstrates the use of \Iris for expressing realistic concurrent protocols.
 
 \paragraph{Specification.}
-\ocamlinline{Rcfd} provides a parallelism-safe file descriptor (FD) relying internally on reference-counting.
+The \ocamlinline{Rcfd} module provides a parallelism-safe file descriptor (FD) relying internally on reference-counting.
 Interestingly, it is used in \Eio in two different ways, more precisely two different ownership regimes: 1) any thread can try to access or close the FD; 2) any thread can try to access the FD but only the owner thread can close it --- and is responsible for closing it.
 To verify all uses, the specification of \ocamlinline{Rcfd} has to support both ownership regimes.
 However, due to space constraints, we consider a simplified specification given in \cref{fig:rcfd_spec}.

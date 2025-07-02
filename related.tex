@@ -49,10 +49,10 @@ This work introduces the Jourdan condition, that physical equality implies equal
 %
 There is also a discussion of similar optimizations in \Lean in \cite{lean-pointer-optimizations}.
 
-The correctness of the axiomatization of physical equality depends on the type of the values being compared: axiomatizations are typically polymorphic on any type \mintinline{coq}{A}, but their correctness depends on the specific \mintinline{coq}{A} being considered.
+The correctness of the axiomatization of physical equality depends on the type of the values being compared: axiomatizations are typically polymorphic on any type \coqinline{A}, but their correctness depends on the specific \coqinline{A} being considered.
 %
 For example, it is easy to correctly characterize physical on natural numbers, and other non-dependent types arising in \Rocq verification projects.
 %
-One difficulty in \HeapLang and \ZooLang is that they are untyped languages, their representation of \mintinline{ocaml}{0} and \mintinline{ocaml}{false} has the same type.
+One difficulty in \HeapLang and \ZooLang is that they are untyped languages, their representation of \ocamlinline{0} and \ocamlinline{false} has the same type.
 %
-But our remark that structural equality (in \OCaml) does not necessarily coincide with definitional equality (in \Rocq) also applies to other \Rocq types: our examples with an existential \mintinline{ocaml}{Any} constructor (see~\cref{sec:physical_equality}) can be reproduced with $\Sigma$-types.
+But our remark that structural equality (in \OCaml) does not necessarily coincide with definitional equality (in \Rocq) also applies to other \Rocq types: our examples with an existential \ocamlinline{Any} constructor (see~\cref{sec:physical_equality}) can be reproduced with $\Sigma$-types.

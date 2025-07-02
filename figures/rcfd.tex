@@ -1,5 +1,5 @@
 \begin{figure}[t!]
-\begin{minted}{ocaml}
+\begin{ocamlcode}
 type state =
   | Open of Unix.file_descr
   | Closing of (unit -> unit)
@@ -22,7 +22,7 @@ let close t =
         then close () ;
         true
       ) else false
-\end{minted}
-\caption{\mintinline{ocaml}{Rcfd} module from \Eio~\cite{eio} (excerpt)}
+\end{ocamlcode}
+\caption{\ocamlinline{Rcfd} module from \Eio~\cite{eio} (excerpt)}
 \label{fig:rcfd}
 \end{figure}

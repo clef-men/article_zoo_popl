@@ -1,5 +1,5 @@
 \begin{figure}[t!]
-\begin{minted}{ocaml}
+\begin{ocamlcode}
 type 'a t = 'a list Atomic.t
 let create () = Atomic.make []
 
@@ -21,7 +21,7 @@ let rec pop t =
         Domain.cpu_relax () ;
         pop t
       )
-\end{minted}
+\end{ocamlcode}
 \caption{Implementation of a concurrent stack}
 \label{fig:stack}
 \end{figure}

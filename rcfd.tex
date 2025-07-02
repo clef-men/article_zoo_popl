@@ -1,7 +1,64 @@
-\section{\texttt{Rcfd}: parallelism-safe file descriptor}
+\section{\ocamlinline{Rcfd}: Parallelism-safe file descriptor}
 \label{sec:rcfd}
 
-% suggested by Thomas Leonard
-% Eio
-% intricate logical state
-% generative constructors
+\newcommand{\inv}{%
+  \textcolor{blue}{\textlog{inv}}%
+}
+\newcommand{\closing}{%
+  \textcolor{red}{\textlog{closing}}%
+}
+
+\input{figures/rcfd_spec}
+
+As mentioned in \cref{sec:physical_equality}, the \ocamlinline{Rcfd} module from the \Eio library is particularly interesting in several respects.
+Not only does it justify the introduction of generative constructors in \OCaml, but it also demonstrates the use of \Iris for expressing realistic concurrent protocols.
+
+\paragraph{Specification.}
+\ocamlinline{Rcfd} provides a parallelism-safe file descriptor (FD) relying internally on reference-counting.
+Interestingly, it is used in \Eio in two different ways, more precisely two different ownership regimes: 1) any thread can try to access or close the FD; 2) any thread can try to access the FD but only the owner thread can close it --- and is responsible for closing it.
+To verify all uses, the specification of \ocamlinline{Rcfd} has to support both ownership regimes.
+However, due to space constraints, we consider a simplified specification given in \cref{fig:rcfd_spec}.
+The full verified specification can be found in the mechanization.
+
+The specification features four operations%
+\footnote{
+We omitted two non-essential operations: \ocamlinline{is_open} and \ocamlinline{peek}.
+}.
+
+\ocamlinline{make} creates a new object $t$ of type \ocamlinline{Rcfd.t} wrapping a given FD $\mathit{fd}$, yielding the (persistent) invariant $\inv\ t\ \mathit{fd}\ \iPredTwo$, where $\iPredTwo$ is an arbitrary fractional predicate.
+Crucially, the user must provide the full predicate $\iPredTwo\ 1$, which is stored in the invariant.
+Once it is created, a wrapped FD can be accessed through the \ocamlinline{use} operation and closed through the \ocamlinline{close} operation.
+
+\ocamlinline{use} requires the invariant along with the weakest preconditions of the $\mathit{closed}$ function, that is called if the FD has been flagged as closed, and $\mathit{open}$ function, that is called if the FD is still open.
+To control the postconditions of the specification and the weakest preconditions, the user can choose an arbitrary predicate $\iPredThree$ parameterized by a boolean indicating whether the $\mathit{closed}$ (\ocamlinline{false}) or the $\mathit{open}$ (\ocamlinline{true}) was called.
+Furthermore, the $\mathit{open}$ function is given a fraction of $\iPredTwo$ during its execution, thereby accessing the FD.
+
+\ocamlinline{close} requires the invariant and proving that the full ownership of $\iPredTwo$ entails the full ownership of the FD $\mathit{fd}$, which is necessary to call \ocamlinline{Unix.close}.
+It yields $\closing\ t$, a persistent resource witnessing that $t$ has been flagged as closed.
+Actually, the wrapped FD is not closed immediately.
+It will be closed only once it is possible, meaning all ongoing calls to \ocamlinline{use} owning a fraction of the FD end.
+
+Alternatively, instead of closing the FD, \ocamlinline{remove} tries to retrieve the full ownership of $\iPredTwo$.
+To achieve it, it exploits the same mechanism as \ocamlinline{close} --- flagging $t$ as closed as witnessed by $\closing\ t$ --- but also waits until all \ocamlinline{use} calls are done.
+
+\paragraph{Logical state.}
+Thomas Leonard, the author of \ocamlinline{Rcfd}, suggested verifying it to make sure the informal concurrent protocol he described in the \OCaml interface was correct.
+This protocol introduces a notion of monotonic logical state --- modeled in \Iris using a specific resource algebra~\cite{DBLP:conf/cpp/TimanyB21} --- to describe the evolution of a FD.
+Originally, there were four logical states but we found that only three are necessary for the verification: \textbf{open}, \textbf{closing/users} and \textbf{closing/no-users}.
+
+In the \textbf{open} state, the FD is available for use, meaning any thread can access it through \ocamlinline{use}.
+Physically, this corresponds to the \ocamlinline{Open} constructor.
+
+When some thread flags the FD as closed through \ocamlinline{close} or \ocamlinline{remove}, the state transitions from \textbf{open} to \textbf{closing/users}.
+Crucially, there can only be one such thread.
+In this state, the FD is not really closed yet because of ongoing \ocamlinline{use} operations.
+Physically, this logical transition corresponds to switching from the \ocamlinline{Open} to the \ocamlinline{Closing} constructor using \ocamlinline{Atomic.Loc.compare_and_set}.
+
+Once all \ocamlinline{use} operations have finished, when the reference-count reaches zero, it is time to actually `close' the FD by calling the function carried by the \ocamlinline{Closing} constructor.
+However, this has to be done only once.
+The `closing' thread is the one that succeeds in updating the \ocamlinline{Closing} constructor (to a new one carrying a no-op function) using again \ocamlinline{Atomic.Loc.compare_and_set}.
+At this point, the state transitions from \textbf{closing/users} to \textbf{closing/no-users} and the wrapper no longer owns the FD.
+
+\paragraph{Generative contructors.}
+As explained in \cref{sec:physical_equality}, the \ocamlinline{Open} constructor has to be generative to prevent \emph{unsharing}.
+In fact, the \ocamlinline{Closing} constructor also has to be generative to prevent \emph{sharing}: when the `closing' thread wins the \ocamlinline{Atomic.Loc.compare_and_set}, it must be true that the `closing' function has not changed.

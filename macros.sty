@@ -6,6 +6,12 @@
 
 %-------------------------------------------------
 
+\newcommand{\Chi}{%
+  \mathrm{X}%
+}
+
+%-------------------------------------------------
+
 \DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
 \def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
 
@@ -44,47 +50,87 @@
 
 %-------------------------------------------------
 
-\newcommand{\mathhyphen}{{\hbox{-}}}
+\newcommand{\textlog}[1]{%
+  \textsf{\upshape #1}%
+}
 
-\newcommand\doubleplus{+\kern-1.3ex+\kern0.8ex}
-\newcommand\mdoubleplus{\ensuremath{\mathbin{+\mkern-10mu+}}}
+\newcommand{\mathhyphen}{%
+  {\hbox{-}}%
+}
+
+\newcommand\doubleplus{%
+  +\kern-1.3ex+\kern0.8ex%
+}
+\newcommand\mdoubleplus{%
+  \ensuremath{\mathbin{+\mkern-10mu+}}%
+}
 
 %-------------------------------------------------
 
 \newcommand{\Prop}{%
-    \mathrm{Prop}%
+  \textlog{Prop}%
 }
 
 \newcommand{\iProp}{%
-    \mathrm{iProp}%
+  \textlog{iProp}%
+}
+\newcommand{\iOr}{%
+  \vee%
 }
 \newcommand{\iSep}{%
-    \ast%
+  \ast%
 }
 \newcommand{\iBigSep}{%
-    \scalerel*{\iSep}{\sum}%
+  \scalerel*{\iSep}{\sum}%
 }
 \newcommand{\iWand}{%
-    \mathrel{-\mkern-6mu\iSep}%
+  \mathrel{-\!\!\iSep}%
 }
 \newcommand{\iBupd}{%
-    |\!\!\!\Rrightarrow%
+  |\!\!\!\Rrightarrow%
 }
 \newcommand{\iPersistent}{%
-    \square%
+  \square%
 }
 \newcommand{\iTrue}{%
-    \mathrm{True}%
+  \textlog{True}%
 }
 \newcommand{\iFalse}{%
-    \mathrm{False}%
+  \textlog{False}%
 }
 \newcommand{\iPointsto}{%
-    \mapsto%
+  \mapsto%
 }
 \newcommand{\iPred}{%
-    \Phi%
+  \Phi%
 }
 \newcommand{\iPredTwo}{%
-    \Psi%
+  \Psi%
+}
+\newcommand{\iPredThree}{%
+  \Chi%
+}
+
+\newcommand{\iWp}[3][]{%
+  \textlog{wp}\ %
+  #2%
+  \ \lbrace\ %
+  \ifx #1 \else #1 \ldotp \fi%
+  #3%
+  \ \rbrace%
+}
+
+\newcommand{\iSpec}[4]{%
+  \begin{array}{c}
+      \begin{array}{c}
+        #1
+      \end{array}
+    \\ \hline
+      #2
+    \\ \hline
+      #3 \ldotp
+      \begin{array}{c}
+        #4
+      \end{array}
+  \end{array}%
 }

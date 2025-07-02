@@ -1,0 +1,69 @@
+\begin{figure}[t!]
+  \begin{mathpar}
+      \iSpec{
+        \iPredTwo\ 1
+      }{
+        \texttt{make}\ \textit{fd}
+      }{
+        t
+      }{
+        \inv\ t\ \textit{fd}\ \iPredTwo
+      }
+    \and
+      \iSpec{
+          \inv\ t\ \textit{fd}\ \iPredTwo
+        \\
+          \iWp{
+            \textit{closed}\ \texttt{()}
+          }{
+            \iPredThree\ \texttt{false}
+          }
+        \\
+          \forall q \ldotp
+          \iPredTwo\ q \iWand
+          \iWp[
+            \textit{res}
+          ]{
+            \textit{open}\ \textit{fd}
+          }{
+            \iPredTwo\ q \iSep
+            \iPredThree\ \texttt{true}\ \textit{res}
+          }
+      }{
+        \texttt{use}\ t\ \textit{closed}\ \textit{open}
+      }{
+        \textit{res}
+      }{
+        \exists b \ldotp
+        \iPredThree\ b\ \textit{res}
+      }
+    \and
+      \iSpec{
+          \inv\ t\ \textit{fd}\ \iPredTwo
+        \\
+          \iPredTwo\ 1 \iWand
+          \exists \textit{chars} \ldotp
+          \textlog{unix-fd}\ \textit{fd}\ 1\ \textit{chars}
+      }{
+        \texttt{close}\ t
+      }{
+        \texttt{()}
+      }{
+        \closing\ t
+      }
+    \and
+      \iSpec{
+        \inv\ t\ \textit{fd}\ \iPredTwo
+      }{
+        \texttt{remove}\ t
+      }{
+        o
+      }{
+          \closing\ t
+        \\
+          o = \textlog{None} \iOr o = \textlog{Some}\ \textit{fd} \iSep \iPredTwo\ 1
+      }
+  \end{mathpar}
+  \caption{\texttt{Rcfd} specification (excerpt)}
+  \label{fig:rcfd_spec}
+\end{figure}

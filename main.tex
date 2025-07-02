@@ -41,6 +41,15 @@
 
 \usepackage{mathtools}
 
+\let\oldexists\exists
+\let\exists\relax\DeclareMathOperator{\exists}{\oldexists}
+\let\oldforall\forall
+\let\forall\relax\DeclareMathOperator{\forall}{\oldforall}
+
+%-------------------------------------------------
+
+\usepackage{mathpartir}
+
 %-------------------------------------------------
 
 \usepackage{macros}
@@ -112,8 +121,6 @@
 %-------------------------------------------------
 
 \input{introduction}
-
-\clearpage
 
 \input{zoo}
 

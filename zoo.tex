@@ -46,17 +46,9 @@ This tool can process entire \texttt{dune} projects, and support several librari
 
 The supported \OCaml fragment includes: tuples, variants, records and inline records, shallow \ocamlinline{match}, atomic record fields, unboxed types, toplevel mutually recursive functions.
 
-Consider, for example, the \OCaml implementation of a concurrent stack~\cite{thomas1986systems} in \cref{fig:stack}.
-The \ocamlinline{push} function is translated into:
+Consider, for example, the \OCaml implementation of a concurrent stack
 
-\begin{coqcode}
-Definition stack_push : val := rec: "push" "t" "v" =>
-  let: "old" := !"t" in
-  let: "new_" := "v" :: "old" in
-  if: ~ CAS "t".[contents] "old" "new_" then (
-    domain_cpu_relax () ;;
-    "push" "t" "v" ).
-\end{coqcode}
+In \cref{fig:stack} we include the \OCaml implementation of a simple lock-free concurrent stack~\cite{thomas1986systems}, and its automatic translation to \ZooLang, demonstrating that readability is preserved for this program.
 
 \subsection{Specifications and proofs}
 

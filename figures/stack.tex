@@ -1,4 +1,5 @@
-\begin{figure}[t!]
+\begin{figure}[htp]
+\begin{minipage}[t]{0.42\textwidth}
 \begin{ocamlcode}
 type 'a t = 'a list Atomic.t
 let create () = Atomic.make []
@@ -6,7 +7,9 @@ let create () = Atomic.make []
 let rec push t v =
   let old = Atomic.get t in
   let new_ = v :: old in
-  if not (Atomic.compare_and_set t old new_) then (
+  if not (Atomic.compare_and_set
+            t old new_)
+  then (
     Domain.cpu_relax () ;
     push t v
   )
@@ -15,13 +18,51 @@ let rec pop t =
   match Atomic.get t with
   | [] -> None
   | v :: new_ as old ->
-      if Atomic.compare_and_set t old new_ then (
-        Some v
-      ) else (
+      if Atomic.compare_and_set
+           t old new_
+      then Some v
+      else (
         Domain.cpu_relax () ;
         pop t
       )
 \end{ocamlcode}
-\caption{Implementation of a concurrent stack}
+\end{minipage}
+\begin{minipage}[t]{0.49\textwidth}
+\begin{coqcode}
+Definition stack_create : val :=
+  fun: <> => ref [].
+
+Definition stack_push : val :=
+  rec: "push" "t" "v" =>
+    let: "old" := !"t" in
+    let: "new_" := "v" :: "old" in
+    if: ~ CAS "t".[contents] "old" "new_"
+    then (
+      domain_cpu_relax () ;;
+      "push" "t" "v"
+    ).
+
+Definition stack_pop : val :=
+  rec: "pop" "t" =>
+    match: !"t" with
+    | [] => §None
+    | ("v" :: "new_") as "old" =>
+        if: CAS "t".[contents] "old" "new_"
+        then ‘Some( "v" )
+        else (
+          domain_yield () ;;
+          "pop" "t"
+        )
+    end.
+
+\end{coqcode}
+\end{minipage}
+
+\caption{A concurrent stack in \OCaml and its automatic \ZooLang translation}
 \label{fig:stack}
 \end{figure}
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "../main"
+%%% End:

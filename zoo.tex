@@ -9,8 +9,10 @@
 The core of \Zoo is \ZooLang: a concurrent, imperative, untyped, functional programming language fully formalized in \Rocq.
 Its semantics has been designed to match \OCaml's.
 
-\ZooLang comes with a program logic based on \Iris: reasoning rules expressed in separation logic (including rules for the different constructs of the language) along with \Rocq tactics that integrate into the \Iris proof mode~\cite{DBLP:conf/popl/KrebbersTB17,DBLP:journals/pacmpl/KrebbersJ0TKTCD18}.
-In addition, it supports \Diaframe~\cite{DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}, enabling proof automation.
+\ZooLang comes with a program logic based on \Iris: reasoning rules expressed in separation logic (including rules for the different constructs of the language) along with \Rocq tactics that integrate into the \Iris proof mode~\cite{% DBLP:conf/popl/KrebbersTB17,
+  DBLP:journals/pacmpl/KrebbersJ0TKTCD18}.
+In addition, it supports \Diaframe~\cite{DBLP:conf/pldi/MulderKG22% ,DBLP:journals/pacmpl/MulderK23
+}, enabling proof automation.
 
 \input{figures/zoo}
 
@@ -19,20 +21,19 @@ Expressions include standard constructs like booleans, integers, anonymous funct
 In any expression, one can refer to a \Rocq term representing a \ZooLang value (of type \coqinline{val}) using its \Rocq identifier.
 \ZooLang is deeply embedded: variables (bound by functions and \ocamlinline{let}) are quoted as strings.
 
-Data constructors (immutable memory blocks) are supported through two constructs : $\texttt{§}C$ represents a constant constructor (\eg $\texttt{§}\texttt{None}$), $\texttt{‘} C\ \texttt{(} e_1 \texttt{,} \dots \texttt{,} e_n \texttt{)}$ represents a non-constant constructor (\eg $\texttt{‘} \texttt{Some( } e \texttt{ )}$).
-Unlike \OCaml, \ZooLang has projections of the form $e \texttt{.<} \mathit{proj} \texttt{>}$ (\eg $\texttt{(} x, y \texttt{).<1>}$), that can be used to obtain a specific component of a tuple or data constructor.
+Data constructors (immutable memory blocks) are supported: $\texttt{§}C$ represents a constant constructor (\eg $\texttt{§}\texttt{None}$), and $\texttt{‘} C\ \texttt{(} e_1 \texttt{,} \dots \texttt{,} e_n \texttt{)}$ represents a non-constant constructor (\eg $\texttt{‘} \texttt{Some( } e \texttt{ )}$).
+Projections of the form $e \texttt{.<} \mathit{proj} \texttt{>}$ (include on tuples: $\texttt{(} x, y \texttt{).<1>}$) can be used to obtain a specific component of a tuple or data constructor.
 \ZooLang supports shallow pattern matching (patterns cannot be nested) on data constructors with an optional fallback case.
 
 Mutable memory blocks are constructed using either the untagged record syntax $\texttt{\{} e_1 \texttt{,} \dots \texttt{,} e_n \texttt{\}}$ or the tagged record syntax $\texttt{‘} C\ \texttt{\{} e_1 \texttt{,} \dots \texttt{,} e_n \texttt{\}}$.
 Reading a record field can be performed using $e \texttt{.\{} \mathit{fld} \texttt{\}}$ and writing to a record field using $e_1\ \texttt{<-\{} \mathit{fld} \texttt{\}}\ e_2$.
 Pattern matching can also be used on mutable tagged blocks provided that cases do not bind anything---in other words, only the tag is examined, no memory access is performed.
-References are also supported through the usual constructs : $\texttt{ref}\ e$ creates a reference, $\texttt{!} e$ reads a reference and $e_1\ \texttt{<-}\ e_2$ writes into a reference.
-The syntax seemingly does not include constructs for arrays but they are supported through the \ocamlinline{Array} standard module (\eg \texttt{array\_make}).
+Mutable references are supported: $\texttt{ref}\ e$ creates a reference, $\texttt{!} e$ reads a reference and $e_1\ \texttt{<-}\ e_2$ writes into a reference.
+There is no built-in syntax for arrays, hey are supported through the \ocamlinline{Array} standard library module (\eg \texttt{array\_make}).
 
 Note that \ZooLang follows \OCaml in sometimes eschewing orthogonality to provide more compact memory representations: constructors are $n$-ary instead of taking a tuple as parameter, and the tagged record syntax is distinct from a constructor taking a mutable record as parameter. In each case the simplifying encoding would introduce an extra indirection in memory, which is absent from the \ZooLang semantics. Performance-conscious experts care about these representation choices, and we care about faithfully modeling their programs.
 
-Parallelism is mainly supported through the \ocamlinline{Domain} standard module (\eg \texttt{domain\_spawn}), including domain-local storage.
-Special constructs (\texttt{Xchg}, \texttt{CAS}, \texttt{FAA}; see \cref{sec:atomic}) are used to model atomic references.
+Parallelism is mainly supported through the \ocamlinline{Domain} standard library module, including domain-local storage. Atomic operations are provided as built-in constructs (\texttt{Xchg}, \texttt{CAS}, \texttt{FAA}; see \cref{sec:atomic}).
 
 The \texttt{Proph} and \texttt{Resolve} constructs model \emph{prophecy variables}~\cite{DBLP:journals/pacmpl/JungLPRTDJ20}, see \cref{sec:prophecy}.
 
@@ -46,9 +47,7 @@ This tool can process entire \texttt{dune} projects, and support several librari
 
 The supported \OCaml fragment includes: tuples, variants, records and inline records, shallow \ocamlinline{match}, atomic record fields, unboxed types, toplevel mutually recursive functions.
 
-Consider, for example, the \OCaml implementation of a concurrent stack
-
-In \cref{fig:stack} we include the \OCaml implementation of a simple lock-free concurrent stack~\cite{thomas1986systems}, and its automatic translation to \ZooLang, demonstrating that readability is preserved for this program.
+In \cref{fig:stack} we include the \OCaml implementation of a simple lock-free concurrent stack~\cite{thomas1986systems}, and its automatic translation to \ZooLang, demonstrating that readability is preserved.
 
 \subsection{Specifications and proofs}
 
@@ -75,9 +74,9 @@ Following standard \Iris notations, the private conditions are on the outside (f
 For this particular operation, the private postcondition is trivial.
 The private precondition $\mathtt{stack\_inv}\ t$ is the stack invariant.
 Intuitively, it asserts that $t$ is a valid concurrent stack.
-More precisely, it enforces a set of logical constraints---a concurrent protocol---that $t$ must respect at all times.
+More precisely, it defines a concurrent protocol that $t$ must respect at all times.
 
-The atomic pre- and post-conditions specify the linearization point of the operation: during the execution of \texttt{stack\_push}, the abstract state of the stack held by $\mathtt{stack\_model}$ is atomically updated from $\mathit{vs}$ to $v :: \mathit{vs}$: $v$ is atomically pushed at the top of the stack.
+The atomic pre- and post-conditions specify the linearization point of the operation: during the execution of \texttt{stack\_push}, the abstract state of the stack held by $\mathtt{stack\_model}$ is atomically updated from $\mathit{vs}$ to $\mathit{v} :: \mathit{vs}$ when $\mathit{v}$ is atomically pushed at the top of the stack.
 
 %%% Local Variables:
 %%% mode: LaTeX

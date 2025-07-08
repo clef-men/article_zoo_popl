@@ -1,8 +1,6 @@
 \section{\Zoo in practice}
 \label{sec:zoo}
 
-\input{figures/zoo}
-
 % In this section, we give an overview of our framework.
 % We also provide a minimal example\footnote{\urlAnonymous{https://github.com/clef-men/zoo-demo}} demonstrating its use.
 
@@ -13,6 +11,8 @@ Its semantics has been designed to match \OCaml's.
 
 \ZooLang comes with a program logic based on \Iris: reasoning rules expressed in separation logic (including rules for the different constructs of the language) along with \Rocq tactics that integrate into the \Iris proof mode~\cite{DBLP:conf/popl/KrebbersTB17,DBLP:journals/pacmpl/KrebbersJ0TKTCD18}.
 In addition, it supports \Diaframe~\cite{DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}, enabling proof automation.
+
+\input{figures/zoo}
 
 The \ZooLang syntax is given in \cref{fig:zoo}\footnote{More precisely, it is the syntax of the surface language, including \Rocq notations.}, omitting mutually recursive toplevel functions that are treated specially.
 Expressions include standard constructs like booleans, integers, anonymous functions (that may be recursive), applications, \ocamlinline{let} bindings, sequence, unary and binary operators, conditionals, \ocamlinline{for} loops, tuples.

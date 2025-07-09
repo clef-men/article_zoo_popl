@@ -1,10 +1,10 @@
 \section{\Saturn: A library of standard lock-free data structures}
 \label{sec:saturn}
 
-We verified a collection of standard lock-free data structures from the \Saturn~\citep*{saturn}, \Eio~\citep*{eio} and \Picos~\citep*{picos} libraries.
+We verified a collection of standard lock-free data structures from the \Saturn, \Eio and \Picos~\citep*{picos} libraries.
 It includes stacks, queues (list-based, array-based and stack-based), bags, and work-stealing queues.
 These data structures are meant to be used as is or adapted to fit specific needs.
-To cover a wide range of use cases, we often provide specialized variants: bounded or unbounded, single-producer (SP) or multi-producer (MP), single-consumer (SC) or multi-consumer (MC).
+To cover a wide range of use cases, we provide specialized variants: bounded or unbounded, single-producer (SP) or multi-producer (MP), single-consumer (SC) or multi-consumer (MC).
 
 Due to space constraints, we focus on the most important algorithms and refrain from showing the corresponding (non-trivial) \Iris invariants, which are mechanized in \Rocq.
 
@@ -20,7 +20,7 @@ From the programmer's perspective, this is unsatisfactory because 1) the compile
 From the verification perspective, this is also unsatisfactory because the mutable representation is more complex to write and reason about: pointers and points-to assertions versus pure \Rocq list.
 
 Although verified stacks may seem like a not-so-new contribution, it is, as far as we know, the first verification of realistic \OCaml implementations.
-For comparison, the exemplary concurrent stacks verified in \Iris~\citep*{iris-examples} all suffer from the same flaw: they need to introduce indirections (pointers) to be able to use the compare-and-set primitive.
+For comparison, the exemplary concurrent stacks verified in \Iris~\citep*{iris-examples} all suffer from the same flaw: they need to introduce indirections (pointers) to be able to use the compare-and-set primitive of \HeapLang.
 
 \subsection{List-based queues}
 
@@ -68,3 +68,8 @@ For comparison, the exemplary concurrent stacks verified in \Iris~\citep*{iris-e
 
 % wise prophet
 % multiplexed prophets
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "main"
+%%% End:

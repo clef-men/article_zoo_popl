@@ -118,7 +118,7 @@ interacts in a non-trivial way with the \OCaml machinery for type-based disambig
 
 For technical reasons, there is also a non-trivial interaction with the type-checking of inline record types (record types that are not defined by themselves but only as the argument of a sum type constructor), which currently prevents from using this approach with inline records, who are unfortunately common in efficient mutable data structures. In February and March 2025 we worked with \OCaml maintainers experts to try to lift these limitations and proposed implementation changes for inline records, but we failed to reach a consensus on the best design.
 
-In April and May, we managed to build consensus among \OCaml maintainers that the simple design, with a simpler user-facing design and a simpler implementation, was a good compromise in view of the significant difficulties of the full design with inline records. Our implementation of the simple design was reviewed again, we wrote user documentation, and it was integrated in OCaml 5.4, released on August 2024.
+In April and May, we managed to build consensus among \OCaml maintainers that the simple design, with a simpler user-facing design and a simpler implementation, was a good compromise in view of the significant difficulties of the full design with inline records. Our implementation of the simple design was reviewed again, we wrote user documentation, and it was integrated upstream in May 2025, to be included in the upcoming release of OCaml 5.4.
 
 \paragraph{Limitation: no support for cache contention}
 The type \ocamlinline{Atomic.t} comes with a function

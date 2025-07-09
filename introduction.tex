@@ -5,25 +5,24 @@ OCaml 5.0 was released on December 15th 2022, the first version of the
 OCaml programming language to support parallel execution of \OCaml
 threads by merging the \MulticoreOCaml
 runtime~\citep*{multicore-ocaml}. It provided basic support in the
-language runtime to start and stop coarse-grained threads (``domains''
-in \OCaml parlance) and support for strongly sequential atomic
-references in the standard library. The third-party library
-\texttt{domainslib} offered a simple scheduler for a pool of tasks,
-used to benchmark the parallel runtime. A world of parallel and
-concurrent software was waiting to be invented.
+language runtime to start and stop coarse-grained threads called
+``domains'', and support for strongly sequential atomic references in
+the standard library. The third-party library \texttt{domainslib}
+offered a simple scheduler for a pool of tasks, used to benchmark the
+parallel runtime. A world of parallel and concurrent software was
+waiting to be invented.
 
 Shared-memory concurrency is a difficult programming domain, and
 existing ecosystems (C++, Java, Haskell, Rust, Go...) took decades to
 evolve comprehensive libraries of concurrent abstractions and data
 structures. In the last couple years, a handful of contributors to the
-OCaml system have been implementing basic libraries for concurrent and
+OCaml ecosystem have been implementing basic libraries for concurrent and
 parallel programs in \OCaml, in particular \Saturn~\citep*{saturn},
 a library of lock-free thread-safe data structures (stacks, queues,
 a work-stealing dequeue, a skip list, a bag and a hash table),
 \Eio~\citep*{eio}, a library of asynchronous IO and structured
 concurrency, and \Kcas~\citep*{kcas}, a library offering
-a software-transactional-memory abstraction for users to build safe
-yet efficient thread-safe data structures.
+a software-transactional-memory abstraction.
 
 Concurrent algorithms and data structures are extremely difficult to
 reason about. Their implementations tend to be fairly short, a few
@@ -58,7 +57,7 @@ To the best of our knowledge, it is currently the closest language to \OCamlFive
 Indeed, it lacks basic abstractions such as algebraic data types (tuples, mutable and immutable records, variants) and mutually recursive functions.
 Verifying \OCaml programs in \HeapLang requires difficult translation choices and introduces various encodings, to the point that the relation between the source and verified programs can become difficult to maintain and reason about.
 It also has very few standard data structures that can be directly reused.
-This view, we believe, is shared by many people in the \Iris community.
+These limitations are well-known in the \Iris community.
 
 We created a new \Iris language, \ZooLang, that can better express concurrent \OCaml programs. Its feature set grew over time as we applied it to more verification scenarios, and we now believe that it allows practical verification of fine-grained concurrent \OCamlFive programs --- including the use of our atomic record fields which were co-designed with \ZooLang.
 We were influenced by the \Perennial framework~\citep*{DBLP:conf/sosp/ChajedTKZ19}, which achieved similar goals for the \Go language with a focus on crash-safety.
@@ -80,11 +79,11 @@ Worse, our discussions with the maintainers of the \OCaml implementation showed 
 
 \paragraph{Contributions} In summary, we claim the following contributions:
 \begin{enumerate}
-\item \Zoo, a program verification framework aimed at practical
-  verification of concurrent \OCaml programs, mechanized in Rocq. The
-  language \ZooLang comes with a program logic expressed in the \Iris
+\item \Zoo, a practical program verification framework aimed at
+  concurrent \OCaml programs, mechanized in Rocq. The language
+  \ZooLang comes with a program logic expressed in the \Iris
   concurrent separation logic. A translator \texttt{ocaml2zoo}
-  generates the Rocq embedding from source \OCaml programs, and works
+  generates Rocq embeddings from source \OCaml programs, and works
   well with \OCaml tooling (\texttt{dune} support).
 
 \item The verification (in a sequentially-consistent model) of

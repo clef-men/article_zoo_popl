@@ -1,11 +1,16 @@
-The release of \OCamlFive, which introduced parallelism into the language, drove the need for safe and efficient concurrent data structures.
-New libraries like \Saturn aim at addressing this need.
-From the perspective of formal verification, this is an opportunity to apply and further state-of-the-art techniques to provide stronger guarantees.
+The release of \OCamlFive, which introduced parallelism in the \OCaml runtime, drove the need for safe and efficient concurrent data structures.
+New libraries like \Saturn address this need.
+This is an opportunity to apply and further state-of-the-art program verification techniques.
 
 We present \Zoo, a framework for verifying fine-grained concurrent \OCamlFive algorithms.
 Following a pragmatic approach, we defined a limited but sufficient fragment of the language to faithfully express these algorithms: \ZooLang.
 We formalized its semantics carefully via a deep embedding in the \Rocq proof assistant, uncovering subtle aspects of physical equality.
-We provide a tool to translate source \OCaml programs into \ZooLang syntax inside \Rocq, where they can be specified and verified using the \Iris concurrent separation logic.
+We provide a tool to translate source \OCaml programs into \ZooLang syntax embedded inside \Rocq, where they can be specified and verified using the \Iris concurrent separation logic.
 To illustrate the applicability of \Zoo, we verified a subset of the standard library and a collection of fined-grained concurrent data structures from the \Saturn and \Eio libraries.
 
 In the process, we also extended \OCaml to more efficiently express certain concurrent programs.
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "main"
+%%% End:

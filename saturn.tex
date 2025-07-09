@@ -20,30 +20,47 @@ From the programmer's perspective, this is unsatisfactory because 1) the compile
 From the verification perspective, this is also unsatisfactory because the mutable representation is more complex to write and reason about: pointers and points-to assertions versus pure \Rocq list.
 
 Although verified stacks may seem like a not-so-new contribution, it is, as far as we know, the first verification of realistic \OCaml implementations.
-For comparison, the exemplary concurrent stacks verified in \Iris~\citep*{iris-examples} all suffer from the same flaw: they need to introduce indirections (pointers) to be able to use the compare-and-set primitive of \HeapLang.
+For comparison, the exemplary concurrent stacks verified in \Iris~\citep*{iris-examples} all suffer from the same flaw: they need to introduce indirections (pointers) to be able to use the compare-and-set primitive.
 
 \subsection{List-based queues}
 
-% Michael-Scott
-% Vindum & Birkedal
+We verified four variants of the Michael-Scott queue~\citep*{DBLP:conf/podc/MichaelS96}: unbounded MPMC (the standard one), bounded MPMC, unbounded MPSC and unbounded SPMC.
+The SPMC queue is used to implement one of the bags, more precisely a relaxed queue guaranteeing only per-producer ordering.
 
-% relaxed version (front-back-last order not enforced)
+In the \Iris literature, \citet*{DBLP:conf/cpp/VindumB21} established contextual refinement of the Michael-Scott queue while \citet*{DBLP:journals/pacmpl/MulderK23} proved logical atomicity.
+However, we had to redesign and extend the invariant for several reasons.
 
-% no indirection
-% atomic fields
-% clear values to avoid memory leak
+\paragraph{Efficient implementation.}
+The Michael-Scott essentially consists in of singly linked list of nodes that only grows over time.
+The previously verified implementations, implemented in \HeapLang, use a double indirection to represent the list~\citep*[\figurename~2]{DBLP:conf/cpp/VindumB21}.
+Similarly to the Treiber stack, this is made so as to be able to use the compare-and-set primitive.
+In \OCaml, this corresponds to introducing atomic references (\ocamlinline{Atomic.t}) between the nodes.
+Using atomic record fields, we can represent the list more efficiently, without the extra indirection.
+However, there is one subtlety: in this new representation, we need to clear the outdated nodes so that their value is no longer reachable and can be garbage-collected, in other words to prevent memory leak.
+Consequently, nodes are now completely mutable.
 
-% external linearization in [is_empty]
-% invariant with waiters
+To deal with this in separation logic, we introduce the notion of \emph{explicit chain} that allows decoupling the chain structure formed by the nodes and the content of the nodes.
+Concretely, the assertion $\textlog{xchain}\ \textit{dq}\ \loc{}s\ \textit{dst}$ represents a chain linking locations $\loc{}s$ and ending at value $\textit{dst}$; $\textit{dq}$ is a discardable fraction~\citep*{DBLP:conf/cpp/VindumB21} that controls the ownership of the chain.
+This notion is very flexible as it is independent of the rest of the structure.
+As a matter of fact, we used it and its generalization to doubly linked list more broadly, to verify other algorithms.
+All the variants of Michael-Scott we verified rely on it.
+In particular, it was quite straightforward to extend the invariant of the bounded queue, where nodes carry more (mutable and immutable) information.
 
-% explicit chain instead of accessibility
-% more natural as nodes are mutable
-% easier to manipulate & extend (cf. bounded variant)
-
-% MPMC queue
-% MPMC bounded queue
-% MPSC queue (used in Picos & Eio)
-% SPMC queue (used to implement relaxed queue)
+\paragraph{External linearization point.}
+Our work also revealed another interesting aspect that is not addressed in the literature, as far as we know.
+None of the previously verified implementations deal with the \ocamlinline{is_empty} operation, that consists in reading the sentinel node and checking whether it has a successor.
+It it has no successor, it is necessarily the last node of the chain, hence the queue is empty.
+If it does have a successor, \ocamlinline{is_empty} returns \ocamlinline{false}, meaning we must have observed a non-empty queue.
+However, this last part is more tricky than it may seem.
+Indeed, it may happen that 1) we read the sentinel while the queue is empty, 2) other operations fill and empty again the queue so that the sentinel is outdated, 3) we read the successor of the former sentinel while the queue is still empty.
+The crucial point here is that the \ocamlinline{is_empty} is linearized when the first \ocamlinline{push} operation filled the queue.
+In other words, the linearization point of \ocamlinline{is_empty} is triggered by another operation; this is called an \emph{external linearization point}.
+To handle this in the proof, we introduced a mechanism in the invariant to transfer the \Iris resource materializing the linearization point%
+\footnote{
+This resource is known as an \emph{atomic update}.
+\citet*{DBLP:journals/pacmpl/MulderK23} provide a good description.
+}
+from \ocamlinline{is_empty} to \ocamlinline{push} and vice versa.
 
 \subsection{Stack-based queues}
 
@@ -57,7 +74,7 @@ For comparison, the exemplary concurrent stacks verified in \Iris~\citep*{iris-e
 \subsection{Work-stealing queues}
 \label{sec:ws_queue}
 
-% \Domainslib~\cite{domainslib}
+% \Domainslib~\citep*{domainslib}
 % Taskflow
 
 % stabilization

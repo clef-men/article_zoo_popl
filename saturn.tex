@@ -1,25 +1,25 @@
 \section{\Saturn: A library of standard lock-free data structures}
 \label{sec:saturn}
 
-We have verified a collection of standard lock-free data structures from the \Saturn~\citep*{saturn}, \Eio~\citep*{eio} and \Picos~\citep*{picos} libraries.
+We verified a collection of standard lock-free data structures from the \Saturn~\citep*{saturn}, \Eio~\citep*{eio} and \Picos~\citep*{picos} libraries.
 It includes stacks, queues (list-based, array-based and stack-based), bags, and work-stealing queues.
 These data structures are meant to be used as is or adapted to fit specific needs.
 To cover a wide range of use cases, we often provide specialized variants: bounded or unbounded, single-producer (SP) or multi-producer (MP), single-consumer (SC) or multi-consumer (MC).
 
-Due to space constraints, we focus on the most important algorithms and refrain from showing the corresponding (non-trivial) \Iris invariants, which have all been mechanized in \Rocq.
+Due to space constraints, we focus on the most important algorithms and refrain from showing the corresponding (non-trivial) \Iris invariants, which are mechanized in \Rocq.
 
 \subsection{Stacks}
 
-We have verified three variants of Treiber stack~\citep*{thomas1986systems}: 1) unbounded MPMC (the standard one), 2) bounded MPMC, 3) closable unbounded MPMC.
+We verified three variants of the Treiber stack~\citep*{thomas1986systems}: 1) unbounded MPMC (the standard one), 2) bounded MPMC, 3) closable unbounded MPMC.
 This last variant features a closing mechanism: at some point, some thread can decide to close the stack, retrieving the current content and preventing others from operating on it.
-For example, we have used it to represent a set of vertex successors in the context of a concurrent graph implementation (not presented in this paper).
+For example, we used it to represent a set of vertex successors in the context of a concurrent graph implementation (not presented in this paper).
 
 As explained in \cref{sec:physical_equality}, the three verified stacks use generative constructors to prevent sharing.
 One may ask whether it would be easier to use a mutable version of lists instead.
 From the programmer's perspective, this is unsatisfactory because 1) the compiler will typically emit warnings complaining that the mutability is not exploited and 2) it does not really reflect the intent, \ie we want precise guarantees for physical equality, not modify the list.
 From the verification perspective, this is also unsatisfactory because the mutable representation is more complex to write and reason about: pointers and points-to assertions versus pure \Rocq list.
 
-Although verified stacks may seem like a not-so-new contribution, we argue that it is the first verification of realistic \OCaml implementations.
+Although verified stacks may seem like a not-so-new contribution, it is, as far as we know, the first verification of realistic \OCaml implementations.
 For comparison, the exemplary concurrent stacks verified in \Iris~\citep*{iris-examples} all suffer from the same flaw: they need to introduce indirections (pointers) to be able to use the compare-and-set primitive.
 
 \subsection{List-based queues}

@@ -33,3 +33,10 @@ Lemma structeq_spec_abstract v1 v2 :
   {{{ b, RET #b; ⌜(if b then val_physeq else val_physneq) v1 v2⌝ }}}
 Proof. ... Qed.
 \end{coqcode}
+
+\Xgabriel{Je ne trouve pas du tout naturelle la dernière spécification. Lue naïvement elle suggère que (1) si deux valeurs immutables sont structurellement égales, alors elles sont physiquement égales, et que (2) si elles sont structurellement distinctes alors elles sont physiquement distinctes. La suggestion (1) est incorrecte et la suggestion (2) est trop faible. Ce qui se passe c'est que \texttt{val\_phys{eq,neq}} veulent dire autre chose que l'égalité physique, et sont des conséquences à la fois de l'(in)égalité physique et de l'(in)égalité structurelle. Je pense qu'il vaudrait mieux changer leurs noms.}
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "main"
+%%% End:

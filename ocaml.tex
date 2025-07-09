@@ -42,7 +42,7 @@ Note that this unsafe approach only works for the first field of a record, so it
 
 \subsubsection{Our atomic fields proposal}
 
-We proposed a design for atomic record fields as an \OCaml language change proposal: RFC~\#39\footnote{\urlDeanonymizing{https://github.com/ocaml/RFCs/pull/39}}.
+In May-June 2024 we proposed a design for atomic record fields as an \OCaml language change proposal: RFC~\#39\footnote{\urlDeanonymizing{https://github.com/ocaml/RFCs/pull/39}}.
 Declaring a record field atomic simply requires an \ocamlinline{[@atomic]} attribute---and could eventually become a proper keyword of the language.
 
 \begin{ocamlcode}
@@ -64,21 +64,30 @@ For example, if \ocamlinline{buf} has type \ocamlinline{'a bag} above, then one 
 But how would one express exchange, compare-and-set and fetch-and-add?
 We would like to avoid adding a new primitive language construct for each atomic operation.
 
-Our proposed implementation\footnote{\urlDeanonymizing{https://github.com/ocaml/ocaml/pull/13404}}
-introduces a built-in type \ocamlinline{'a Atomic.Loc.t}
-for an atomic location that holds an element of type
-\ocamlinline{'a}, with a syntax extension
-\ocamlinline{[%atomic.loc <expr>.<field>]}
-to construct such locations. Atomic primitives operate on values of type \ocamlinline{'a Atomic.Loc.t},
-and they are exposed as functions of the module \ocamlinline{Atomic.Loc}.
+Two different designs have been proposed for atomic operations on atomic record fields.
 
 \begin{enumerate}
   \item
-    Our first implementation\footnote{\urlAnonymous{https://github.com/ocaml/ocaml/pull/13404}} introduces a built-in type \ocamlinline{'a Atomic.Loc.t} for an atomic location that holds an element of type \ocamlinline{'a}, with a syntax extension \ocamlinline{[%atomic.loc <expr>.<field>]} to construct such locations.
+    The original, ``full'' design in our proposal introduces a built-in type \ocamlinline{('r, 'a) Atomic.Field.t} that denotes a field/index of type \ocamlinline{'a} within a record of type \ocamlinline{'r}, with a syntax extension \ocamlinline{[%atomic.loc <field>]} to construct such field description, and atomic primitives in a module \ocamlinline{Atomic.Field}, that need both the record value of type \ocamlinline{'r} and the field description.
+    For example, the standard library exposes:
+\begin{ocamlcode}
+val Atomic.Field.fetch_and_add :
+  'a -> ('a, int) Atomic.Field.t -> int -> int
+\end{ocamlcode}
+    and users can write:
+\begin{ocamlcode}
+let preincrement_front (buf : 'a bag) : int =
+  Atomic.Loc.fetch_and_add buf [%atomic.field front] 1
+\end{ocamlcode}
+    where \ocamlinline{[%atomic.field front]} has type \ocamlinline{('a bag, int) Atomic.Loc.t}.
+    Internally, a value of type \ocamlinline{('r, 'a) Atomic.Field.t} is just an integer offset locating the field within the record.
+  \item
+    An alternative ``simple'' design, which was proposed by Basile Clément, introduces a built-in type \ocamlinline{'a Atomic.Loc.t} for an atomic location that holds an element of type \ocamlinline{'a}, with a syntax extension \ocamlinline{[%atomic.loc <expr>.<field>]} to construct such locations.
     Atomic primitives operate on values of type \ocamlinline{'a Atomic.Loc.t} and they are exposed as functions of the module \ocamlinline{Atomic.Loc}.
     For example, the standard library exposes:
 \begin{ocamlcode}
-val Atomic.Loc.fetch_and_add : int Atomic.Loc.t -> int -> int
+val Atomic.Loc.fetch_and_add :
+  int Atomic.Loc.t -> int -> int
 \end{ocamlcode}
     and users can write:
 \begin{ocamlcode}
@@ -88,47 +97,41 @@ let preincrement_front (buf : 'a bag) : int =
     where \ocamlinline{[%atomic.loc buf.front]} has type \ocamlinline{int Atomic.Loc.t}.
     Internally, a value of type \ocamlinline{'a Atomic.Loc.t} can be represented as a pair of a record and an integer offset for the desired field, and the \ocamlinline{atomic.loc} construction builds this pair in a well-typed manner.
     When a primitive of the \ocamlinline{Atomic.Loc} module is applied to an \ocamlinline{atomic.loc} expression, the compiler can optimize away the construction of the pair---but it would happen if there was an abstraction barrier between the construction and its use.
+\end{enumerate}
 
-  \item
-    Our second implementation\footnote{\urlAnonymous{https://github.com/ocaml/ocaml/pull/13707}} introduces a built-in type \ocamlinline{('r, 'a) Atomic.Field.t} that denotes a field/index of type \ocamlinline{'a} within a record of type \ocamlinline{'r}, with a syntax extension \ocamlinline{[%atomic.loc <field>]} to construct such field description, and atomic primitives in a module \ocamlinline{Atomic.Field}, that need both the record value of type \ocamlinline{'r} and the field description.
-    For example, the standard library exposes:
-\begin{ocamlcode}
-val Atomic.Field.fetch_and_add : 'a -> ('a, int) Atomic.Field.t -> int -> int
-\end{ocamlcode}
-    and users can write:
-\begin{ocamlcode}
-let preincrement_front (buf : 'a bag) : int =
-  Atomic.Loc.fetch_and_add buf [%atomic.field front] 1
-\end{ocamlcode}
-    where \ocamlinline{[%atomic.field front]} has type \ocamlinline{('a bag, int) Atomic.Loc.t}.
-    Internally, a value of type \ocamlinline{('r, 'a) Atomic.Field.t} is just an integer offset locating the field within the record: in exchange for a more complex type, we get a simpler data representation, that does not rely on specific compiler optimizations to generate efficient code, even across abstraction boundaries.
-    Note that the previous type \ocamlinline{'a Atomic.Loc.t} can be reconstructed as a dependent pair of a \ocamlinline{'r} and a \ocamlinline{('r, 'a) Atomic.Field.t}, which is expressible in \OCaml as a GADT:
+The simple design has the strong advantage of exposing simpler types to users. The full design involves more complex types, but a simpler data representation that does not rely on specific compiler optimizations to generate efficient code, even across abstraction boundaries. As remarked by Leo White, the simpler type \ocamlinline{'a Atomic.Loc.t} can be reconstructed as a dependent pair of a \ocamlinline{'r} and a \ocamlinline{('r, 'a) Atomic.Field.t}, which is expressible in \OCaml as a GADT:
 \begin{ocamlcode}
 type 'a loc = Loc : 'r * ('r, 'a) Atomic.Field.t -> 'a loc
 \end{ocamlcode}
-    The main downside of this proposal is that it is harder to implement in the type-checker.
-    The extension form
-    \ocamlinline{[%atomic.loc buf.front]} has typing rules that are very similar to a field access \ocamlinline{buf.front}.
-    On the other hand,
-    \ocamlinline{[%atomic.loc front]} interacts in a non-trivial way with the \OCaml machinery for type-based disambiguation of record fields---several records with a field named \ocamlinline{front} can co-exist in the typing environment.
-    For technical reasons, there is also a non-trivial interaction with the type-checking of inline record types (record types that are not defined by themselves but only as the argument of a sum type constructor), which currently prevents from using this approach with those inline records.
-    We have been working with \OCaml maintainers to try to lift this limitation.
-\end{enumerate}
 
-At the time of writing, there seems to be a consensus among \OCaml maintainers to integrate support for atomic record fields in the language, but there is no final decision on which of the two forms should be preferred.
-Our work on \Zoo relies on our experimental implementation of the first, simpler form for now, and could switch to the second form if it is preferred for merging into the main compiler.
+In August and September 2024 we implemented the simple design as an experimental version of the \OCaml compiler. We got a full code review by Olivier Nicole. When we approached the \OCaml maintainers to integrate the feature upstream, they asked us to reconsider implementing the full design, based on feedback in this direction by Vesa Karvonen (author of \Kcas and \Saturn).
 
-Note: the type \ocamlinline{'a Atomic.t} of atomic references exposes a function
+We implemented the full design between November 2024 and January 2025. We found that it is harder to implement in the type-checker. The extension form
+%
+\ocamlinline{[%atomic.loc buf.front]}
+%
+of the simple design has typing rules that are very similar to a field access \ocamlinline{buf.front}. On the other hand,
+%
+\ocamlinline{[%atomic.loc front]}
+%
+interacts in a non-trivial way with the \OCaml machinery for type-based disambiguation of record fields---several records with a field named \ocamlinline{front} can co-exist in the typing environment.
+
+For technical reasons, there is also a non-trivial interaction with the type-checking of inline record types (record types that are not defined by themselves but only as the argument of a sum type constructor), which currently prevents from using this approach with inline records, who are unfortunately common in efficient mutable data structures. In February and March 2025 we worked with \OCaml maintainers experts to try to lift these limitations and proposed implementation changes for inline records, but we failed to reach a consensus on the best design.
+
+In April and May, we managed to build consensus among \OCaml maintainers that the simple design, with a simpler user-facing design and a simpler implementation, was a good compromise in view of the significant difficulties of the full design with inline records. Our implementation of the simple design was reviewed again, we wrote user documentation, and it was integrated in OCaml 5.4, released on August 2024.
+
+\paragraph{Limitation: no support for cache contention}
+The type \ocamlinline{Atomic.t} comes with a function
 \begin{ocamlcode}
 val Atomic.make_contended : 'a -> 'a Atomic.t
 \end{ocamlcode}
-that ensures that the returned atomic value is allocated with enough alignment and padding to sit alone on its cache line, to avoid performance issues caused by false sharing.
+that ensures that the returned atomic reference is allocated with enough alignment and padding to sit alone on its cache line, to avoid performance issues caused by false sharing.
 Currently there is no such support for padding of atomic record fields (we are planning to
 work on this if the support for atomic fields gets merged in standard \OCaml), so the less-compact atomic references remain preferable in certain scenarios.
 
 \subsection{Atomic arrays}
 
-On top of our atomic record fields, we have implemented support for atomic arrays, another facility commonly requested by authors of efficient concurrent programs.
+On top of our atomic record fields, we have implemented experimental support for atomic arrays, another facility commonly requested by authors of efficient concurrent programs.
 Our previous example of a concurrent bag of type \ocamlinline{'a bag} used a backing array of type \ocamlinline{'a Atomic.t array}, which contains more indirections than may be desirable, as each array element is a pointer to a block containing the value of type \ocamlinline{'a}, instead of storing the value of type \ocamlinline{'a} directly in the array.
 
 Our implementation of atomic arrays\footnote{\urlAnonymous{https://github.com/clef-men/ocaml/tree/atomic\_array}} builds on top of the type \ocamlinline{'a Atomic.Loc.t} we described in the previous section, and it relies on two new low-level primitives provided by the compiler:
@@ -146,3 +149,8 @@ The atomic primitives of the module \ocamlinline{Atomic.Loc} can then be used on
 val Atomic_array.exchange : 'a Atomic_array.t -> int -> 'a -> 'a
 val Atomic_array.unsafe_exchange : 'a Atomic_array.t -> int -> 'a -> 'a
 \end{ocamlcode}
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "main"
+%%% End:

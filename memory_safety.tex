@@ -1,0 +1,30 @@
+\section{Memory safety}
+
+Concurrency creates new sources of tension between performance and memory-safety. The \OCaml maintainers are trying to maintain memory-safety for all \OCaml programs, including concurrent programs that would contain data races. They have tried to imprint this focus on memory-safety to library authors as well.
+
+Performance-sensitive \OCaml libraries are sometimes written using unsafe primtiives, that may break memory-safety if used incorrectly. It is the responsibility of code authors to ensure that the preconditions of those unsafe primitives are satisfied to ensure safety. Unfortunately, the addition to parallel code execution in \OCamlFive broke the safety of some existing unsafe code: it adds more possible interleaving and may invalidate safety reasoning.
+
+\subsection{Dynarray} In January 2023, Gabriel Scherer proposed the additional of \ocamlinline{Dynarray}, a module of (sequential) resizable arrays, to the \OCaml standard libary.\footnote{\url{https://github.com/ocaml/ocaml/pull/11882}} 
+
+\paragraph{A concurrent safety problem}
+
+Resizable arrays are implemented as a record with two mutable fields, a \ocamlinline{length} field that stores the current length of the resizable array, and an \ocamlinline{arr} field storing the ``backing array'' a (non-resizable) array of size at least \ocamlinline{length} elements. When a user pushes a new element to the end of a resizable array, it typically suffices to write the new element at index \ocamlinline{length} in the backing array, and then increment the \ocamline{length} field. But when the \ocamlinline{length} field reaches the actual length of the backing array (which we call the ``capacity'' of the resizable array), we need to allocate a new, larger backing array, to copy the values from the old to the new backing array, and to overwrite the \ocamlinline{arr} field with the new backing array; then we can write the user-provided element.
+
+This operation of pushing a new element is performance-critical for resizable arrays, and it always incurs a length comparison followed by resizing is necessary. After this check and potential resizing, sequentially we know that the backing array has enough space, and we can write the new element using an \ocamlinline{unsafe_set} operation that avoids a second bound-checking on array access. Efficient implementations use this unsafe operation, which can provide performance benefits of up to 20\% in certain scenarios. Unfortunately, the safety reasoning is incorrect in presence of parallel operations on the same dynarray: another thread could mutate the backing array after the length check and before the unsafe write, for example \ocamlinline{Dynarray.reset} which sets length to \ocamlinline{0} and replaces the backing array by an empty array.
+
+Writing to a (non-resizable) array outside its bounds without bound checks breaks memory safety, so this implementation was memory-safe under \OCamlFour but it becomes memory-unsafe under \OCamlFive. On the other hand, \ocamlinline{Dynarray} is explicitly documented as a sequential data structure, so it is the user responsibility to respect this precondition by using appropriate synchronization (for example a mutex) to prevent data races. Some performance-obsessed users would argue that if \emph{other} users fail in their responsibility of ensuring sequential access, then they do not deserve memory-safety. The \OCaml maintainers and standard library authors consider on the other hand that memory-safety should be preserved even in this case: it can only be lifted for operations that are explicitly marked as unsafe, and hopefully have simple, checkable preconditions. So they decided to change the optimization of \ocamlinline{Dynarray} to guarantee memory-safety even in presence of racy concurrent usage.
+
+The proposed implementation reads the \ocamlinline{arr} field to get the backing array $b$, then it performs the length check on this backing array. If no resizing is necessary, then an unsafe write is performed as before (on the backing array $b$, without re-reading the \ocamlinline{arr} field). In the infrequent case where resizing is necessary, the operation retries from the start after resizing.
+
+\paragraph{A concurrent verification problem}
+
+
+
+\subsection{\Saturn: Single-producer or Single-consumer queues}
+
+
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "main"
+%%% End:

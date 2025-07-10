@@ -66,7 +66,7 @@ Instance : AsValRecs' g 1 f_g [f;g]. Proof. done. Qed.
 
 \subsection{Standard library}
 
-To save users from reinventing the wheel, we provide a standard library---more or less a subset of the \OCaml standard library.
+To save users from reinventing the wheel, we provide a standard library --- more or less a subset of the \OCaml standard library.
 Currently, it mainly includes standard data sequential structures like: array (\ocamlinline{Array}), resizable array (\ocamlinline{Dynarray}), list (\ocamlinline{List}), stack (\ocamlinline{Stack}), queue (\ocamlinline{Queue}), double-ended queue. It also includes mutexes (\ocamlinline{Mutex}) and condition variable (\ocamlinline{Condition}).
 
 Each of these standard modules contains \ZooLang functions and their verified specifications. These specifications are modular: they have been used to verify more complex data structures.
@@ -120,7 +120,7 @@ To tackle them, \Iris provides powerful mechanisms such as \emph{prophecy variab
 Essentially, prophecy variables can be used to predict the future of the program execution and reason about it.
 They are key to handle \emph{future-dependent linearization points}: linearization points that may or may not occur at a given location in the code depending on a future observation.
 
-\Zoo supports prophecy variables through the \texttt{Proph} and \texttt{Resolve} expressions---as in \HeapLang, the canonical \Iris language.
+\Zoo supports prophecy variables through the \texttt{Proph} and \texttt{Resolve} expressions --- as in \HeapLang, the canonical \Iris language.
 In \OCaml, these expressions correspond to \ocamlinline{Zoo.proph} and \ocamlinline{Zoo.resolve}, that are recognized by \texttt{ocaml2zoo}.
 
 %%% Local Variables:

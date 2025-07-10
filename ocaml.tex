@@ -32,7 +32,7 @@ The code uses \ocamlinline{Obj.magic} to unsafely cast this value to an atomic r
 
 \ocamlinline{Obj.magic} is a shunned unsafe cast (the \OCaml equivalent of \ocamlinline{unsafe} or \ocamlinline{unsafePerformIO}).
 It is very difficult to be confident about its usage given that it may typically violate assumptions made by the \OCaml compiler and optimizer.
-In the example above, casting a two-fields record into a one-argument atomic reference may or may not be sound---but it gives measurable performance improvements on concurrent queue benchmarks.
+In the example above, casting a two-fields record into a one-argument atomic reference may or may not be sound --- but it gives measurable performance improvements on concurrent queue benchmarks.
 
 It is possible to statically forbid passing \ocamlinline{Nil} to \ocamlinline{as_atomic} to avoid error handling, by turning \ocamlinline{'a node} into a GADT indexed over a type-level representation of its head constructor.
 Examples of this pattern can be found in the \Kcas~\cite{kcas} library by Vesa Karvonen.
@@ -43,7 +43,7 @@ Note that this unsafe approach only works for the first field of a record, so it
 \subsubsection{Our atomic fields proposal}
 
 In May-June 2024 we proposed a design for atomic record fields as an \OCaml language change proposal: RFC~\#39\footnote{\urlDeanonymizing{https://github.com/ocaml/RFCs/pull/39}}.
-Declaring a record field atomic simply requires an \ocamlinline{[@atomic]} attribute---and could eventually become a proper keyword of the language.
+Declaring a record field atomic simply requires an \ocamlinline{[@atomic]} attribute --- and could eventually become a proper keyword of the language.
 
 \begin{ocamlcode}
 (* re-implementation of atomic references *)
@@ -96,7 +96,7 @@ let preincrement_front (buf : 'a bag) : int =
 \end{ocamlcode}
     where \ocamlinline{[%atomic.loc buf.front]} has type \ocamlinline{int Atomic.Loc.t}.
     Internally, a value of type \ocamlinline{'a Atomic.Loc.t} can be represented as a pair of a record and an integer offset for the desired field, and the \ocamlinline{atomic.loc} construction builds this pair in a well-typed manner.
-    When a primitive of the \ocamlinline{Atomic.Loc} module is applied to an \ocamlinline{atomic.loc} expression, the compiler can optimize away the construction of the pair---but it would happen if there was an abstraction barrier between the construction and its use.
+    When a primitive of the \ocamlinline{Atomic.Loc} module is applied to an \ocamlinline{atomic.loc} expression, the compiler can optimize away the construction of the pair --- but it would happen if there was an abstraction barrier between the construction and its use.
 \end{enumerate}
 
 The simple design has the strong advantage of exposing simpler types to users. The full design involves more complex types, but a simpler data representation that does not rely on specific compiler optimizations to generate efficient code, even across abstraction boundaries. As remarked by Leo White, the simpler type \ocamlinline{'a Atomic.Loc.t} can be reconstructed as a dependent pair of a \ocamlinline{'r} and a \ocamlinline{('r, 'a) Atomic.Field.t}, which is expressible in \OCaml as a GADT:
@@ -114,7 +114,7 @@ of the simple design has typing rules that are very similar to a field access \o
 %
 \ocamlinline{[%atomic.loc front]}
 %
-interacts in a non-trivial way with the \OCaml machinery for type-based disambiguation of record fields---several records with a field named \ocamlinline{front} can co-exist in the typing environment.
+interacts in a non-trivial way with the \OCaml machinery for type-based disambiguation of record fields --- several records with a field named \ocamlinline{front} can co-exist in the typing environment.
 
 For technical reasons, there is also a non-trivial interaction with the type-checking of inline record types (record types that are not defined by themselves but only as the argument of a sum type constructor), which currently prevents from using this approach with inline records, who are unfortunately common in efficient mutable data structures. In February and March 2025 we worked with \OCaml maintainers experts to try to lift these limitations and proposed implementation changes for inline records, but we failed to reach a consensus on the best design.
 
@@ -142,7 +142,7 @@ val Atomic_array.unsafe_index : 'a array -> int -> 'a Atomic.Loc.t
 \end{ocamlcode}
 
 The function \ocamlinline{index} takes an array and an integer index within the array, and returns an atomic location into the corresponding element after performing a bound check.
-\ocamlinline{unsafe_index} omits the boundcheck---additional performance at the cost of memory-safety---and allows to express the atomic counterpart of the unsafe operations \ocamlinline{Array.unsafe_get} and \ocamlinline{Array.unsafe_set}.
+\ocamlinline{unsafe_index} omits the boundcheck --- additional performance at the cost of memory-safety --- and allows to express the atomic counterpart of the unsafe operations \ocamlinline{Array.unsafe_get} and \ocamlinline{Array.unsafe_set}.
 The atomic primitives of the module \ocamlinline{Atomic.Loc} can then be used on these indices; our implementation implements a library module on top of these primitives to provide a higher-level layer to the user, with direct array operations such as:
 
 \begin{ocamlcode}

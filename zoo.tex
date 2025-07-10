@@ -27,7 +27,7 @@ Projections of the form $e \texttt{.<} \mathit{proj} \texttt{>}$ (include on tup
 
 Mutable memory blocks are constructed using either the untagged record syntax $\texttt{\{} e_1 \texttt{,} \dots \texttt{,} e_n \texttt{\}}$ or the tagged record syntax $\texttt{‘} C\ \texttt{\{} e_1 \texttt{,} \dots \texttt{,} e_n \texttt{\}}$.
 Reading a record field can be performed using $e \texttt{.\{} \mathit{fld} \texttt{\}}$ and writing to a record field using $e_1\ \texttt{<-\{} \mathit{fld} \texttt{\}}\ e_2$.
-Pattern matching can also be used on mutable tagged blocks provided that cases do not bind anything---in other words, only the tag is examined, no memory access is performed.
+Pattern matching can also be used on mutable tagged blocks provided that cases do not bind anything --- in other words, only the tag is examined, no memory access is performed.
 Mutable references are supported: $\texttt{ref}\ e$ creates a reference, $\texttt{!} e$ reads a reference and $e_1\ \texttt{<-}\ e_2$ writes into a reference.
 There is no built-in syntax for arrays, hey are supported through the \ocamlinline{Array} standard library module (\eg \texttt{array\_make}).
 

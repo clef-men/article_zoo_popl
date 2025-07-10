@@ -55,7 +55,7 @@ This shows that even on immediate values, specifying physical equality as equali
   The physical comparison of \ocamlinline{Some 0} and \ocamlinline{Some 0} may return either \ocamlinline{true} or \ocamlinline{false}: we cannot determine the result of physical comparison just by looking at the abstract values.
 \end{enumerate}
 
-To solve these problems we treat physical equality on abstract values is \emph{non-deterministic} -- even though the comparison instruction that implements it on low-level values is perfectly deterministic.
+To solve these problems we treat physical equality on abstract values is \emph{non-deterministic} --- even though the comparison instruction that implements it on low-level values is perfectly deterministic.
 The question is then: what guarantees do we get when physical equality returns \ocamlinline{true} and when it returns \ocamlinline{false}?
 Given such guarantees, denoted by \coqinline{val_physeq} and \coqinline{val_physneq}, the non-deterministic semantics is reflected in the logic through the following specification:
 
@@ -175,7 +175,7 @@ let test = x == x (* false *)
 Going back to \ocamlinline{Rcfd}, we have a problem: in the second branch, the \ocamlinline{Open} block corresponding to \ocamlinline{prev} could be unshared, which would make \ocamlinline{Atomic.Loc.compare_and_set} fail.
 Hence, we cannot prove the expected specification; in fact, the program as it is written has a bug.
 
-To remedy this unfortunate situation, we propose to reuse the notions of generative immutable blocks, that we introduced to prevent sharing, to also forbid unsharing by the \OCaml compiler -- we implemented this in our experiment compiler branch.
+To remedy this unfortunate situation, we propose to reuse the notions of generative immutable blocks, that we introduced to prevent sharing, to also forbid unsharing by the \OCaml compiler --- we implemented this in our experiment compiler branch.
 
 Supporting this requires enriching the \Zoo semantics so that each generative block is annotated with a \emph{logical identifier}\footnote{Actually, for practical reasons, we distinguish identified and unidentified generative blocks.} representing its physical identity, much like a pointer for a mutable block.
 If physical equality on two generative blocks returns \ocamlinline{false}, the two identifiers are necessarily distinct.

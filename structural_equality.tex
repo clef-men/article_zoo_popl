@@ -2,16 +2,19 @@
 \label{sec:structural_equality}
 
 Structural equality is also supported.
-More precisely, it is not part of the semantics of the language but axiomatized on top of it\footnote{We could also have implemented it in \ZooLang, but that would require more low-level primitives.}.
+More precisely, it is not part of the semantics of the language but implemented using low-level primitives%
+\footnote{
+In \OCaml, these primitives correspond to the unsafe functions \ocamlinline{Obj.is_int}, \ocamlinline{Obj.tag}, \ocamlinline{Obj.size} and \ocamlinline{Obj.field}.
+}.
 The reason is that it is in fact difficult to specify for arbitrary values.
-In general, we have to compare graphs---which implies structural comparison may diverge.
+In general, we have to compare graphs --- which implies structural comparison may diverge.
 
 Accordingly, the specification of $v_1\ \texttt{=}\ v_2$ requires the (partial) ownership of a \emph{memory footprint} corresponding to the union of the two compared graphs, giving the permission to traverse them safely.
-If it terminates, the comparison decides whether the two graphs are isomorphic (modulo representation conflicts, as described in \cref{sec:physical_equality}).
+If it terminates, the comparison decides whether the two graphs are bisimilar (modulo representation conflicts, as described in \cref{sec:physical_equality}).
 In \Iris, this gives:
 
 \begin{coqcode}
-Axiom structeq_spec : ∀ v1 v2 footprint,
+Lemma structeq_spec v1 v2 footprint,
   val_traversable footprint v1 →
   val_traversable footprint v2 →
   {{{ structeq_footprint footprint }}}

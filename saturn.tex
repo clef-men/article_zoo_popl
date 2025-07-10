@@ -31,15 +31,20 @@ In the \Iris literature, \citet*{DBLP:conf/cpp/VindumB21} established contextual
 However, we had to redesign and extend the invariant for several reasons.
 
 \paragraph{Efficient implementation.}
-The Michael-Scott essentially consists in of singly linked list of nodes that only grows over time.
+The Michael-Scott essentially consists of a singly linked list of nodes that only grows over time.
 The previously verified implementations, implemented in \HeapLang, use a double indirection to represent the list~\citep*[\figurename~2]{DBLP:conf/cpp/VindumB21}.
-Similarly to the Treiber stack, this is made so as to be able to use the compare-and-set primitive.
-In \OCaml, this corresponds to introducing atomic references (\ocamlinline{Atomic.t}) between the nodes.
+Similarly to the Treiber stack, this is made so as to be able to use the compare-and-set primitive of \HeapLang. \citet*{DBLP:conf/cpp/VindumB21} write:
+\begin{quotation}
+  A node is a pointer to either none or some of a pair of a value and a pointer to the next node.
+  The pointer serves to make nodes comparable by pointer equality such that pointers to nodes can be changed with CAS.
+\end{quotation}
+In \OCaml, this would correspond to introducing extra atomic references (\ocamlinline{Atomic.t}) between the nodes.
 Using atomic record fields, we can represent the list more efficiently, without the extra indirection.
-However, there is one subtlety: in this new representation, we need to clear the outdated nodes so that their value is no longer reachable and can be garbage-collected, in other words to prevent memory leak.
-Consequently, nodes are now completely mutable.
+However, there is one subtlety: in this new representation, we need to clear the outdated nodes so that their value is no longer reachable and can be garbage-collected, in other words to prevent a memory leak.
+This subtlety was missing from the original implementation designed for non-garbage-collected languages,
+but \Saturn implements it (\href{https://github.com/ocaml-multicore/saturn/pull/64}{saturn\#64}).
 
-To deal with this in separation logic, we introduce the notion of \emph{explicit chain} that allows decoupling the chain structure formed by the nodes and the content of the nodes.
+To deal with this representation in separation logic, we introduce the notion of \emph{explicit chain} that allows decoupling the chain structure formed by the nodes and the content of the nodes.
 Concretely, the assertion $\textlog{xchain}\ \textit{dq}\ \loc{}s\ \textit{dst}$ represents a chain linking locations $\loc{}s$ and ending at value $\textit{dst}$; $\textit{dq}$ is a discardable fraction~\citep*{DBLP:conf/cpp/VindumB21} that controls the ownership of the chain.
 This notion is very flexible as it is independent of the rest of the structure.
 As a matter of fact, we used it and its generalization to doubly linked list more broadly, to verify other algorithms.
@@ -53,7 +58,7 @@ It it has no successor, it is necessarily the last node of the chain, hence the 
 If it does have a successor, \ocamlinline{is_empty} returns \ocamlinline{false}, meaning we must have observed a non-empty queue.
 However, this last part is more tricky than it may seem.
 Indeed, it may happen that 1) we read the sentinel while the queue is empty, 2) other operations fill and empty again the queue so that the sentinel is outdated, 3) we read the successor of the former sentinel while the queue is still empty.
-The crucial point here is that the \ocamlinline{is_empty} is linearized when the first \ocamlinline{push} operation filled the queue.
+The crucial point here is that \ocamlinline{is_empty} is linearized when the first \ocamlinline{push} operation filled the queue.
 In other words, the linearization point of \ocamlinline{is_empty} is triggered by another operation; this is called an \emph{external linearization point}.
 To handle this in the proof, we introduced a mechanism in the invariant to transfer the \Iris resource materializing the linearization point%
 \footnote{

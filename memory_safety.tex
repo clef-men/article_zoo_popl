@@ -8,20 +8,91 @@ Performance-sensitive \OCaml libraries are sometimes written using unsafe primti
 
 \paragraph{A concurrent safety problem}
 
-Resizable arrays are implemented as a record with two mutable fields, a \ocamlinline{length} field that stores the current length of the resizable array, and an \ocamlinline{arr} field storing the ``backing array'' a (non-resizable) array of size at least \ocamlinline{length} elements. When a user pushes a new element to the end of a resizable array, it typically suffices to write the new element at index \ocamlinline{length} in the backing array, and then increment the \ocamline{length} field. But when the \ocamlinline{length} field reaches the actual length of the backing array (which we call the ``capacity'' of the resizable array), we need to allocate a new, larger backing array, to copy the values from the old to the new backing array, and to overwrite the \ocamlinline{arr} field with the new backing array; then we can write the user-provided element.
+Resizable arrays are implemented as a record with two mutable fields, a \ocamlinline{size} field that stores the current length of the resizable array, and a \ocamlinline{data} field storing the ``backing array'' a (non-resizable) array of size at least \ocamlinline{size} elements. When a user pushes a new element to the end of a resizable array, it typically suffices to write the new element at index \ocamlinline{size} in the backing array, and then increment the \ocamlinline{size} field. But when the \ocamlinline{size} field reaches the actual length of the backing array (which we call the ``capacity'' of the resizable array), we need to allocate a new, larger backing array, to copy the values from the old to the new backing array, and to overwrite the \ocamlinline{data} field with the new backing array; then we can write the user-provided element.
 
-This operation of pushing a new element is performance-critical for resizable arrays, and it always incurs a length comparison followed by resizing is necessary. After this check and potential resizing, sequentially we know that the backing array has enough space, and we can write the new element using an \ocamlinline{unsafe_set} operation that avoids a second bound-checking on array access. Efficient implementations use this unsafe operation, which can provide performance benefits of up to 20\% in certain scenarios. Unfortunately, the safety reasoning is incorrect in presence of parallel operations on the same dynarray: another thread could mutate the backing array after the length check and before the unsafe write, for example \ocamlinline{Dynarray.reset} which sets length to \ocamlinline{0} and replaces the backing array by an empty array.
+This operation of pushing a new element is performance-critical for resizable arrays, and it always incurs a size comparison followed by resizing is necessary. After this check and potential resizing, sequentially we know that the backing array has enough space, and we can write the new element using an \ocamlinline{unsafe_set} operation that avoids a second bound-checking on array access. Efficient implementations use this unsafe operation, which can provide performance benefits of up to 20\% in certain scenarios. Unfortunately, the safety reasoning is incorrect in presence of parallel operations on the same dynarray: another thread could mutate the backing array after the size check and before the unsafe write, for example \ocamlinline{Dynarray.reset} which sets the size to \ocamlinline{0} and replaces the backing array by an empty array.
+
+\begin{ocamlcode}
+let add_last a x = (* sequential version *)
+  let size = a.size in
+  if Array.length a.data = size then ensure_capacity a (size + 1);
+  a.size <- size + 1;
+  Array.unsafe_set a.arr size x
+\end{ocamlcode}
 
 Writing to a (non-resizable) array outside its bounds without bound checks breaks memory safety, so this implementation was memory-safe under \OCamlFour but it becomes memory-unsafe under \OCamlFive. On the other hand, \ocamlinline{Dynarray} is explicitly documented as a sequential data structure, so it is the user responsibility to respect this precondition by using appropriate synchronization (for example a mutex) to prevent data races. Some performance-obsessed users would argue that if \emph{other} users fail in their responsibility of ensuring sequential access, then they do not deserve memory-safety. The \OCaml maintainers and standard library authors consider on the other hand that memory-safety should be preserved even in this case: it can only be lifted for operations that are explicitly marked as unsafe, and hopefully have simple, checkable preconditions. So they decided to change the optimization of \ocamlinline{Dynarray} to guarantee memory-safety even in presence of racy concurrent usage.
 
-The proposed implementation reads the \ocamlinline{arr} field to get the backing array $b$, then it performs the length check on this backing array. If no resizing is necessary, then an unsafe write is performed as before (on the backing array $b$, without re-reading the \ocamlinline{arr} field). In the infrequent case where resizing is necessary, the operation retries from the start after resizing.
+The proposed implementation reads the \ocamlinline{data} field to get the backing array $b$, then it performs the size check on this backing array. If no resizing is necessary, then an unsafe write is performed as before (on the backing array $b$, without re-reading the \ocamlinline{data} field). In the infrequent case where resizing is necessary, the operation retries afterwards. (A full retry is not necessary, a bound-checking write would suffice for safety.)
 
-\paragraph{A concurrent verification problem}
+\begin{ocamlcode}
+let rec add_last a x = (* memory-safe under concurrency *)
+  let {size; data} = a in
+  if Array.length data >= size
+  then ( ensure_capacity a (size + 1); add_last a x )
+  else ( a.size <- size + 1; Array.unsafe_set arr size x )
+\end{ocamlcode}
 
+\paragraph{A concurrent verification problem} We verified (a representative fragment of) the proposed \ocamlinline{Dynarray} implementation in \ZooLang, providing a definitivee proof that it is functionally correct under sequential usage, and that it does preserve memory-safety even under concurrent usage. The verified fragment is now part of the \Zoo standard library, and can be used in further verification projects.
 
+Informally, the verification of (sequential) functional correctness and (concurrent) memory-safety rely on two different invariants:
+\begin{itemize}
+\item Functional correctness relies on a \emph{strong} invariant,
+  which may not be preserved under concurrent usage; for example that
+  the content of the \ocamlinline{size} field is smaller than the
+  size of the backing array.
+\item Memory-safety relies on a \emph{weak} invariant that does not
+  suffice to prove correctness, but is preserved under concurrent
+  usage. For this \ocamlinline{Dynarray} implementation, the weak
+  invariant is that the backing array remains well-typed and that the
+  content of the \ocamlinline{size} field is non-negative.
+\end{itemize}
+To informally check the two desired properties, it suffices to check
+that the strong invariant is indeed a sequential invariant, and that
+implies functional correctness; and separately that the weak invariant
+is preserved by all operations on the data structure.
+
+In our mechanized verification, the strong invariant becomes a \emph{model}
+of the data structure, and we verify separation-logic triples where
+each operation can assume unique ownership of the model in input, and
+has to return ownership of a valid model in output, as is
+standard. For example, the ``functional correctness'' lemma for the
+\ocamlinline{add_last} function is the following:
+
+\begin{coqcode}
+Lemma dynarray_2_push_spec t vs v :
+  {{{ dynarray_2_model t vs }}}
+    dynarray_2_push t v
+  {{{ RET (); dynarray_2_model t (vs ++ [v]) }}}.
+\end{coqcode}
+
+This lemma establishes correctness in a purely-sequential usage, but
+also under any concurrent usage where correctly synchronization is used to
+guarantee unique ownership of the model.
+
+The formal counterpart of our weak invariant is a \emph{semantic type}, following the approach of the \RustBelt project~\citep*{rustbelt}, which also deals with unsafe fragments within a language intended to be safe. Note that the \RustBelt semantic types are derived from \Rust types, where mutating operations get a mutable borrow and thus unique ownership (for a time). In contrast, our semantic types carry no ownership of the values they manipulate, so they are stored entirely as invariants, and all interactions with the structure must be shown to preserve this invariant atomically. The invariant must be robust against any interference coming from any other function called in parallel on the same structure.
+
+The definition of the semantic type for dynarrays, and the statement of memory safety (or in fact semantic typing) for \ocamlinline{add_last} look as follows:
+\begin{coqcode}
+Definition itype_dynarray_2 ty t : iProp Σ :=
+  ∃ l,
+  ⌜t = #l⌝ ∗
+  inv nroot (
+    ∃ (sz : nat) cap data,
+    l.[size] ↦ #sz ∗
+    l.[data] ↦ data ∗ itype_array ty cap data
+  ).
+
+Lemma dynarray_2_push_type ty t v :
+  {{{ itype_dynarray_2 ty t ∗ ty v }}}
+    dynarray_2_push ty t v
+  {{{ RET (); True }}}.
+\end{coqcode}
+
+The predicate \coqinline{ty} is the semantic type for the elements of the array -- it must hold for each value of the backing array and for the new value \ocamlinline{v}.
+
+\Xgabriel{Je crois avoir compris qu'il y a des choses intéressantes à dire sur le raisonnement sur les itérateurs (\ocamlinline{iteri} par exemple), mais je ne saurais pas quoi écrire à ce sujet.}
 
 \subsection{\Saturn: Single-producer or Single-consumer queues}
-
 
 
 %%% Local Variables:

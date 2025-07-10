@@ -64,13 +64,6 @@ Instance : AsValRecs' f 0 f_g [f;g]. Proof. done. Qed.
 Instance : AsValRecs' g 1 f_g [f;g]. Proof. done. Qed.
 \end{coqcode}
 
-\subsection{Standard library}
-
-To save users from reinventing the wheel, we provide a standard library --- more or less a subset of the \OCaml standard library.
-Currently, it mainly includes standard data sequential structures like: array (\ocamlinline{Array}), resizable array (\ocamlinline{Dynarray}), list (\ocamlinline{List}), stack (\ocamlinline{Stack}), queue (\ocamlinline{Queue}), double-ended queue. It also includes mutexes (\ocamlinline{Mutex}) and condition variable (\ocamlinline{Condition}).
-
-Each of these standard modules contains \ZooLang functions and their verified specifications. These specifications are modular: they have been used to verify more complex data structures.
-
 \subsection{Fine-grained concurrent primitives}
 \label{sec:atomic}
 

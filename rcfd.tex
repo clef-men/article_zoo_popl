@@ -61,7 +61,7 @@ At this point, the state transitions from \textbf{closing/users} to \textbf{clos
 
 \paragraph{Generative contructors.}
 As explained in \cref{sec:physical_equality}, the \ocamlinline{Open} constructor has to be generative to prevent \emph{unsharing}.
-In fact, the \ocamlinline{Closing} constructor also has to be generative to prevent \emph{sharing}, otherwise two calls could have a shared value of \ocamline{next} and believe they both won the second update.
+In fact, the \ocamlinline{Closing} constructor also has to be generative to prevent \emph{sharing}, otherwise two calls could have a shared value of \ocamlinline{next} and believe they both won the second update.
 
 %%% Local Variables:
 %%% mode: LaTeX

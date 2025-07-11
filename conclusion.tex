@@ -2,11 +2,15 @@
 
 We presented \Zoo, a framework for the verification of concurrent \OCaml~5 programs.
 While it is not yet available on \texttt{opam}, it can be installed and used in other \Rocq projects.
-We provide a minimal example\footnote{\urlAnonymous{https://github.com/clef-men/zoo_demo}} demonstrating its use.
-
-\Zoo has already been used to verify sequential imperative algorithms~\citeAnonymous{DBLP:journals/pacmpl/AllainC0S24} and is currently being used to verify a library of lock-free data structures.
+%
+\Zoo has been used to verify sequential imperative algorithms and a significant library of lock-free data structures.
 Its main weakness so far is its memory model, which is sequentially consistent as opposed to the relaxed \OCaml~5 memory model.
 It also lacks exceptions and algebraic effects, that we plan to introduce in the future.
 
 Another interesting direction would be to combine \Zoo with semi-automated techniques.
 Similarly to \WhyThree, the simple parts of the verification effort would be done in a semi-automated way, while the most difficult parts would be conducted in \Rocq.
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "main"
+%%% End:

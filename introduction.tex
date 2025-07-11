@@ -75,7 +75,7 @@ In doing so we discovered a hole in state-of-the-art language semantics for prog
 
 Worse, our discussions with the maintainers of the \OCaml implementation showed that implementors guarantee weaker properties of physical equalities than users assume, in particular they may allow \emph{unsharing}, which makes some existing concurrent programs incorrect. We propose a small new language feature for \OCaml, per-constructor unsharing control, which we also integrate in our \ZooLang translation, to fix affected programs and verify them. Finally, we discussed these subtleties with authors who axiomatize physical equality within Rocq for the purpose of efficient extraction, and we found out that some subtleties we discovered could translate into incorrectness in their axiomatization, requiring careful restrictions.
 
-\paragraph{Verification results} We verified a small library for \ZooLang, typically a subset of the \OCaml standard library. It can serve as building blocks to define our concurrent data structures. (The lack of such a reusable standard library is a current limitation of \HeapLang.) We verified a specific component of the \Eio~library, whose author Thomas Leonard had pointed to us as being delicate to reason about and worth mechanizing. Finally, we verified a large subset of the \Saturn library: stacks, queues (list-based and stack-based), and finally the Chase-Lev work-stealing queue~\citep*{DBLP:conf/spaa/ChaseL05}. The \Saturn implementation of these lock-free data structures are used by the concurrent schedulers proposed in the \OCamlFive library ecosystem, notably \texttt{domainslib} and \texttt{picos}. (The main \Saturn concurrent structures missing from our verification are a skip-list and a hashtable.) Several of these data structures contained verification challenges, which we will describe in the relevant section.
+\paragraph{Verification results} We verified a small library for \ZooLang, typically a subset of the \OCaml standard library. It can serve as building blocks to define our concurrent data structures. (The lack of such a reusable standard library is a current limitation of \HeapLang.) We verified a specific component of the \Eio~library, whose author Thomas Leonard had pointed to us as being delicate to reason about and worth mechanizing. Finally, we verified a large subset of the \Saturn library. Several of these data structures contained verification challenges, which we will describe in the relevant section. The main \Saturn concurrent structures remaining unverified are a skip-list and a hashtable; we have verified its work-stealing queue~\citep*{DBLP:conf/spaa/ChaseL05}, but do not discuss it here for space reasons.
 
 \paragraph{Contributions} In summary, we claim the following contributions:
 \begin{enumerate}
@@ -88,9 +88,7 @@ Worse, our discussions with the maintainers of the \OCaml implementation showed 
 
 \item The verification (in a sequentially-consistent model) of
   important structures coming from \Saturn, the \OCamlFive library of
-  lock-free data structures. In particular we present a precise
-  concurrent invariant for the Chase-Lev work-stealing queue, which gives
-  stronger specifications than its previous formalizations.
+  lock-free data structures.
 
   \Xgabriel{It would be nice to emphasize here a ``proof technique''
     for concurrent verification that is novel in Clément's

@@ -106,6 +106,30 @@ They are key to handle \emph{future-dependent linearization points}: linearizati
 \Zoo supports prophecy variables through the \texttt{Proph} and \texttt{Resolve} expressions --- as in \HeapLang, the canonical \Iris language.
 In \OCaml, these expressions correspond to \ocamlinline{Zoo.proph} and \ocamlinline{Zoo.resolve}, that are recognized by \texttt{ocaml2zoo}.
 
+\subsection{Future work: the \OCaml memory model}
+\label{subsec:memory-model}
+
+Our current formalization of \Zoo assumes sequential consistency; this
+does not faithfully model all possible behaviors of concurrent \OCaml
+programs, which uses a more relaxed memory
+model~\citep*{ocaml-memory-model}. Some concurrent algorithms, such as
+the Treiber stack, do not contain any data races between atomic and
+non-atomic locations, so their behavior is identical between both
+memory models. (Our specifications do not cover the synchronization
+guarantees on user-provided data, which varies between implementations
+in relaxed models.). Other algorithms do contain data races, and our
+formal correctness result must be taken with the caveat that it does
+not describe all observable behaviors in the actual \OCaml program.
+
+We made the choice to focus on proving correctness of these subtle
+concurrent algorithms in the simpler setting of sequential consistency
+first, to encounter and solve the obstacles to practical verfication
+of concurrent programs. We intend to migrate \Zoo to the \OCaml memory
+model as formalized by \citet*{DBLP:journals/pacmpl/MevelJP20}, and
+have started preliminary work in this direction, introducing its
+\emph{views} in a work-in-progress version of the \ZooLang program
+logic.
+
 %%% Local Variables:
 %%% mode: LaTeX
 %%% TeX-master: "main"

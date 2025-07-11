@@ -25,7 +25,7 @@ For comparison, the exemplary concurrent stacks verified in \Iris~\citep*{iris-e
 \subsection{List-based queues}
 
 We verified four variants of the Michael-Scott queue~\citep*{DBLP:conf/podc/MichaelS96}: unbounded MPMC (the standard one), bounded MPMC, unbounded MPSC and unbounded SPMC.
-The SPMC queue is used to implement one of the bags, more precisely a relaxed queue guaranteeing only per-producer ordering.
+The SPMC queue is used to implement one of the bags---a relaxed queue guaranteeing only per-producer ordering.
 
 In the \Iris literature, \citet*{DBLP:conf/cpp/VindumB21} established contextual refinement of the Michael-Scott queue while \citet*{DBLP:journals/pacmpl/MulderK23} proved logical atomicity.
 However, we had to redesign and extend the invariant for several reasons.

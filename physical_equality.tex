@@ -71,7 +71,7 @@ We will now explore the specifications of the \ocamlinline{true} and \ocamlinlin
 \subsection{When physical equality returns \ocamlinline{true}}
 
 Let us go back to the concurrent stack of \cref{fig:stack} and more specifically the \ocamlinline{push} function. Its atomic specification, given in \cref{subsec:stack-specs-and-proofs}, states that if we push a value $v$ onto a stack whose current model is $vs$, then it atomically becomes a stack of model $v :: vs$.
-To prove this specification we rely on the fact that, if \ocamlinline{Atomic.compare_and_set} returns \ocamlinline{true}, the current list must be equal to $vs$, in the sense of \Rocq equality for (abstract) \Zoo values. This equality is strictly stronger than structural equality on mutable types, so we need a more precise specification than provided by the \OCaml manual.
+To prove this specification we rely on the fact that, if \ocamlinline{Atomic.compare_and_set} returns \ocamlinline{true}, the current list must be equal to $vs$, in the sense of \Rocq equality for \Zoo values. This equality is strictly stronger than structural equality on mutable types, so we need a more precise specification than provided by the \OCaml manual.
 
 \Zoo supports the following fragment of \OCaml values: booleans, integers, mutable blocks (pointers), immutable blocks, functions.
 

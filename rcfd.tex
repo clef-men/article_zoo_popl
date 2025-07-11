@@ -19,19 +19,19 @@ Interestingly, it is used in \Eio in two different ways, more precisely two diff
 To verify all uses, the specification of \ocamlinline{Rcfd} has to support both ownership regimes.
 However, due to space constraints, we consider a simplified specification given in \cref{fig:rcfd_spec}.
 The full verified specification can be found in the mechanization.
-
+%
 The specification features four operations%
 \footnote{
 We omitted two non-essential operations: \ocamlinline{is_open} and \ocamlinline{peek}.
-}.
+}:
 
 \ocamlinline{make} creates a new object $t$ of type \ocamlinline{Rcfd.t} wrapping a given FD $\mathit{fd}$, yielding the (persistent) invariant $\inv\ t\ \mathit{fd}\ \iPredTwo$, where $\iPredTwo$ is an arbitrary fractional predicate.
 Crucially, the user must provide the full predicate $\iPredTwo\ 1$, which is stored in the invariant.
 Once it is created, a wrapped FD can be accessed through the \ocamlinline{use} operation and closed through the \ocamlinline{close} operation.
 
 \ocamlinline{use} requires the invariant along with the weakest preconditions of the $\mathit{closed}$ function, that is called if the FD has been flagged as closed, and $\mathit{open}$ function, that is called if the FD is still open.
-To control the postconditions of the specification and the weakest preconditions, the user can choose an arbitrary predicate $\iPredThree$ parameterized by a boolean indicating whether the $\mathit{closed}$ (\ocamlinline{false}) or the $\mathit{open}$ (\ocamlinline{true}) was called.
-Furthermore, the $\mathit{open}$ function is given a fraction of $\iPredTwo$ during its execution, thereby accessing the FD.
+To control the postconditions and the weakest preconditions, the user can choose an arbitrary predicate $\iPredThree$ parameterized by a boolean indicating whether the $\mathit{closed}$ (\ocamlinline{false}) or the $\mathit{open}$ (\ocamlinline{true}) was called.
+The $\mathit{open}$ function is given a fraction of $\iPredTwo$, thereby accessing the FD.
 
 \ocamlinline{close} requires the invariant and proving that the full ownership of $\iPredTwo$ entails the full ownership of the FD $\mathit{fd}$, which is necessary to call \ocamlinline{Unix.close}.
 It yields $\closing\ t$, a persistent resource witnessing that $t$ has been flagged as closed.
@@ -55,10 +55,15 @@ In this state, the FD is not really closed yet because of ongoing \ocamlinline{u
 Physically, this logical transition corresponds to switching from the \ocamlinline{Open} to the \ocamlinline{Closing} constructor using \ocamlinline{Atomic.Loc.compare_and_set}.
 
 Once all \ocamlinline{use} operations have finished, when the reference-count reaches zero, it is time to actually `close' the FD by calling the function carried by the \ocamlinline{Closing} constructor.
-However, this has to be done only once.
-The `closing' thread is the one that succeeds in updating the \ocamlinline{Closing} constructor (to a new one carrying a no-op function) using again \ocamlinline{Atomic.Loc.compare_and_set}.
+This has to be done only once.
+The `closing' thread is the one that succeeds in updating the \ocamlinline{Closing} constructor (to a new one carrying a no-op function) using \ocamlinline{Atomic.Loc.compare_and_set}.
 At this point, the state transitions from \textbf{closing/users} to \textbf{closing/no-users} and the wrapper no longer owns the FD.
 
 \paragraph{Generative contructors.}
 As explained in \cref{sec:physical_equality}, the \ocamlinline{Open} constructor has to be generative to prevent \emph{unsharing}.
-In fact, the \ocamlinline{Closing} constructor also has to be generative to prevent \emph{sharing}: when the `closing' thread wins the \ocamlinline{Atomic.Loc.compare_and_set}, it must be true that the `closing' function has not changed.
+In fact, the \ocamlinline{Closing} constructor also has to be generative to prevent \emph{sharing}, otherwise two calls could have a shared value of \ocamline{next} and believe they both won the second update.
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "main"
+%%% End:

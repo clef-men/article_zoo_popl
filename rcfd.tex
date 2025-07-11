@@ -54,9 +54,9 @@ Crucially, there can only be one such thread.
 In this state, the FD is not really closed yet because of ongoing \ocamlinline{use} operations.
 Physically, this logical transition corresponds to switching from the \ocamlinline{Open} to the \ocamlinline{Closing} constructor using \ocamlinline{Atomic.Loc.compare_and_set}.
 
-Once all \ocamlinline{use} operations have finished, when the reference-count reaches zero, it is time to actually `close' the FD by calling the function carried by the \ocamlinline{Closing} constructor.
+Once all \ocamlinline{use} operations have finished, when the reference-count reaches zero, it is time to actually ``close'' the FD by calling the function carried by the \ocamlinline{Closing} constructor.
 This has to be done only once.
-The `closing' thread is the one that succeeds in updating the \ocamlinline{Closing} constructor (to a new one carrying a no-op function) using \ocamlinline{Atomic.Loc.compare_and_set}.
+The ``closing'' thread is the one that succeeds in updating the \ocamlinline{Closing} constructor (to a new one carrying a no-op function) using \ocamlinline{Atomic.Loc.compare_and_set}.
 At this point, the state transitions from \textbf{closing/users} to \textbf{closing/no-users} and the wrapper no longer owns the FD.
 
 \paragraph{Generative contructors.}

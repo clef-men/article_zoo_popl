@@ -14,8 +14,8 @@ Furthermore, when the semantics is defined, values are compared using their \Roc
 
 \subsection{Physical equality in \OCaml}
 
-In \OCaml, physical equality is more tricky.
-\emph{Structural equality} \ocamlinline{v1 = v2}, which we describe in \cref{sec:structural_equality}, would be the preferred way of comparing values, and using physical equality \ocamlinline{v1 == v2} is often an unintentional mistake.
+In \OCaml, \emph{physical} equality is tricky.
+\emph{Structural} equality \ocamlinline{v1 = v2}, which we describe in \cref{sec:structural_equality}, would be the preferred way of comparing values, and using physical equality \ocamlinline{v1 == v2} is often an unintentional mistake.
 However, physical equality is typically much faster than structural equality, as it compiles to only one assembly instruction instead of traversing the value.
 Also, the \ocamlinline{Atomic.compare_and_set} requires the comparison to be atomic, ruling out structural equality.
 
@@ -59,7 +59,6 @@ Lemma physeq_spec v1 v2 :
   {{{ True }}}
     v1 == v2
   {{{ b, RET #b; ⌜(if b then val_physeq else val_physneq) v1 v2⌝ }}}
-Proof. ... Qed.
 \end{coqcode}
 
  The \OCaml manual documents a partial specification for physical equality, which is precise for basic types such as integers or integer references, but does not clearly extend to structured values containing a mix of immutable and mutable constructors, which are present in the programs we verify.
@@ -67,7 +66,7 @@ The only guarantee that it provides for all values is: if two values are physica
 
 We will now explore the specifications of the \ocamlinline{true} and \ocamlinline{false} return cases. We describe our program verification requirements to suggest a precise enough semantics: if it does not say enough, we cannot prove our programs correct. In the other direction we describe some optimizations that \OCaml implementations may perform (gathered through our discussion with \OCaml maintainers), in particular the current compiler, that may rule out certain stronger specifications are incorrect.
 
-\paragraph{Remark} It is extremely tempting to state that physical equality implies equality of \Rocq representations, but incorrect in general as we have seen. Existing work on the modelling of \OCaml physical equality within proof assistants have typically made this simplification, restricting the set of supported values to preserve soundness. We discussed our examples with authors of such earlier formalizations, and this has sometimes uncovered soundness issues on their side, as we discuss in \cref{subsec:related-work-physical-equality}.
+\paragraph{Remark} It is tempting to state that physical equality implies equality of \Rocq representations, but incorrect in general as we have seen. Existing work on the modelling of \OCaml physical equality within proof assistants have typically made this simplification, restricting the set of supported values to preserve soundness. We discussed our examples with authors of such earlier formalizations, and this has sometimes uncovered soundness issues on their side, as we discuss in \cref{subsec:related-work-physical-equality}.
 
 \subsection{When physical equality returns \ocamlinline{true}}
 

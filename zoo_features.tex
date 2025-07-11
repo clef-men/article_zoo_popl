@@ -59,10 +59,8 @@ Definition f_g := (
 \subsection{Fine-grained concurrent primitives}
 \label{sec:atomic}
 
-\Zoo supports concurrent primitives both on atomic references (from \ocamlinline{Atomic}) and atomic record fields (from \ocamlinline{Atomic.Loc}\footnote{The \ocamlinline{Atomic.Loc} module is part of the \href{https://github.com/ocaml/ocaml/pull/13404}{PR} that implements atomic record fields (see \cref{sec:ocaml}).}) according to the table below.
-The \OCaml expressions listed in the left-hand column translate into the \Zoo expressions in the right-hand column.
-Notice that an atomic location \ocamlinline[escapeinside=||]{[%atomic.loc |$e$|.|$f$|]} (of type \ocamlinline{_ Atomic.Loc.t}) translates directly into $e \texttt{.[} f \texttt{]}$.
-
+\Zoo supports concurrent primitives both on atomic references (from \ocamlinline{Atomic}) and atomic record fields (from \ocamlinline{Atomic.Loc}, see \cref{sec:atomic-record-fields}) according to the table below.
+The \OCaml expressions listed on the left translate into the \Zoo expressions on the right.
 \begin{center}
 \begin{tabular}{ll}
     \OCaml &

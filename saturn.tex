@@ -80,21 +80,6 @@ The key difference compared to the sequential version is that the algorithm has 
 Essentially, the concurrent protocol --- and therefore the \Iris invariant --- includes a \emph{destabilization} phase during which a new back stack pointing to the former one awaits to be \emph{stabilized}, which happens when the reversed former back stack becomes the new front stack.
 In practice, the synchronization is a bit tricky and relies on the indices of the elements.
 
-\subsection{Work-stealing queues}
-\label{sec:ws_queue}
-
-% \Domainslib~\citep*{domainslib}
-% Taskflow
-
-% stabilization
-
-% idealized: infinite array
-% bounded: one finite array
-% original: many finite arrays
-
-% wise prophet
-% multiplexed prophets
-
 %%% Local Variables:
 %%% mode: LaTeX
 %%% TeX-master: "main"

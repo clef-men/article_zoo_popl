@@ -30,7 +30,7 @@ The SPMC queue is used to implement one of the bags, more precisely a relaxed qu
 In the \Iris literature, \citet*{DBLP:conf/cpp/VindumB21} established contextual refinement of the Michael-Scott queue while \citet*{DBLP:journals/pacmpl/MulderK23} proved logical atomicity.
 However, we had to redesign and extend the invariant for several reasons.
 
-\paragraph{Efficient implementation.}
+\paragraph{Efficient implementation.}\label{par:michael-scott-cleanup}
 The Michael-Scott essentially consists of a singly linked list of nodes that only grows over time.
 The previously verified implementations, implemented in \HeapLang, use a double indirection to represent the list~\citep*[\figurename~2]{DBLP:conf/cpp/VindumB21}.
 Similarly to the Treiber stack, this is made so as to be able to use the compare-and-set primitive of \HeapLang. \citet*{DBLP:conf/cpp/VindumB21} write:
@@ -41,8 +41,7 @@ Similarly to the Treiber stack, this is made so as to be able to use the compare
 In \OCaml, this would correspond to introducing extra atomic references (\ocamlinline{Atomic.t}) between the nodes.
 Using atomic record fields, we can represent the list more efficiently, without the extra indirection.
 However, there is one subtlety: in this new representation, we need to clear the outdated nodes so that their value is no longer reachable and can be garbage-collected, in other words to prevent a memory leak.
-This subtlety was missing from the original implementation designed for non-garbage-collected languages,
-but \Saturn implements it (\href{https://github.com/ocaml-multicore/saturn/pull/64}{saturn\#64}).
+This subtlety is not discussed in the original implementation~\citep*{DBLP:conf/podc/MichaelS96} designed for non-garbage-collected languages, but it is folklore; it is implemented in \Saturn (\href{https://github.com/ocaml-multicore/saturn/pull/64}{saturn\#64}) and we verified that it preserves correctness.
 
 To deal with this representation in separation logic, we introduce the notion of \emph{explicit chain} that allows decoupling the chain structure formed by the nodes and the content of the nodes.
 Concretely, the assertion $\textlog{xchain}\ \textit{dq}\ \loc{}s\ \textit{dst}$ represents a chain linking locations $\loc{}s$ and ending at value $\textit{dst}$; $\textit{dq}$ is a discardable fraction~\citep*{DBLP:conf/cpp/VindumB21} that controls the ownership of the chain.

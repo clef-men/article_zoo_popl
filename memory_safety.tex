@@ -94,8 +94,11 @@ The predicate \coqinline{ty} is the semantic type for the elements of the array 
 
 \subsection{\Saturn: Single-producer or Single-consumer queues}
 
-Similar problems of memory-safety occur in the concurrent data structures of the \Saturn library. For example, we mention that the Michael-Scott MPMC queue is careful to ``erase'' values stored in the queue to avoid memory leaks. This erasure is performed by writing a non-type-safe dummy value, \ocamlinline{Obj.magic ()}, .
+Similar problems of memory-safety occur in the concurrent data structures of the \Saturn library. For example, we explained (\cref{par:michael-scott-cleanup}) that the \Saturn implementation of the Michael-Scott MPMC queue is careful to ``erase'' values stored in the queue to avoid memory leaks. This erasure is performed by writing a non-type-safe dummy value, \ocamlinline{Obj.magic ()}. We define a semantic type for the MPMC queue which is essentially its concurrent invariant, and prove that this unsafe idiom does not endanger memory-safety.
 
+On the other hand, the efficient implementations of single-consumer or single-producer queues in \Saturn do \emph{not} respect the general \OCaml recommendation of favoring safety over performance: if a library user uses a single-consumer structure from two consumers in racy ways, they lose memory safety. Our correctness results imply memory-safety when the single-consumer or single-producer protocol is respecter; when the caller does own its end of the structure uniquely, as our precondition requires. But we cannot prove memory-safety with only persistent preconditions, as it does not hold.
+
+\Xgabriel{Je crois me souvenir que les implémenteurs de \Saturn ont typiquement à la fois une version ``safe'' et une version ``unsafe'' de leurs structures. Est-ce qu'il existe bien des versions safe de ces structures SP et/ou SC ? Il serait bon de le mentionner dans ce cas.}
 
 %%% Local Variables:
 %%% mode: LaTeX

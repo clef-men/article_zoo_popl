@@ -61,10 +61,9 @@ Lemma stack_push_spec t ι v :
     stack_push t v @ ↑ι
   <<< stack_model t (v :: vs)
     | RET (); True >>>.
-Proof. ... Qed.
 \end{coqcode}
 
-Here, we use a \emph{logically atomic specification}~\cite{DBLP:conf/ecoop/PintoDG14}, which has been proven~\cite{DBLP:journals/pacmpl/BirkedalDGJST21} to be equivalent to \emph{linearizability}~\cite{DBLP:journals/toplas/HerlihyW90} in sequentially consistent memory models.
+It uses a \emph{logically atomic specification}~\cite{DBLP:conf/ecoop/PintoDG14}, which has been proven~\cite{DBLP:journals/pacmpl/BirkedalDGJST21} to be equivalent to \emph{linearizability}~\cite{DBLP:journals/toplas/HerlihyW90} in sequentially consistent memory models.
 
 Similarly to \href{https://en.wikipedia.org/wiki/Hoare_logic}{Hoare triples},
 the specification is formed of a precondition and a postcondition, represented in angle brackets.

@@ -106,6 +106,18 @@ Worse, our discussions with the maintainers of the \OCaml implementation showed 
   language extension to let users selectively disable unsharing.
 \end{enumerate}
 
+\paragraph{Artifact} We include an anonymous artifact containing (1)
+our experimental fork of the OCaml compiler implementing atomic arrays
+(\cref{subsec:atomic-arrays}) and generative constructors
+(\cref{subsec:generative-constructors}), (2) the source of the
+\texttt{ocaml2zoo} translator, and (3) the \Zoo repository, which
+includes \ZooLang and its metatheory (\texttt{theories/zoo}), verified
+OCaml source (in \texttt{lib/}) and corresponding proofs
+(in \texttt{theories/}). In particular, the output of
+\texttt{ocaml2zoo} is included, for example \text{mpmc\_stack\_1.ml}
+in \texttt{lib/zoo\_saturn/} is translated into
+\texttt{mpmc\_stack\_1\_\_code.v} in \texttt{theories/zoo\_saturn/}.
+
 %%% Local Variables:
 %%% mode: LaTeX
 %%% TeX-master: "main"

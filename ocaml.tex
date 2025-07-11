@@ -127,6 +127,7 @@ Currently there is no such support for padding of atomic record fields (we are p
 work on this), so the less-compact atomic references remain preferable in certain scenarios.
 
 \subsection{Atomic arrays}
+\label{subsec:atomic-arrays}
 
 On top of our atomic record fields, we have implemented experimental support for atomic arrays, another facility commonly requested by authors of efficient concurrent programs.
 Our previous example of a concurrent bag of type \ocamlinline{'a bag} used a backing array of type \ocamlinline{'a Atomic.t array}, which contains more indirections than may be desirable, as each array element is a pointer to a block containing the value of type \ocamlinline{'a}, instead of storing the value of type \ocamlinline{'a} directly in the array.

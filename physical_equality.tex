@@ -116,6 +116,7 @@ Given a stack of \ocamlinline{any}, it is possible for the \ocamlinline{Atomic.c
 In short, the expected specification of \cref{subsec:stack-specs-and-proofs} is incorrect: we may not get $v :: vs$ back in the model, but a list $v :: vs'$ where $vs'$ is physically equal to $vs$ but not the same abstract value.
 To fix this discrepancy, we would need to weaken all our specifications to be formulated \emph{modulo physical equality}, which is non-standard and quite burdensome.
 
+\label{subsec:generative-constructors}
 We believe this really is a shortcoming, at least from the verification perspective.
 Therefore, we propose to extend \OCaml with \emph{generative immutable blocks}\footnote{\urlAnonymous{https://github.com/clef-men/ocaml/tree/generative_constructors}}.
 These generative blocks are just like regular immutable blocks, except they cannot be shared.

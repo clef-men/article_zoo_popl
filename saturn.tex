@@ -72,8 +72,8 @@ A standard way to implement a sequential queue is to use two stacks: producers p
 Based on this simple idea, Vesa Karvonen developed a new lock-free concurrent queue.
 We verified the MPMC variant used in \Picos and the closable MPSC variant used in \Picos.
 
-Similarly to the sequential implementation, the two stacks are mainly immutable.
-As both stacks are updated using compare-and-set, generative constructors are needed to reason about physical equality.
+As in the sequential implementation, the two stacks are mainly immutable.
+Both stacks are updated using compare-and-set so we use generative constructors to reason about physical equality.
 
 Similarly again, producers and consumers work concurrently on separate stacks, limiting interference.
 The key difference compared to the sequential version is that the algorithm has to deal with the concurrent back stack reversal in a lock-free manner.

@@ -1,11 +1,11 @@
 \section{Conclusion and future work}
 
-We presented \Zoo, a framework for the verification of concurrent \OCaml~5 programs.
+We presented \Zoo, a framework for verification of concurrent \OCaml~5 programs.
 While it is not yet available on \texttt{opam}, it can be installed and used in other \Rocq projects.
 %
 \Zoo has been used to verify sequential imperative algorithms and a significant library of lock-free data structures.
 Its main weakness so far is its memory model, which is sequentially consistent as opposed to the relaxed \OCaml~5 memory model.
-It also lacks exceptions and algebraic effects, that we plan to introduce in the future.
+In the future we also plan to add exceptions and algebraic effects.
 
 Another interesting direction would be to combine \Zoo with semi-automated techniques.
 Similarly to \WhyThree, the simple parts of the verification effort would be done in a semi-automated way, while the most difficult parts would be conducted in \Rocq.

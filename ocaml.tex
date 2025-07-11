@@ -42,7 +42,9 @@ Note that this unsafe approach only works for the first field of a record, so it
 
 \subsubsection{Our atomic fields proposal}
 
-In May-June 2024 we proposed a design for atomic record fields as an \OCaml language change proposal: RFC~\#39\footnote{\urlDeanonymizing{https://github.com/ocaml/RFCs/pull/39}}.
+In May-June 2024 we proposed a design for atomic record fields as an \OCaml language change proposal
+%: RFC~\#39\footnote{\urlDeanonymizing{https://github.com/ocaml/RFCs/pull/39}}
+.
 Declaring a record field atomic simply requires an \ocamlinline{[@atomic]} attribute --- and could eventually become a proper keyword of the language.
 
 \begin{ocamlcode}

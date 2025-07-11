@@ -6,7 +6,7 @@
 
 The core of \Zoo is \ZooLang: a concurrent, imperative, untyped, functional programming language fully formalized in \Rocq. Its semantics has been designed to match \OCaml.
 
-\ZooLang comes with a program logic based on \Iris: reasoning rules expressed in separation logic (including rules for the different constructs of the language) along with \Rocq tactics that integrate into the \Iris proof mode~\cite{% DBLP:conf/popl/KrebbersTB17,
+\ZooLang comes with a program logic based on \Iris, proved correct with respect to its small-step operational semantics. The reasoning rules are expressed in separation logic (including rules for the different constructs of the language) along with \Rocq tactics that integrate into the \Iris proof mode~\cite{% DBLP:conf/popl/KrebbersTB17,
   DBLP:journals/pacmpl/KrebbersJ0TKTCD18}.
 In addition, it supports \Diaframe~\cite{DBLP:conf/pldi/MulderKG22% ,DBLP:journals/pacmpl/MulderK23
 }, enabling proof automation.

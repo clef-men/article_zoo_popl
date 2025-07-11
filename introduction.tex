@@ -51,7 +51,7 @@ and succeeded in getting it integrated in the upstream \OCaml
 compiler: it should be available as part of OCaml 5.4, which is not
 yet released at the time of writing.
 
-\paragraph{Verification tools for concurrent programs.} The state-of-the-art approach for mechanized verification of fine-grained concurrent algorithms is to use \Iris~\citep*{DBLP:journals/jfp/JungKJBBD18}, a state-of-the-art mechanized \emph{higher-order} concurrent separation logic with \emph{user-defined ghost state}. Its expressivity allows to precisely capture delicate invariants, and to reason about the linearization points of fine-grained concurrent algorithms (including external~\citep*{DBLP:conf/cpp/VindumFB22} and future-dependent~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/osdi/Chang0STKZ23} linearization). \Iris provides a generic mechanism to define programming languages and program logics for them. Much of the existing \Iris concurrent verification work has been performed in \HeapLang, the exemplar \Iris language; a concurrent, imperative, untyped, call-by-value functional language.
+\paragraph{Verification tools for concurrent programs.} The state-of-the-art approach for mechanized verification of fine-grained concurrent algorithms is \Iris~\citep*{DBLP:journals/jfp/JungKJBBD18}, a mechanized \emph{higher-order} concurrent separation logic with \emph{user-defined ghost state}. Its expressivity allows to precisely capture delicate invariants, and to reason about the linearization points of fine-grained concurrent algorithms, including external~\citep*{DBLP:conf/cpp/VindumFB22} and future-dependent~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/osdi/Chang0STKZ23} linearization. \Iris provides a generic mechanism to define programming languages and program logics for them. Most existing \Iris concurrent verification work has been performed in \HeapLang, the exemplar \Iris language; a concurrent, imperative, untyped, call-by-value functional language.
 
 To the best of our knowledge, it is currently the closest language to \OCamlFive in the \Iris ecosystem --- we review the existing frameworks in \cref{sec:related}. We started our verification effort in \HeapLang, but it eventually proved impractical to verify realistic \OCaml libraries.
 Indeed, it lacks basic abstractions such as algebraic data types (tuples, mutable and immutable records, variants) and mutually recursive functions.
@@ -64,7 +64,7 @@ We were influenced by the \Perennial framework~\citep*{DBLP:conf/sosp/ChajedTKZ1
 As in \Perennial, we also provide a translator from (a subset of) \OCaml to \ZooLang: \texttt{ocaml2zoo}. We start from \OCaml code and call our translator to obtain a deep \ZooLang embedding inside \Rocq; we can use lightweight annotations to guide the translation. Inside \Rocq we define specifications using \Iris, and prove them correct with respect to the \ZooLang version, which is syntactically very close to the original \OCaml source.
 We call the resulting framework \Zoo.
 
-One notable current limitation of \ZooLang is that it assumes a sequentially-consistent memory model, whereas \OCaml offers a weaker memory model~\citep*{ocaml-memory-model}. We made the choice to ensure that we supported practical verification in a sequentially-consistent setting first; in the future we plan to equip \ZooLang with the \OCaml memory model as formalized in \Cosmo~\citep*{DBLP:journals/pacmpl/MevelJP20}. We discuss the impact of this difference in \cref{sec:memory-model}.
+One notable current limitation of \ZooLang is that it assumes a sequentially-consistent memory model, whereas \OCaml offers a weaker memory model~\citep*{ocaml-memory-model}. We wanted to ensure that we supported practical verification in a sequentially-consistent setting first; in the future we plan to adopt the \OCaml memory model as formalized in \Cosmo~\citep*{DBLP:journals/pacmpl/MevelJP20}. We discuss the impact of this difference in \cref{sec:memory-model}.
 
 % The formal verification of fine-grained concurrent algorithms involves finding and reasoning about non-trivial linearization points~\cite{DBLP:journals/csur/DongolD15,DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/cpp/VindumFB22,DBLP:conf/osdi/Chang0STKZ23}. In recent years, concurrent separation logic~\cite{DBLP:journals/siglog/BrookesO16} has enabled significant progress in this area.
 % In particular, the development of \Iris~\cite{DBLP:journals/jfp/JungKJBBD18}, a state-of-the-art mechanized \emph{higher-order} concurrent separation logic with \emph{user-defined ghost state}, has nourished a rich and successful line of works~\cite{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/cpp/VindumFB22,DBLP:conf/osdi/Chang0STKZ23,DBLP:conf/cpp/CarbonneauxZKON22,DBLP:journals/pacmpl/JungLCKPK23,DBLP:journals/pacmpl/SomersK24,DBLP:journals/pacmpl/MevelJP20,DBLP:journals/pacmpl/MevelJ21,DBLP:conf/pldi/DangJCNMKD22,DBLP:journals/pacmpl/ParkKMJLKK24,DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}, dealing with external~\cite{DBLP:conf/cpp/VindumFB22} and future-dependent~\cite{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/osdi/Chang0STKZ23} linearization points, relaxed memory~\cite{DBLP:journals/pacmpl/MevelJP20,DBLP:journals/pacmpl/MevelJ21,DBLP:conf/pldi/DangJCNMKD22,DBLP:journals/pacmpl/ParkKMJLKK24} and automation~\cite{DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}.
@@ -99,9 +99,9 @@ Worse, our discussions with the maintainers of the \OCaml implementation showed 
   integrated into upstream \OCaml.
 
 \item The identification of blind spots in existing specifications of
-  \emph{physical equality} and a new specification that is precise
-  enough to reason about \texttt{compare-and-set} in the various
-  programs we considered.
+  \emph{physical equality}, and a new specification precise
+  enough to reason about \texttt{compare-and-set} in concurrent
+  programs.
 
   In the process we identified a potential bug in existing \OCaml
   programs related to \emph{unsharing}, and we propose a small

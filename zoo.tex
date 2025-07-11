@@ -17,7 +17,7 @@ In addition, it supports \Diaframe~\cite{DBLP:conf/pldi/MulderKG22% ,DBLP:journa
 
 While \ZooLang lives in \Rocq, we want to verify \OCaml programs.
 To connect them we provide the tool \texttt{ocaml2zoo} to translate \OCaml source files\footnote{Actually, \texttt{ocaml2zoo} processes binary annotation files (\texttt{.cmt} files).} into \Rocq files containing \ZooLang code.
-This tool can process entire \texttt{dune} projects, and support several libraries provided together or as dependencies of the project.
+This tool can process entire \texttt{dune} projects, and supports library dependencies.
 
 The supported \OCaml fragment includes: tuples, variants, records and inline records, shallow \ocamlinline{match}, atomic record fields, unboxed types, toplevel mutually recursive functions.
 

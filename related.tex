@@ -8,13 +8,10 @@ In general there are two approaches to practical program verification:
 The verified program is translated, manually or in an automated way, into a representation living inside a proof assistant.
 The user has to write specifications and prove them.
 
-The representation may be primitive, like Gallina for \Rocq.
-For pure programs, \Xgabriel[this is rather straightforward]{I disagree, I believe that hs-to-coq is scientifically problematic as the translation is unsound for higher-order functions and infinite data.}, \eg in \texttt{hs-to-coq}~\cite{DBLP:conf/cpp/Spector-Zabusky18}.
-For imperative programs, this is more challenging.
-One solution is to use a monad, \eg in \texttt{coq-of-ocaml}~\cite{coq-of-ocaml}, but it does not support concurrency.
+Translating into the native programming language of the proof assistant, such as Gallina for \Rocq, is challenging as it is hard to faithfully preserve the semantics of the source language, which typically has non-terminating functions for example. Monadic translations should support it, but faithfully encoding all impure behaviors is challenging, and tools typically provide a best-effort translation~\citep*{coq-of-ocaml,DBLP:conf/cpp/Spector-Zabusky18} that is only approximately sound.
 
 The representation may be embedded, meaning the semantics of the language is formalized in the proof assistant.
-This is the path taken by some recent works~\cite{DBLP:books/hal/Chargueraud23, DBLP:journals/pacmpl/GondelmanHPTB23, DBLP:conf/sosp/ChajedTKZ19,osiris} harnessing the power of separation logic.
+This is the path taken by some recent works (for example \citet*{DBLP:journals/pacmpl/GondelmanHPTB23}) harnessing the power of separation logic.
 In particular, \CFML~\cite{DBLP:books/hal/Chargueraud23} and \Osiris~\cite{osiris} target \OCaml.
 However, \CFML does not support concurrency and is not based on \Iris.
 \Osiris, still under development, is based on \Iris but does not support concurrency.
@@ -57,3 +54,8 @@ For example, it is easy to correctly characterize physical on natural numbers, a
 One difficulty in \HeapLang and \ZooLang is that they are untyped languages, their representation of \ocamlinline{0} and \ocamlinline{false} has the same type.
 %
 But our remark that structural equality (in \OCaml) does not necessarily coincide with definitional equality (in \Rocq) also applies to other \Rocq types: our examples with an existential \ocamlinline{Any} constructor (see~\cref{sec:physical_equality}) can be reproduced with $\Sigma$-types.
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "main"
+%%% End:

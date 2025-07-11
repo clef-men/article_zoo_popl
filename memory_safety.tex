@@ -94,6 +94,8 @@ The predicate \coqinline{ty} is the semantic type for the elements of the array 
 
 \subsection{\Saturn: Single-producer or Single-consumer queues}
 
+Similar problems of memory-safety occur in the concurrent data structures of the \Saturn library. For example, we mention that the Michael-Scott MPMC queue is careful to ``erase'' values stored in the queue to avoid memory leaks. This erasure is performed by writing a non-type-safe dummy value, \ocamlinline{Obj.magic ()}, .
+
 
 %%% Local Variables:
 %%% mode: LaTeX

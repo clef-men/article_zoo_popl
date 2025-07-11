@@ -24,17 +24,12 @@ This difficulty can result in dangerous gaps between the programming language us
 
 \ZooLang has a grammar of values, and most operations are specified by defining how they compute with \ZooLang values. Its definition may look as follows in \Rocq (simplified):
 \begin{coqcode}
-Inductive literal :=
- | Bool (b : bool)
- | Int (n : nat)
- | Loc (l : location)
- | Proph (pid : prophet_id)
+Inductive literal :=            Inductive val :=
+ | Bool (b : bool)                | Lit (lit : literal)
+ | Int (n : nat)                  | Recs (i : nat)
+ | Loc (l : location)                    (recs : list (binder * binder * expr))
+ | Proph (pid : prophet_id)       | Block (tag : nat) (vs : list val).
  | Poison.
-
-Inductive val :=
- | Lit (lit : literal)
- | Recs (i : nat) (recs : list (binder * binder * expr))
- | Block (tag : nat) (vs : list val).
 \end{coqcode}
 
 The value $'\texttt{Cons} (42, \texttt{§}\texttt{Nil})$ is represented in \Rocq as \coqinline{Block 1 [Lit (Int 42), Block 0 []]}. Notice that immutable blocks are represented in \Rocq using the \coqinline{Block} constructor directly, and \emph{not} as a location (\coqinline{Loc}) allocated on the heap. We use locations only for \emph{mutable} records. We would say that our representation of \ZooLang values is high-level or \emph{abstract}, as close to the surface syntax as reasonably possible. This distinction is important to make verification pleasant in practice, by reducing the number of locations and heap indirections that the programmer needs to work with during verification. A \ZooLang tuple is directly a tuple, etc., and this design decision of using high-level values is important to the verification experience --- in addition, assuming full owernship of arguments of immutable blocks would be incorrect.

@@ -1,12 +1,8 @@
 \begin{figure}[tp]
 \begin{ocamlcode}
-type state =
-  | Open of Unix.file_descr
-  | Closing of (unit -> unit)
-
-type t =
-  { mutable ops: int [@atomic];
-    mutable state: state [@atomic]; }
+type state =                             type t =
+  | Open of Unix.file_descr                { mutable ops: int [@atomic];
+  | Closing of (unit -> unit)                mutable state: state [@atomic]; }            
 
 let make fd = { ops = 0; state = Open fd }
 
@@ -26,3 +22,8 @@ let close t =
 \caption{\ocamlinline{Rcfd} module from \Eio (excerpt)}
 \label{fig:rcfd}
 \end{figure}
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "../main"
+%%% End:

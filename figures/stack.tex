@@ -38,7 +38,7 @@ Definition stack_push : val :=
     let: "new_" := "v" :: "old" in
     if: ~ CAS "t".[contents] "old" "new_"
     then (
-      domain_cpu_relax () ;;
+      domain_yield () ;;
       "push" "t" "v"
     ).
 

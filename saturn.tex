@@ -70,7 +70,7 @@ from \ocamlinline{is_empty} to \ocamlinline{push} and vice versa.
 
 A standard way to implement a sequential queue is to use two stacks: producers push onto the \emph{back stack} while consumers pop from the \emph{front stack}, stealing and reversing the back stack when needed.
 Based on this simple idea, Vesa Karvonen developed a new lock-free concurrent queue.
-We verified the MPMC variant used in \Picos and the closable MPSC variant used in \Picos.
+We verified the MPMC variant used in \Picos and the closable MPSC variant used in \Eio.
 
 As in the sequential implementation, the two stacks are mainly immutable.
 Both stacks are updated using compare-and-set so we use generative constructors to reason about physical equality.

@@ -16,7 +16,9 @@ In particular, \CFML~\cite{DBLP:books/hal/Chargueraud23} and \Osiris~\cite{osiri
 However, \CFML does not support concurrency and is not based on \Iris.
 \Osiris, still under development, is based on \Iris but does not support concurrency.
 
-At the time of writing, \HeapLang is thus the most appropriate tool to verify concurrent \OCaml programs. We discussed limitations of \HeapLang in the introduction, and \ZooLang is our proposal to improve on this. Conversely, one notable limitation of \ZooLang today is its lack of support for \OCaml's relaxed memory model.
+Prior to our work, \HeapLang was thus the most appropriate tool to verify concurrent \OCaml programs.
+We discussed limitations of \HeapLang in the introduction, and \ZooLang is our proposal to improve on this.
+Conversely, one notable limitation of \ZooLang today is its lack of support for \OCaml's relaxed memory model.
 
 \subsection{Semi-automated verification}
 
@@ -49,7 +51,7 @@ There is also a discussion of similar optimizations in \Lean in \cite{lean-point
 
 The correctness of the axiomatization of physical equality depends on the type of the values being compared: axiomatizations are typically polymorphic on any type \coqinline{A}, but their correctness depends on the specific \coqinline{A} being considered.
 %
-For example, it is easy to correctly characterize physical on natural numbers, and other non-dependent types arising in \Rocq verification projects.
+For example, it is easy to correctly characterize physical equality on natural numbers, and other non-dependent types arising in \Rocq verification projects.
 %
 One difficulty in \HeapLang and \ZooLang is that they are untyped languages, their representation of \ocamlinline{0} and \ocamlinline{false} has the same type.
 %

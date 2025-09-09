@@ -81,7 +81,9 @@
 > 
 > - Section 4.1 -- I don't think the full chronology of when things were
 >   implemented is really necessary/the best use of space.
-> 
+
+Our intent was to suggest, in a fact-based way, that getting features integrated in the upstream OCaml compiler is in fact a significant source of work.
+
 > - Lines 600 - Lines 604: I think you should spell out the reason why
 >   Some 0 == Some 0 can return false, for people who do not already
 >   know why.
@@ -99,8 +101,14 @@
 >   closer to how those data structures are implemented in languages
 >   like C or what you see in the algorithms papers describing those
 >   examples. But you're absolutely right that it's not a good model of
->   an efficient/idiomatic OCaml implementation
-> 
+>   an efficient/idiomatic OCaml implementation.
+
+TODO: recheck this.
+
+We must insist: the data representation in the HeapLang implementations we reviewed, in particular the one of Vindum and Birkedal, uses one *extra* pointer indirection for each element compared to a C or C++ implementation: one has to follow two pointers to go from a node to the value of the next node. In contrast, our memory representation is closer to a C/C++ implementation.
+
+(This is non-obvious, but clearly shown in the Figure 2 of the Vindum-Birkdel-2021 paper, we cite their description explicitly.)
+
 > - Line 1031: "proposed the additional of", should say "addition"
 > 
 > - Line 1044: "pritive"
@@ -211,7 +219,13 @@
 > Osiris.
 > How does ZooLang handle exceptions and algebraic effects?
 > How does the physical equality of ZooLang compare to Osiris?
-> 
+
+Osiris and Zoo can be described as having evolved in two separate and complementary directions:
+
+- Zoo has been designed from the start for pragmatic verification of advanced concurrent data-structures; this informed the choice of feature coverage and the semantics design. We succeeded in getting a practical verification framework for this domain, as evidenced by the vast amount of state-of-the-art examples we managed to verify.
+
+- Osiris is designed to poke at the limits of language verification in general (not necessarily in a concurrent setting), and focused on order-of-evaluation issues and effect handlers as an advanced feature. On the other hand, the authors were only able to verify a small amount of relatively simple examples, suggesting that Osiris may not yet be ready for practical verification -- certainly not for our problem domain.
+
 > Another relevant recent paper is "Data Race Freedom à la Mode"
 > (POPL'25). How does Zoo compare to this paper? In particular, how does
 > ZooLang compare to the language from this paper?
@@ -314,7 +328,11 @@
 > Is there a particular reason for defining a new Iris core language for
 > OCaml, rather than trying to build on the Osiris work that you cite,
 > by adding support to concurrency there?
-> 
+
+One aspect to keep in mind is that the present submission represents several years of work. To understand this design choice, one cannot compare Zoo to the current state of Osiris as presented at ICFP'25, but rather to the state in which Osiris was a couple years ago.
+
+TODO say more.
+
 > Doesn't the restriction to a SC memory model undermine the validity of
 > the verification of the data-structures from Saturn, Eio, Picos you
 > present in Section 10?

@@ -103,11 +103,86 @@ Our intent was to suggest, in a fact-based way, that getting features integrated
 >   examples. But you're absolutely right that it's not a good model of
 >   an efficient/idiomatic OCaml implementation.
 
-TODO: recheck this.
+Note that this is not just a matter of exposing explicitly a pointer indirection that exists in OCaml's data representation of sums/variants. The data representation in the HeapLang implementations we reviewed uses one *extra* pointer indirection for each element compared to a C or C++ (or Java, OCaml) implementation: one has to follow two pointers to go from a node to the value of the next node.
 
-We must insist: the data representation in the HeapLang implementations we reviewed, in particular the one of Vindum and Birkedal, uses one *extra* pointer indirection for each element compared to a C or C++ implementation: one has to follow two pointers to go from a node to the value of the next node. In contrast, our memory representation is closer to a C/C++ implementation.
+This is non-obvious, but clearly shown in the Figure 2 of the Vindum-Birkdel-2021 paper ( https://www.cs.au.dk/~birke/papers/2021-ms-queue.pdf ), we cite their description of this extra indirection explicitly.
 
-(This is non-obvious, but clearly shown in the Figure 2 of the Vindum-Birkdel-2021 paper, we cite their description explicitly.)
+For a different example, consider the following implementation of a Treiber stack in the iris/examples repository:
+  https://gitlab.mpi-sws.org/iris/examples/-/blob/426893b7d67cd4456f89337d9163b3b4a91734d0/theories/concurrent_stacks/concurrent_stack1.v#L9
+
+```
+Definition new_stack : val := λ: "_", ref NONEV.
+Definition push : val :=
+  rec: "push" "s" "v" :=
+    let: "tail" := ! "s" in
+    let: "new" := SOME (ref ("v", "tail")) in
+    if: CAS "s" "tail" "new" then #() else "push" "s" "v".
+Definition pop : val :=
+  rec: "pop" "s" :=
+    match: !"s" with
+      NONE => NONEV
+    | SOME "l" =>
+      let: "pair" := !"l" in
+      if: CAS "s" (SOME "l") (Snd "pair")
+      then SOME (Fst "pair")
+      else "pop" "s"
+    end.
+```
+
+For example `pop` first dereferences the mutable reference `s` and
+reads its value, then performs a second dereference on `l` when the
+stack is non-empty to be able to access the list cell, which is itself
+a (boxed) pair so a third dereference is implicit in `Fst "pair"` to
+get the first element of the list. (The Some constructor around `l`
+does not introduce a pointer indirection, as Heaplang assumes an
+optimized tagged encoding for disjoint sums constructor with
+a location payload; see
+https://gitlab.mpi-sws.org/iris/iris/-/blob/c5014d246b2cc5d1bf79d3ba362501dd7b447f74/iris_heap_lang/lang.v#L148
+for a documentation of the assumed HeapLang value representation.)
+
+One would naively think of erasing the extra indirection in HeapLang by writing the following:
+
+```
+Definition new_stack : val := λ: "_", ref NONEV.
+Definition push : val :=
+  rec: "push" "s" "v" :=
+    let: "tail" := ! "s" in
+    let: "new" := SOME ("v", "tail") in
+    if: CAS "s" "tail" "new" then #() else "push" "s" "v".
+Definition pop : val :=
+  rec: "pop" "s" :=
+    match: !"s" with
+      NONE => NONEV
+    | SOME "pair" =>
+      if: CAS "s" (SOME "pair") (Snd "pair")
+      then SOME (Fst "pair")
+      else "pop" "s"
+    end.
+```
+
+but this is not allowed due to the restricted semantics of compare-and-set: the HeapLang semantics allow calling compare-and-set on a value of type `UnboxedOption<Ref<...>>`, but *not* on a value of type `UnboxedOption<Pair<...>>` or `Pair<...>`.
+
+We do believe that adding extra indirections in the memory layout, and corresponding allocations/dereferences in the implementation (adding noise to already-tricky code), is a "flaw" of the HeapLang implementations of these structures. It makes them (less efficient and) more distant from the textbook implementation. See for example the textbook Java implementation on Wikipedia ( https://en.wikipedia.org/wiki/Treiber_stack ):
+
+```java
+public E pop() {
+    Node<E> oldHead;
+    Node<E> newHead;
+
+    do {
+        oldHead = top.get();
+        if (oldHead == null)
+            return null;
+        newHead = oldHead.next;
+    } while (!top.compareAndSet(oldHead, newHead));
+
+    return oldHead.item;
+}
+```
+
+The check `oldHead == null` corresponds to the match on `!s`, but `oldHead` is directly a (boxed) pair, with no need for an extra dereference `!l` to get the pair.
+
+(Implementations of the Treiber stack in C/C++ are obscured along an orthogonal dimension, as they typically implement manual pointer versioning to avoid the ABA problem -- which is typically not an issue in GC-ed languages such as OCaml and Java. This makes comparing to C/C++ code harder, but it does not change the amount of pointer indirection in the structure.)
 
 > - Line 1031: "proposed the additional of", should say "addition"
 > 
@@ -225,6 +300,9 @@ Osiris and Zoo can be described as having evolved in two separate and complement
 - Zoo has been designed from the start for pragmatic verification of advanced concurrent data-structures; this informed the choice of feature coverage and the semantics design. We succeeded in getting a practical verification framework for this domain, as evidenced by the vast amount of state-of-the-art examples we managed to verify.
 
 - Osiris is designed to poke at the limits of language verification in general (not necessarily in a concurrent setting), and focused on order-of-evaluation issues and effect handlers as an advanced feature. On the other hand, the authors were only able to verify a small amount of relatively simple examples, suggesting that Osiris may not yet be ready for practical verification -- certainly not for our problem domain.
+
+Osiris examples:
+  https://gitlab.inria.fr/fpottier/osiris/-/blob/master/coq-osiris/examples/
 
 > Another relevant recent paper is "Data Race Freedom à la Mode"
 > (POPL'25). How does Zoo compare to this paper? In particular, how does

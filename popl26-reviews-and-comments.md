@@ -82,7 +82,7 @@
 > - Section 4.1 -- I don't think the full chronology of when things were
 >   implemented is really necessary/the best use of space.
 
-Our intent was to suggest, in a fact-based way, that getting features integrated in the upstream OCaml compiler is in fact a significant source of work.
+Our intent was to suggest, in a fact-based way, that getting features integrated in the upstream OCaml compiler is in fact a significant source of work. (This is also a form of impact of our research, and letting our academic colleagues have a bird eye's view of the dynamics involved could be of interest to some.)
 
 > - Lines 600 - Lines 604: I think you should spell out the reason why
 >   Some 0 == Some 0 can return false, for people who do not already
@@ -90,7 +90,9 @@ Our intent was to suggest, in a fact-based way, that getting features integrated
 > 
 > - Lines 618-620 -- but then doesn't the manual's described guarantee
 >   contradict what's going on with the Any example in lines 594-599?
-> 
+
+OCaml implementations that validate the physical equality `Any false == Any 0` also validate the structural equality `Any false = Any 0`: structural equality is defined on untyped representations and can relate values of different types.
+
 > - Fig 4 -- something seems misformatted about these specifications,
 >   are they supposed to be atomic triples? in my PDF viewer they're
 >   just rendered as having horizontal line sseparating the
@@ -103,7 +105,7 @@ Our intent was to suggest, in a fact-based way, that getting features integrated
 >   examples. But you're absolutely right that it's not a good model of
 >   an efficient/idiomatic OCaml implementation.
 
-Note that this is not just a matter of exposing explicitly a pointer indirection that exists in OCaml's data representation of sums/variants. The data representation in the HeapLang implementations we reviewed uses one *extra* pointer indirection for each element compared to a C or C++ (or Java, OCaml) implementation: one has to follow two pointers to go from a node to the value of the next node.
+There are several ways to interpret your remark: "closer to C" could be in terms of programming style, or in term of data layout and in-memory representation. In this paragraph, and we expand a bit on this in the specific case of the Michael-Scott queue below, we emphasize that HeapLang programs have a *different* memory layout / data representation from textbook implementations in C/C++ (or Java, OCaml, etc.), due to the insertion of an *additional* pointer indirection in each node, which is specifically added to work around the restricted semantics of compare-and-swap in HeapLang.
 
 This is non-obvious, but clearly shown in the Figure 2 of the Vindum-Birkdel-2021 paper ( https://www.cs.au.dk/~birke/papers/2021-ms-queue.pdf ), we cite their description of this extra indirection explicitly.
 
@@ -160,7 +162,7 @@ Definition pop : val :=
     end.
 ```
 
-but this is not allowed due to the restricted semantics of compare-and-set: the HeapLang semantics allow calling compare-and-set on a value of type `UnboxedOption<Ref<...>>`, but *not* on a value of type `UnboxedOption<Pair<...>>` or `Pair<...>`.
+This program would be morally correct, and it does correspond to the version that we verify in OCaml, but it is not a valid HeapLang program: the HeapLang semantics allow calling compare-and-set on a value of type `UnboxedOption<Ref<...>>`, but *not* on a value of type `UnboxedOption<Pair<...>>` (or `Pair<...>`).
 
 We do believe that adding extra indirections in the memory layout, and corresponding allocations/dereferences in the implementation (adding noise to already-tricky code), is a "flaw" of the HeapLang implementations of these structures. It makes them (less efficient and) more distant from the textbook implementation. See for example the textbook Java implementation on Wikipedia ( https://en.wikipedia.org/wiki/Treiber_stack ):
 
@@ -331,15 +333,15 @@ reach outside the OCaml community:
   immutable blocks without an identity.)
 
 - We did not have the space to detail the verification arguments of
-  the data-structure we verified, but we do consider their complete
+  the data-structures we verified, but we do consider their complete
   verification (and in particular the invariants that we established)
-  to be contributions of this work (and they are of course included in
-  the mechanized code attached to the paper). We believe that people
+  to be contributions of this work, and they are of course included in
+  the mechanized code attached to the paper. We believe that people
   working on the verification of concurrent data structures in other
-  languages than OCaml could benefit from studying our proof arguments
-  and reusing our invariants and specifications -- just like we
-  studied the existing Iris verifications of similar structures,
-  typically in HeapLang.
+  languages or other verification frameworks could benefit from
+  studying our proof arguments and, if they also use Iris, reusing our
+  invariants and specifications -- just like we studied the existing
+  Iris verifications of similar structures, typically in HeapLang.
 
 > Emblematic of this problem is Section 4.1.1: This section give
 > a history of various proposal for atomic fields with a full
@@ -376,8 +378,14 @@ explicitly in section 3.5.)
 (We wonder if you were asking about interactions between physical
 equality and OCaml's memory model. To our knowledge there are
 essentially no interactions, as only mutable locations (atomic or
-non-atomic) have memory-model subtleties, and the difficulties we
-found were centered on immutable constructors.)
+non-atomic) cause memory-model subtleties, and the difficulties we
+found were centered on immutable constructors.
+
+Structural equality does read sub-values under mutable locations, but
+our program-logic require require either that immutable values are
+being compared or that the caller uniquely owns their mutable parts,
+so program that we can verify should not exhibit data races during
+structural equality checking.)
 
 > Also the description of the verified concurrent algorithms suffers
 > from this problem: The text describes what the authors did at the
@@ -386,7 +394,7 @@ found were centered on immutable constructors.)
 > interesting, but is only mention in passing. Similar for the
 > destabilization in Section 10.3.
 
-We tried to summarize the salient points for domain experts, which are
+We tried to summarize the salient points for domain experts, who are
 welcome to look at the mechanized proofs for all the details. This
 being said, we would be happy to receive recommendations from
 reviewers on which technical points to expose more directly in the
@@ -400,10 +408,20 @@ cover just one for example in deeper levels of details.
 > ZooLang compares to OCaml. What features of OCaml does ZooLang support
 > and which not?
 
-We did try to exhaustively cover all support Zoo features in Section
-2.2, with a full grammar in Section 2. As we mentioned in the
-conclusion (lines 1220-1221), we believe that the most pressing
-features to add for our problem domain would be:
+We did try to exhaustively cover all supported Zoo features in Section
+2.2, with a full grammar in Section 2. We support functions, including
+recursive and mutually-recursive functions, integers (with arithmetic
+and comparison operators), booleans (with if-then-else), for loops,
+algebraic datatypes (variant/sums type, including constant and n-ary
+constructors; and records, including mutable and atomic fields; and
+records "inlined" within a variant constructor) but only shallow
+pattern matching, and convenience syntax for references and lists. We
+notably do not support the OCaml module system, but our translation
+tool uses a mangling scheme for flat module hierarchies that appears
+to suffice for now.
+
+As we mentioned in the conclusion (lines 1220-1221), we believe that
+the most pressing features to add for our problem domain would be:
 
 - the OCaml memory model,
 
@@ -427,13 +445,37 @@ Osiris and Zoo can be described as having evolved in two separate and complement
 Osiris examples:
   https://gitlab.inria.fr/fpottier/osiris/-/blob/master/coq-osiris/examples/
 
+For a concrete example of the difference in philosophy, the Osiris
+designers ensured that they cover all possible evaluation orders for
+OCaml, and in fact went above and beyond by supporting (sequential)
+interleavings of argument evaluations, which is not allowed by the
+informal OCaml specification. This is impressive, but it also makes
+everyday proofs about n-ary functions more difficult. In contrast Zoo
+makes the pragmatic choice of assuming a right-to-left evaluation
+order for function arguments, which coincides with the choice of
+existing OCaml compilers (ocamlc, ocamlopt, js_of_ocaml) and
+simplifies verification. This means that the verified programs could
+break under different OCaml implementations, but (1) so would various
+OCaml programs in the wild, so new implementations tend to align with
+this historical choice whenever possible, and (2) our aim is to verify
+a finite amount of expert-level concurrent libraries that form basic
+blocks of the ecosystem, and in our experience those programs do not
+play games like passing two observably-effectful argument expressions
+in a function call.
+
+We did study our semantics tradeoffs carefully and made some 'perfectionist' rather than 'pragmatist' choices for language features that are essential to our problem domain, in particular atomic record fields and physical equality -- revealing potential issues in existing programs. Osiris is designed to be perfectionist for all aspects of the language it covers so it evolves at a slower pace; even with our personal involvement, it could probably not be equipped with concurrency-support features in a reasonable timeline for our verification work.
+
+This does not mean of course that we cannot benefit from Osiris' study of OCaml semantics, and Osiris from ours. We believe that Osiris will be able to reuse many aspects our specification work when it adds support for physical equality. And in the future if Osiris gets within reaching distance of concurrent program verification, and economy of academic ressources suggests that merging the two efforts is the best route going forward, we could probably port our developments to this rule-them-all Iris language -- we have the experience of porting some of our developments from HeapLang to Zoo.
+
+The same of course applies to HeapLang: we would be happy to contribute features back to HeapLang, and as a first step we would be delighted to contribute support for arbitrary sums/variants constructors instead of just `inL, inR` or `(tag, value)` encodings. Supporting constant and n-ary constructors would be nice, but the most impactful change would be the first step of supporting an arbitrary number of constructors with arbitrary names. We already started conversations in this direction, but modifying a widely-used (relatively speaking) verification language, whose maintainers already have a full plate of topics to work on, happens slowly and carefully.
+
 > How does ZooLang handle exceptions and algebraic effects?
 
 It does not. None of the data-structure we considered uses algebraic effects. (They are used in user-facing concurrency abstractions, such as `domainslib`.) We did encounter algorithms that raise exceptions (for example in our a-posteriori formalization of the Dynarray implementation; Dynarray raises in some failure scenarios that can only happen due to data races), and Zoo currently translates those failures into divergence, which is (not quite satisfying) but relatively standard Iris practice -- HeapLang does not have exceptions either.
 
 > How does the physical equality of ZooLang compare to Osiris?
 
-TODO
+TODO (note: we mention lack of support for physical equality in Osiris above, to reformulate if this changed)
 
 > Another relevant recent paper is "Data Race Freedom à la Mode"
 > (POPL'25). How does Zoo compare to this paper? In particular, how does
@@ -477,10 +519,10 @@ More technical explanations are indeed desirable
 process to ask the main author and maintainer of an ambitious
 concurrent OCaml library which parts they believe would benefit most
 from a formalization effort, and focus on those parts first. The fact
-that authors of key multicore OCaml libraries were able to have their
-intuitions about concurrent subtleties and correctness in their own
-code, within a reasonable time frame, is also a secondary benefit of
-our effort.
+that authors of key multicore OCaml libraries were able to get
+rigorous feedback on their intuitions about concurrent subtleties and
+correctness in their own code, within a reasonable time frame, is also
+a secondary benefit of our effort.
 
 > Did the authors try to upstream the generative attribute and if so,
 > which feedback did they receive?
@@ -496,15 +538,16 @@ Rocq values.
 
 In `Lemma structeq_spec_abstract`, the use of `val_physeq` is
 unnecessarily confusing, and we should rephrase it. The idea is that
-on immutable values (that are hereditarily formed of
+on deeply-immutable values (that are hereditarily formed of
 immutable constructors), the guarantees we get from observing
 structural or physical equality are exactly the same. `val_physeq`
 states that the two values must have the same constructors and
 immediate values at arbitrary depth (otherwise they would be
-physically different), and `val_physneq` more conservatively states
-that if the two values are immediate, then they must be distinct, and
-if they are mutable or immutable-but-generative constructors they must
-have a different identity.
+physically and structurally different), and `val_physneq` more
+conservatively states that if the two values are immediate, then they
+must be distinct, and if they are (mutable or)
+immutable-but-generative constructors they must have a different
+identity.
 
 > The citation style of listing all authors is very verbose. I would
 > recommend to use the standard citation style.
@@ -592,9 +635,9 @@ have a different identity.
 > OCaml, rather than trying to build on the Osiris work that you cite,
 > by adding support to concurrency there?
 
-One aspect to keep in mind is that the present submission represents several years of work. To understand this design choice, one cannot compare Zoo to the current state of Osiris as presented at ICFP'25, but rather one should think of the state in which Osiris was a couple years ago.
+One aspect to keep in mind is that the present submission represents several years of work. To understand this design choice, one cannot compare Zoo to the current state of Osiris as will presented in a few weeks at ICFP'25, but rather one should think of the state in which Osiris was a couple years ago.
 
-TODO say more.
+(see our answer to Reviewer B for a more detailed technical and project-focus comparison with Osiris.)
 
 > Doesn't the restriction to a SC memory model undermine the validity of
 > the verification of the data-structures from Saturn, Eio, Picos you

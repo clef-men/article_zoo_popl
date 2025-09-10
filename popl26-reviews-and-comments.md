@@ -205,9 +205,42 @@ The check `oldHead == null` corresponds to the match on `!s`, but `oldHead` is d
 > 1. Can you say anything about whether your [@generative] directive
 >    might be possibly merged, as your other proposed changes were? Or
 >    are there drawbacks/design considerations that prevent that?
-> 
-> 
-> 
+
+We have not started this discussion yet. `[@generative]` is a much
+simpler change to implement than (say) atomic record fields, it
+suffices to ask the compiler to pretend that the fields of the
+constructor are mutable instead of immutable. So we hope that it could
+be easier to gather consensus, and feel optimistic that it could be
+received positively by compiler maintainers.
+
+Our main non-upstreamed change currently is the support for atomic
+arrays. It builds on top of the now-merged machinery for atomic record
+fields, so it is less invasive than atomic fields were. But it will
+require more review work and discussion than generative constructors:
+
+- Example of non-scientific questions that will take some time to be
+  discussed are: should this be an Atomic.Array submodule, or maybe an
+  Array.Atomic submodule, or a first-level Atomic_Array module?
+  Should the new module export many helpful functions as the main
+  Array module does, or just the bare primitives necessary to
+  manipulate arrays in user code?
+
+- On the more technical side, our patch introduces a new compiler
+  primitive for array bound checking separately of array access (to be
+  able to reuse it for atomic-array accesses; the OCaml backend uses
+  a specific code-generation strategy to reduce code size for array
+  bound accesses, and we would want to benefit from it as well), and
+  we could expect some discussion with backend experts on the
+  right/better way to do this.
+  
+- Some functions of the (non-atomic) Array module are implemented in
+  C for efficiency reasons (`Array.blit`, `Array.sub`), reviewers
+  could consider asking for the same effort on atomic arrays. On the
+  other hand, it is unclear that these functions should be provided in
+  the first place, as they would not operate atomically on their
+  atomic array arguments.
+
+
 > Review #427B
 > ===========================================================================
 > 
@@ -240,7 +273,11 @@ The check `oldHead == null` corresponds to the match on `!s`, but `oldHead` is d
 > Weaknesses:
 > - Written at a high level without technical detail
 > - Only sequential consistency
+
 > - Many references to private communication
+
+Most of this work happened in public, but we had to hide the references to specific issues/PRs from the present submission as they would rather directly contradict the POPL instructions to carefully preserve anonymity. For example, we followed the standard *public* RFC process to discuss the design of Atomic record fields, and our local non-anonymous version of our paper of course links to our RFC and the following discussion, but providing this link to POPL reviewers would immediately de-anonymize some of the authors.
+
 > - No evaluation of the semantics and discussion of the fragment
 > 
 > Main Comments:
@@ -267,33 +304,119 @@ The check `oldHead == null` corresponds to the match on `!s`, but `oldHead` is d
 > expect reading what the authors did, but also to understand how the
 > authors achieved their results, and what the insights are that are
 > generally useful, even for people not directly working with OCaml.
-> 
+
+One point to note in our defense is that the present submission is
+accompanied by an extensive Rocq development, which (we made available
+on submission on) intend to remain permanently linked to the paper,
+covering both the Zoo formalization and the various verified
+data-structures whose verification is claimed as a contribution. Any
+additional technical detail that would unfortunately be missing from
+the paper can be recovered (with some effort) from this mechanized
+development, which we believe follows reasonable standards of
+readability and maintenability.
+
+This being said, we did try to emphasize some valuable lessons that
+reach outside the OCaml community:
+
+- In section 3 we list salient language features that we encountered
+  in concurrent OCaml code in practice, or in their verification, and
+  in particular the centrality of physical equality. We would expect
+  this to be relevant to people interested in verifying lock-free
+  concurrent code in other functional languages such as Lisp/Scheme,
+  Haskell, Scala, etc.
+
+- The question of how to formalize physical equality similarly applies
+  to all languages that offer composite/structured data structures
+  with a mix of mutable and immutable constructors. (More precisely,
+  immutable blocks without an identity.)
+
+- We did not have the space to detail the verification arguments of
+  the data-structure we verified, but we do consider their complete
+  verification (and in particular the invariants that we established)
+  to be contributions of this work (and they are of course included in
+  the mechanized code attached to the paper). We believe that people
+  working on the verification of concurrent data structures in other
+  languages than OCaml could benefit from studying our proof arguments
+  and reusing our invariants and specifications -- just like we
+  studied the existing Iris verifications of similar structures,
+  typically in HeapLang.
+
 > Emblematic of this problem is Section 4.1.1: This section give
 > a history of various proposal for atomic fields with a full
 > implementation timeline. However, at the end of the section it is
 > unclear what the final implemented version actually is and what its
-> formal semantics are.  Similarly, the problem of physical equality is
+> formal semantics are. Similarly, the problem of physical equality is
 > described well with many examples, but in a POPL paper I would expect
 > a formal definition of physical equality, not just an informal
-> description. Also I would like to see how the proposal interacts with
+> description.
+
+The section on physical equality was the hardest to write in the
+paper. The difficulties around physical equality are subtle and easy
+to misunderstand (we first had several experiences of failing to
+explain them to domain experts), so they require ample informal
+explanations.
+
+We do include a precise definition (in English prose) of physical
+equality on lines 765-777.
+
+We would be happy to try to expand this section with a more formal
+presentation of physical equality as done in our Rocq development, but
+we must decide which part of the paper to remove
+accordingly. (Any advice/preference on that end is welcome.)
+
+> Also I would like to see how the proposal interacts with
 > OCaml's weak memory model. Otherwise, it is impossible to understand
-> what the authors concretely propose.  Also the description of the
-> verified concurrent algorithms suffers from this problem: The text
-> describes what the authors did at the high level, but does not provide
-> technical detail on the novel insights. For example, the xchain
-> assertion on l. 978 could be interesting, but is only mention in
-> passing. Similar for the destabilization in Section 10.3.
-> 
+> what the authors concretely propose.
+
+Our semantics for Zoo currently assume sequential consistency (as does
+HeapLang and most other usable-in-practice Iris languages), so this
+aspect of OCaml is not currently modeled in our work. (We mention this
+explicitly in section 3.5.)
+
+(We wonder if you were asking about interactions between physical
+equality and OCaml's memory model. To our knowledge there are
+essentially no interactions, as only mutable locations (atomic or
+non-atomic) have memory-model subtleties, and the difficulties we
+found were centered on immutable constructors.)
+
+> Also the description of the verified concurrent algorithms suffers
+> from this problem: The text describes what the authors did at the
+> high level, but does not provide technical detail on the novel
+> insights. For example, the xchain assertion on l. 978 could be
+> interesting, but is only mention in passing. Similar for the
+> destabilization in Section 10.3.
+
+We tried to summarize the salient points for domain experts, which are
+welcome to look at the mechanized proofs for all the details. This
+being said, we would be happy to receive recommendations from
+reviewers on which technical points to expose more directly in the
+article, and what part of the content should be removed to allow
+this. Clearly it is impossible to hope to provide proof insights
+and/or key invariants for all the structures we verified, but we could
+cover just one for example in deeper levels of details.
+
 > The authors develop ZooLang as a formalization of OCaml with
 > a frontend for translating OCaml programs, but they do not discuss how
 > ZooLang compares to OCaml. What features of OCaml does ZooLang support
 > and which not?
+
+We did try to exhaustively cover all support Zoo features in Section
+2.2, with a full grammar in Section 2. As we mentioned in the
+conclusion (lines 1220-1221), we believe that the most pressing
+features to add for our problem domain would be:
+
+- the OCaml memory model,
+
+- exceptions (which are routinely used to signal failure), and
+
+- effect handlers (which are typically not used to implement
+  concurrent data structures, but are used in implementations of
+  concurrent schedulers which we may want to verify).
+
 > The authors claim that the HeapLang is the closest language to OCaml
 > in the Iris ecosystem, but arguably state of the art of modeling OCaml
 > is Osiris. I would like to see a more throughout comparison with
 > Osiris.
-> How does ZooLang handle exceptions and algebraic effects?
-> How does the physical equality of ZooLang compare to Osiris?
 
 Osiris and Zoo can be described as having evolved in two separate and complementary directions:
 
@@ -304,23 +427,85 @@ Osiris and Zoo can be described as having evolved in two separate and complement
 Osiris examples:
   https://gitlab.inria.fr/fpottier/osiris/-/blob/master/coq-osiris/examples/
 
+> How does ZooLang handle exceptions and algebraic effects?
+
+It does not. None of the data-structure we considered uses algebraic effects. (They are used in user-facing concurrency abstractions, such as `domainslib`.) We did encounter algorithms that raise exceptions (for example in our a-posteriori formalization of the Dynarray implementation; Dynarray raises in some failure scenarios that can only happen due to data races), and Zoo currently translates those failures into divergence, which is (not quite satisfying) but relatively standard Iris practice -- HeapLang does not have exceptions either.
+
+> How does the physical equality of ZooLang compare to Osiris?
+
+TODO
+
 > Another relevant recent paper is "Data Race Freedom à la Mode"
 > (POPL'25). How does Zoo compare to this paper? In particular, how does
 > ZooLang compare to the language from this paper?
-> 
+
+The language in that work is mostly an extension of HeapLang with
+features (modalities and local regions) that are entirely orthogonal
+to our work. It does not offer better support than HeapLang for the
+features that we found essential theory (physical equality) or in
+practice (non-encoded variant types, mutual recursion, atomic
+operations on record fields rather than just references, etc.).
+
+Note: the formalization of OCaml in that work assumes
+a sequentially-consistent memory model, just like we do, providing
+some support for the idea that it is reasonable to present scientific
+contributions that are focused on concurrent OCaml programs without
+quite going the full length of also handling weak memory
+models. (This is of course not specific to this work and ours, the
+vast majority of previous work on verification of concurrent data
+structures in Iris have also been made under SC assumptions.) Most of
+that work focuses on data-race-free programs, where the distinction
+does not matter, but the key 'capsule' primitive API is implemented in
+a less well-behaved language fragment, justified by semantic types in
+a sequentially-consistent semantics. In particular, understanding
+synchronization guarantees for capsules in a weak memory model would be
+highly non-trivial, and was left as future work.
+
 > Throughout the paper, the authors extensively refer to private
 > discussions. It would be good to substantiate these claims with
-> citations, e.g., to the relevant github issues, where possible.  Also
-> I would like to see less appeals to authority (e.g. on line 902 to the
-> recommendations of Thomas Leonard), but instead technical explanations
-> why these case studies are interesting to verify.
-> 
+> citations, e.g., to the relevant github issues, where possible.
+
+As mentioned earlier, links to relevant github issues/PRs/RFCs are
+available in our non-anonymous version of this paper.
+
+> Also I would like to see less appeals to authority (e.g. on line 902
+> to the recommendations of Thomas Leonard), but instead technical
+> explanations why these case studies are interesting to verify.
+
+More technical explanations are indeed desirable
+(within space constraints). We do think that it is a reasonable
+process to ask the main author and maintainer of an ambitious
+concurrent OCaml library which parts they believe would benefit most
+from a formalization effort, and focus on those parts first. The fact
+that authors of key multicore OCaml libraries were able to have their
+intuitions about concurrent subtleties and correctness in their own
+code, within a reasonable time frame, is also a secondary benefit of
+our effort.
+
 > Did the authors try to upstream the generative attribute and if so,
 > which feedback did they receive?
 > 
 > In Section 6, why does structural equality just imply physical
 > equality and not Rocq-level equality?
-> 
+
+Structural equality cannot in general imply Rocq-level equality, for
+similar reasons to physical equality. For example, `Any false` and
+`Any 0` may be both physically equal and structurally equal (in some
+versions of the OCaml compiler), but they are represented by distinct
+Rocq values.
+
+In `Lemma structeq_spec_abstract`, the use of `val_physeq` is
+unnecessarily confusing, and we should rephrase it. The idea is that
+on immutable values (that are hereditarily formed of
+immutable constructors), the guarantees we get from observing
+structural or physical equality are exactly the same. `val_physeq`
+states that the two values must have the same constructors and
+immediate values at arbitrary depth (otherwise they would be
+physically different), and `val_physneq` more conservatively states
+that if the two values are immediate, then they must be distinct, and
+if they are mutable or immutable-but-generative constructors they must
+have a different identity.
+
 > The citation style of listing all authors is very verbose. I would
 > recommend to use the standard citation style.
 > 
@@ -357,9 +542,9 @@ Osiris examples:
 > 
 > How does Zoo compare to "Data Race Freedom à la Mode" (POPL'25)? In
 > particular, how does ZooLang compare to the language from this paper?
-> 
-> 
-> 
+
+(all these questions have been discussed above.)
+
 > Review #427C
 > ===========================================================================
 > 
@@ -407,18 +592,35 @@ Osiris examples:
 > OCaml, rather than trying to build on the Osiris work that you cite,
 > by adding support to concurrency there?
 
-One aspect to keep in mind is that the present submission represents several years of work. To understand this design choice, one cannot compare Zoo to the current state of Osiris as presented at ICFP'25, but rather to the state in which Osiris was a couple years ago.
+One aspect to keep in mind is that the present submission represents several years of work. To understand this design choice, one cannot compare Zoo to the current state of Osiris as presented at ICFP'25, but rather one should think of the state in which Osiris was a couple years ago.
 
 TODO say more.
 
 > Doesn't the restriction to a SC memory model undermine the validity of
 > the verification of the data-structures from Saturn, Eio, Picos you
 > present in Section 10?
-> 
+
+Yes, it does, as we discuss in Section 3.5 (lines 373-385). In
+particular we wrote:
+
+> Other algorithms do contain data races, and our formal correctness
+> result must be taken with the caveat that it does not describe all
+> observable behaviors in the actual OCaml program.
+
+To our defense, the majority of published or in-progress work on verification of concurrent programs (including in OCaml) makes similar sequential-consistency assumptions.
+
+Note that the recommended style for concurrent OCaml programs is to only use non-atomic locations for well-synchronized accesses (when we have unique ownership), and use the `Atomic` module (and now our atomic record fields) for all potentially-racy concurrent accesses. (This is encouraged in particular by the ThreadSanitizer (TSan) instrumentation for OCaml, which currently warns on all non-atomic races, with no way to disable them for races that are believed to be benign.)
+Given that `Atomic` enforces a sequentially-consistent semantics, it may seem reasonable to assume that programs that respect this discipline only exhibit SC behaviors. Unfortunately the specialized libraries that we looked at, written by domain experts, do live dangerously and creatively combine atomic accesses with non-atomic accesses on different locations, making low-level assumptions about the semantics of memory fences generated by the compiler. This aspect of their work would certainly also benefit from a formalization effort.
+
+(We also believe that it would be cleaner to add a notion of relaxed memory accesses to the OCaml memory model, rather than (ab)use non-atomic locations for benign races, if only to silence the TSan instrumentation. It is however non-trivial to extend the OCaml memory model with relaxed reads, and some of the OCaml maintainers are firmly opposed to making the memory model more complex.)
+
+
 > ---
 > 
 > L702:  shouldn't the "close ()" instead be "Unix.close fd" ?
-> 
+
+Indeed, this is a typo/confusion we introduced at the last minute, while editing the code to save some vertical space...
+
 > **Editorial Comments**
 > 
 > L383:  verfication

@@ -82,7 +82,7 @@
 > - Section 4.1 -- I don't think the full chronology of when things were
 >   implemented is really necessary/the best use of space.
 
-Our intent was to suggest, in a fact-based way, that getting features integrated in the upstream OCaml compiler is in fact a significant source of work. (This is also a form of impact of our research, and letting our academic colleagues have a bird eye's view of the dynamics involved could be of interest to some.)
+Our intent was to suggest, in a fact-based way, that getting features integrated in the upstream OCaml compiler is in fact a significant source of work. (This is also a form of impact of our research, and show to our academic colleagues a bird's eye view of the dynamics involved could be of interest to some.)
 
 > - Lines 600 - Lines 604: I think you should spell out the reason why
 >   Some 0 == Some 0 can return false, for people who do not already
@@ -91,7 +91,7 @@ Our intent was to suggest, in a fact-based way, that getting features integrated
 > - Lines 618-620 -- but then doesn't the manual's described guarantee
 >   contradict what's going on with the Any example in lines 594-599?
 
-OCaml implementations that validate the physical equality `Any false == Any 0` also validate the structural equality `Any false = Any 0`: structural equality is defined on untyped representations and can relate values of different types.
+OCaml implementations that validate the physical equality `Any false == Any 0` also validate the structural equality `Any false = Any 0`: structural equality in OCaml is implemented on untyped representations, and can relate values of different types.
 
 > - Fig 4 -- something seems misformatted about these specifications,
 >   are they supposed to be atomic triples? in my PDF viewer they're
@@ -138,7 +138,7 @@ a (boxed) pair so a third dereference is implicit in `Fst "pair"` to
 get the first element of the list. (The Some constructor around `l`
 does not introduce a pointer indirection, as Heaplang assumes an
 optimized tagged encoding for disjoint sums constructor with
-a location payload; see
+a location payload.) See
 https://gitlab.mpi-sws.org/iris/iris/-/blob/c5014d246b2cc5d1bf79d3ba362501dd7b447f74/iris_heap_lang/lang.v#L148
 for a documentation of the assumed HeapLang value representation.)
 
@@ -162,9 +162,9 @@ Definition pop : val :=
     end.
 ```
 
-This program would be morally correct, and it does correspond to the version that we verify in OCaml, but it is not a valid HeapLang program: the HeapLang semantics allow calling compare-and-set on a value of type `UnboxedOption<Ref<...>>`, but *not* on a value of type `UnboxedOption<Pair<...>>` (or `Pair<...>`).
+This program is morally correct, and it does correspond to the version that we verify in OCaml. But it is not a valid HeapLang program: the HeapLang semantics allow calling compare-and-set on a value of type `UnboxedOption<Ref<...>>`, but *not* on a value of type `UnboxedOption<Pair<...>>` (or `Pair<...>` for that matter).
 
-We do believe that adding extra indirections in the memory layout, and corresponding allocations/dereferences in the implementation (adding noise to already-tricky code), is a "flaw" of the HeapLang implementations of these structures. It makes them (less efficient and) more distant from the textbook implementation. See for example the textbook Java implementation on Wikipedia ( https://en.wikipedia.org/wiki/Treiber_stack ):
+We do believe that adding extra indirections in the memory layout, and corresponding allocations/dereferences in the implementation (adding noise to already-tricky code), is a "flaw" of the HeapLang implementations and verifications of these structures. The change is relatively systematic, but also invasive. It makes them (less efficient and) more distant from the textbook implementation. See for example the textbook Java implementation on Wikipedia ( https://en.wikipedia.org/wiki/Treiber_stack ):
 
 ```java
 public E pop() {
@@ -449,30 +449,13 @@ Osiris and Zoo can be described as having evolved in two separate and complement
 
 - Zoo has been designed from the start for pragmatic verification of advanced concurrent data-structures; this informed the choice of feature coverage and the semantics design. We succeeded in getting a practical verification framework for this domain, as evidenced by the vast amount of state-of-the-art examples we managed to verify.
 
-- Osiris is designed to poke at the limits of language verification in general (not necessarily in a concurrent setting), and focused on order-of-evaluation issues and effect handlers as an advanced feature. On the other hand, the authors were only able to verify a small amount of relatively simple examples, suggesting that Osiris may not yet be ready for practical verification -- certainly not for our problem domain.
+- Osiris is designed to poke at the limits of language verification in general (not necessarily in a concurrent setting), and focused on order-of-evaluation issues and effect handlers as an advanced feature. On the other hand, the authors verified a relatively small amount of simple examples¹, suggesting that Osiris may not yet be ready for practical verification at scale -- certainly not for our problem domain.
 
-Osiris examples:
-  https://gitlab.inria.fr/fpottier/osiris/-/blob/master/coq-osiris/examples/
+¹ https://gitlab.inria.fr/fpottier/osiris/-/blob/master/coq-osiris/examples/
 
-For a concrete example of the difference in philosophy, the Osiris
-designers ensured that they cover all possible evaluation orders for
-OCaml, and in fact went above and beyond by supporting (sequential)
-interleavings of argument evaluations, which is not allowed by the
-informal OCaml specification. This is impressive, but it also makes
-everyday proofs about n-ary functions more difficult. In contrast Zoo
-makes the pragmatic choice of assuming a right-to-left evaluation
-order for function arguments, which coincides with the choice of
-existing OCaml compilers (ocamlc, ocamlopt, js_of_ocaml) and
-simplifies verification. This means that the verified programs could
-break under different OCaml implementations, but (1) so would various
-OCaml programs in the wild, so new implementations tend to align with
-this historical choice whenever possible, and (2) our aim is to verify
-a finite amount of expert-level concurrent libraries that form basic
-blocks of the ecosystem, and in our experience those programs do not
-play games like passing two observably-effectful argument expressions
-in a function call.
+For a concrete example of the difference in philosophy, the Osiris designers ensured that they cover all possible evaluation orders for OCaml, and in fact went above and beyond by supporting (sequential) interleavings of argument evaluations, which is not allowed by the informal OCaml specification. This is impressive, but it also makes everyday proofs about n-ary functions more difficult. In contrast Zoo makes the pragmatic choice of assuming a right-to-left evaluation order for function arguments, which coincides with the choice of existing OCaml compilers (ocamlc, ocamlopt, js_of_ocaml) and simplifies verification. This means that the verified programs could break under different OCaml implementations, but (1) so would various OCaml programs in the wild, so new implementations tend to align with this historical choice whenever possible, and (2) our aim is to verify a finite amount of expert-level concurrent libraries that form basic blocks of the ecosystem, and in our experience those programs do not play games like passing two observably-effectful argument expressions in a function call.
 
-We did study our semantics tradeoffs carefully and made some 'perfectionist' rather than 'pragmatist' choices for language features that are essential to our problem domain, in particular atomic record fields and physical equality -- revealing potential issues in existing programs. Osiris is designed to be perfectionist for all aspects of the language it covers so it evolves at a slower pace; even with our personal involvement, it could probably not be equipped with concurrency-support features in a reasonable timeline for our verification work.
+We did study our semantics tradeoffs carefully and made some 'perfectionist' rather than 'pragmatist' choices for language features that are essential to our problem domain, in particular atomic record fields and physical equality -- revealing potential issues in existing programs. Osiris is designed to be perfectionist for all aspects of the language it covers so it evolves at a slower pace; even with our personal involvement, it could probably not be equipped with concurrency-support features in a reasonable timeline for our verification work. Finally, there is a risk that the resulting system would be less convenient to use in practice, which could have a substantial impact on the feasability of the verification effort in practice, for these programs that are already close to the limit of the human comfort zone in dealing with complexity. Having a simpler, more specialized system allowed us to cover more ground in term of actual real-world programs, and our scientific contributions come in part from this methodological choice.
 
 This does not mean of course that we cannot benefit from Osiris' study of OCaml semantics, and Osiris from ours. We believe that Osiris will be able to reuse many aspects our specification work when it adds support for physical equality. And in the future if Osiris gets within reaching distance of concurrent program verification, and economy of academic ressources suggests that merging the two efforts is the best route going forward, we could probably port our developments to this rule-them-all Iris language -- we have the experience of porting some of our developments from HeapLang to Zoo.
 
@@ -503,14 +486,15 @@ some support for the idea that it is reasonable to present scientific
 contributions that are focused on concurrent OCaml programs without
 quite going the full length of also handling weak memory
 models. (This is of course not specific to this work and ours, the
-vast majority of previous work on verification of concurrent data
+majority of previous work on verification of concurrent data
 structures in Iris have also been made under SC assumptions.) Most of
 that work focuses on data-race-free programs, where the distinction
 does not matter, but the key 'capsule' primitive API is implemented in
 a less well-behaved language fragment, justified by semantic types in
-a sequentially-consistent semantics. In particular, understanding
-synchronization guarantees for capsules in a weak memory model would be
-highly non-trivial, and was left as future work.
+a sequentially-consistent semantics. In particular, our first
+impression is that understanding synchronization guarantees for
+capsules in a weak memory model would be highly non-trivial, and was
+left as future work.
 
 > Throughout the paper, the authors extensively refer to private
 > discussions. It would be good to substantiate these claims with

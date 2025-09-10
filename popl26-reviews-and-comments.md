@@ -278,7 +278,7 @@ require more review work and discussion than generative constructors:
 
 > - Many references to private communication
 
-Most of this work happened in public, but we had to hide the references to specific issues/PRs from the present submission as they would rather directly contradict the POPL instructions to carefully preserve anonymity. For example, we followed the standard *public* RFC process to discuss the design of Atomic record fields, and our local non-anonymous version of our paper of course links to our RFC and the following discussion, but providing this link to POPL reviewers would immediately de-anonymize some of the authors.
+Most of this work happened in public, but we had to hide the references to specific issues/PRs from the present submission as they would rather directly contradict the POPL instructions to carefully preserve anonymity. For example, we followed the standard *public* RFC process to discuss the design of Atomic record fields, and our local non-anonymous version of our paper of course links to our RFC and the following discussion, but providing this link to POPL reviewers would immediately de-anonymize some of the authors. We would of course link to those public discussions in a non-anonymous version of our work.
 
 > - No evaluation of the semantics and discussion of the fragment
 > 
@@ -342,6 +342,14 @@ reach outside the OCaml community:
   studying our proof arguments and, if they also use Iris, reusing our
   invariants and specifications -- just like we studied the existing
   Iris verifications of similar structures, typically in HeapLang.
+  
+  We could plausibly extend our paper with de-Rocqified, in-greek
+  descriptions of significant predicates and invariants, with
+  a high-level commentary, in a supplementary appendix. But we do not
+  know whether POPL editors would allow including appendices along
+  with the paper. (The only related information we got so far is that
+  any extra space would require transferring $200 from our research
+  institutions to the ACM.)
 
 > Emblematic of this problem is Section 4.1.1: This section give
 > a history of various proposal for atomic fields with a full
@@ -421,15 +429,16 @@ tool uses a mangling scheme for flat module hierarchies that appears
 to suffice for now.
 
 As we mentioned in the conclusion (lines 1220-1221), we believe that
-the most pressing features to add for our problem domain would be:
+the most impactful features to add for our problem domain would be:
 
-- the OCaml memory model,
+- the OCaml weak memory model,
 
 - exceptions (which are routinely used to signal failure), and
 
-- effect handlers (which are typically not used to implement
-  concurrent data structures, but are used in implementations of
-  concurrent schedulers which we may want to verify).
+- effect handlers with one-shot continuations (which are typically not
+  used to implement concurrent data structures, but are used in
+  implementations of concurrent schedulers which we may want
+  to verify)
 
 > The authors claim that the HeapLang is the closest language to OCaml
 > in the Iris ecosystem, but arguably state of the art of modeling OCaml

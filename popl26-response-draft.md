@@ -273,7 +273,9 @@ references and continuations. There is no physical-equality between
 pure constructors (or records (Osiris only support immutable records),
 integers, strings, arrays, etc.):
 
-https://gitlab.inria.fr/fpottier/osiris/-/blob/89cf70870fa52b92d61e828bdfd0831dafa04ae9/coq-osiris/theories/semantics/eval.v#L586
+References:
+- physical equality: https://gitlab.inria.fr/fpottier/osiris/-/blob/89cf70870fa52b92d61e828bdfd0831dafa04ae9/coq-osiris/theories/semantics/eval.v#L586
+- value representation: https://gitlab.inria.fr/fpottier/osiris/-/blob/89cf70870fa52b92d61e828bdfd0831dafa04ae9/coq-osiris/theories/lang/syntax.v#L372
 
 
 > Also I would like to see less appeals to authority (e.g. on line 902

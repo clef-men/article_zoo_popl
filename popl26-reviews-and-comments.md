@@ -68,12 +68,40 @@
 >   described, but I still didn't understand what solution you
 >   selected. Perhaps you can describe the reduction rules?
 
-It is hard to explain... Suppose you have `let rec f = ... and
-g = ... in ...`. When we want to unfold the definition of `f` during
-derication, we expand the body of `f` which contains (in the
-translated program) string variables `"f"` and `"g"`.
+This is a trick of proof engineering: technical and also a bit hard to
+explain... Suppose you have `let rec f = ... and g = ... in ...`. When
+we want to unfold the definition of `f` during reduction, we expand
+the body of `f` which contains (in the translated program) string
+variables `"f"` and `"g"`. At this point we do not want to substitute
+`"f"` and `"g"` with their definition, as this blows up in size, nor
+with `proj fg 0` and `proj fg 1` where `fg` would be the Coq
+identifier of the recursive group (and `proj` an operation that
+selects one of the recursive definitions), as this is less readable.
 
-TODO
+So we use the following machinery:
+
+1. we define the whole recursive group, here `fg`,
+  (each definition comes with its name as a string, and refers to
+   its own name recursively or other mutual names as strings)
+2. we define convenient aliases `f` and `g` as these projections
+  `proj fg 0` and `proj fg 1`; these are the names that user see
+
+At this point the expansion machinery could not guess that during unfolding `"f"` should be translated into `f`, as `proj fg 0` does not carry the Coq values `f` and `g` (it would require a cyclic value), so there is a third step:
+
+3. We use the typeclass machinery to declare a-posteriori and globally
+   that `f` is our preferred abbreviation for the first projection of
+   `fg`, and `g` for the second abbreviation of `fg`. Zoo defines
+   typeclasses `AsValRecs` and `AsValRecs'`, and we register one
+   instance per recursive function in the group, with information on
+   its position within the group, the group iself, and the list of all
+   "preferred abbreviations" registered for this group.
+
+4. Our reduction function on embedded Zoo program will query the
+   typeclass database when reducing calls to `f` or `g`: their code is
+   substituted, and the embedded references to `"f"` and `"g"` in the
+   code are replaced by direct references to the preferred
+   abbreviations `f` and `g`, as found in the typeclass instance
+   metadata.
 
 > - Section 3.3 -- I get why SC makes it sound to translate
 >   Atomic.get/Atomic.set to just loads/stores, but what I am confused

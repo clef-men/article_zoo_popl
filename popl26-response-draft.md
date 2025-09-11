@@ -66,6 +66,32 @@ Note: DRFCaml also seems to assume a sequentially-consistent (SC) memory model, 
 
 ### Review A
 
+> - Section 3.2 -- after reading this, I understand the problem being
+>   described, but I still didn't understand what solution you
+>   selected. Perhaps you can describe the reduction rules?
+
+This is a trick of proof engineering: technical and also a bit hard to explain... Suppose you have `let rec f = ... and g = ... in ...`. When we want to unfold the definition of `f` during reduction, we expand the body of `f` which contains (in the translated program) string variables `"f"` and `"g"`. At this point we do not want to substitute `"f"` and `"g"` with their definition, as this blows up in size, nor with `proj fg 0` and `proj fg 1` where `fg` would be the Coq identifier of the recursive group (and `proj` an operation that selects one of the recursive definitions), as this is less readable.
+
+So we use the following machinery:
+
+1. we define the whole recursive group, here `fg`, (each definition comes with its name as a string, and refers to its own name recursively or other mutual names as strings)
+
+2. we define convenient aliases `f` and `g` as these projections `proj fg 0` and `proj fg 1`; these are the names that user see.
+
+   So far this is standard for mutual recursion. But At this point the expansion machinery could not guess that during unfolding `"f"` should be translated into `f`, as `proj fg 0` does not carry the Coq values `f` and `g` (it would require a cyclic value). So there are more steps:
+
+3. We use the typeclass machinery to declare a-posteriori and globally that `f` is our preferred abbreviation for the first projection of `fg`, and `g` for the second abbreviation of `fg`. Zoo defines typeclasses `AsValRecs` and `AsValRecs'`, and we register one instance per recursive function in the group, with information on its position within the group, the group iself, and the list of all "preferred abbreviations" registered for this group.
+
+4. Our reduction function on embedded Zoo program will query the typeclass database when reducing calls to `f` or `g`: their code is substituted, and the embedded references to `"f"` and `"g"` in the code are replaced by direct references to the preferred abbreviations `f` and `g`, as found in the typeclass instance metadata.
+
+> - Section 3.3 -- I get why SC makes it sound to translate
+>   Atomic.get/Atomic.set to just loads/stores, but what I am confused
+>   about is, does that mean you don't have "plain" references at all?
+>   I.e. there's nothing that corresponds to the usual non-atomic "!"
+>   operator in OCaml?
+
+We translate ! like a normal load as well. (In the SC model there is no need to distinguish atomic from non-atomic accesses.)
+
 > - Section 4.1 -- I don't think the full chronology of when things were implemented is really necessary/the best use of space.
 
 Our intent was to suggest, in a fact-based way, that getting features integrated in the upstream OCaml compiler is in fact a significant source of work. (This is also a form of impact of our research, and show to our academic colleagues a bird's eye view of the dynamics involved could be of interest to some.)
@@ -110,16 +136,7 @@ Definition pop : val :=
     end.
 ```
 
-For example `pop` first dereferences the mutable reference `s` and
-reads its value, then performs a second dereference on `l` when the
-stack is non-empty to be able to access the list cell, which is itself
-a (boxed) pair so a third dereference is implicit in `Fst "pair"` to
-get the first element of the list. (The Some constructor around `l`
-does not introduce a pointer indirection, as Heaplang assumes an
-optimized tagged encoding for disjoint sums constructor with
-a location payload.) See
-https://gitlab.mpi-sws.org/iris/iris/-/blob/c5014d246b2cc5d1bf79d3ba362501dd7b447f74/iris_heap_lang/lang.v#L148
-for a documentation of the assumed HeapLang value representation.)
+For example `pop` first dereferences the mutable reference `s` and reads its value, then performs a second dereference on `l` when the stack is non-empty to be able to access the list cell, which is itself a (boxed) pair so a third dereference is implicit in `Fst "pair"` to get the first element of the list. (The Some constructor around `l` does not introduce a pointer indirection, as Heaplang assumes an optimized tagged encoding for disjoint sums constructor with a location payload.) See https://gitlab.mpi-sws.org/iris/iris/-/blob/c5014d246b2cc5d1bf79d3ba362501dd7b447f74/iris_heap_lang/lang.v#L148 for a documentation of the assumed HeapLang value representation.)
 
 One would naively think of erasing the extra indirection in HeapLang by writing the following:
 
@@ -170,7 +187,9 @@ The check `oldHead == null` corresponds to the match on `!s`, but `oldHead` is d
 >    might be possibly merged, as your other proposed changes were? Or
 >    are there drawbacks/design considerations that prevent that?
 
-We have not started this discussion yet. `[@generative]` is a much simpler change to implement than (say) atomic record fields, it suffices to ask the compiler to pretend that the fields of the constructor are mutable instead of immutable. So we hope that it could be easier to gather consensus, and feel optimistic that it could be received positively by compiler maintainers.
+We have not started the upstreaming discussion yet. `[@generative]` is a much simpler change to implement than (say) atomic record fields, it suffices to ask the compiler to pretend that the fields of the constructor are mutable instead of immutable. So we hope that it could be easier to gather consensus, and feel optimistic that it could be received positively by compiler maintainers.
+
+(When we discussed `[@generative]` with OCaml maintainers, they pointed an interesting interaction with the `Set` and `Map` module of the standard library. The `add` function in this module check the physical equality of its output with its input on recursive call into the relevant subtree, and in this case returns the larger input tree unchanged. The documentation states that the input is returned unchanged if the element is already in the set, but in fact this guarantee may be broken by unsharing, so one might want to add `[@generative]` to their data constructors to strengthen the guarantee.)
 
 Our main non-upstreamed change currently is the support for atomic arrays. It builds on top of the now-merged machinery for atomic record fields, so it is less invasive than atomic fields were. But it will require more review work and discussion than generative constructors:
 
@@ -296,6 +315,13 @@ Structural equality cannot in general imply Rocq-level equality, for similar rea
 In `Lemma structeq_spec_abstract`, the use of `val_physeq` is unnecessarily confusing, and we should rephrase it. The idea is that on deeply-immutable values (that are hereditarily formed of immutable constructors), the guarantees we get from observing structural or physical equality are exactly the same. `val_physeq` states that the two values must have the same constructors and immediate values at arbitrary depth (otherwise they would be physically and structurally different), and `val_physneq` more conservatively states that if the two values are immediate, then they must be distinct, and if they are (mutable or) immutable-but-generative constructors they must have a different identity.
 
 
+> l.732: Technically, it is not correct that if the CAS does not observe
+> Open, it must be Closing since it could also be an Open with
+> a different fd.
+
+The protocol for this part of the state is that Open transitions to Closing, but never to another Open. As our proof shows, the only possible values here are the Open we observed or a Closing. (The problem comes from the fact that the Open we observed is *not* necessarily equal to itself, in presence of unsharing.)
+
+
 ### Review C
 
 > Doesn't the restriction to a SC memory model undermine the validity of
@@ -314,7 +340,9 @@ To our defense, a majority of published or in-progress work on verification of c
 Note that the recommended style for concurrent OCaml programs is to only use non-atomic locations for well-synchronized accesses (when we have unique ownership), and use the `Atomic` module (and now our atomic record fields) for all potentially-racy concurrent accesses. (This is encouraged in particular by the ThreadSanitizer (TSan) instrumentation for OCaml, which currently warns on all non-atomic races, with no way to disable them for races that are believed to be benign.)
 Given that `Atomic` references enforce a sequentially-consistent semantics, it may seem reasonable to assume that programs that respect this discipline only exhibit SC behaviors. Unfortunately several of the specialized libraries that we looked at, written by domain experts, do live dangerously and creatively combine atomic accesses with non-atomic accesses on different locations, making low-level assumptions about the semantics of memory fences generated by the compiler. This aspect of their work would certainly also benefit from a formalization effort.
 
-(We also believe that it would be cleaner to add a notion of relaxed memory accesses to the OCaml memory model, rather than (ab)use non-atomic locations for benign races, if only to silence the TSan instrumentation. It is however non-trivial to extend the OCaml memory model with relaxed reads, and some of the OCaml maintainers are firmly opposed to making the memory model more complex.)
+(We also believe that it would be cleaner to add a notion of relaxed memory accesses to the OCaml memory model, rather than (ab)use non-atomic locations for benign races, if only to silence the TSan instrumentation. It is however non-trivial to extend the OCaml memory model with relaxed reads, and some of the OCaml maintainers are understandably opposed to making the memory model more complex.)
+
+Note that moving to weaker memory model would not throw our work away to redo it, it would extend it. The weak-memory-model specifications are more complex, and the proofs are more complex, but they are obtained by refining the SC specifications and invariants. Our work thus provides a first (highly non-trivial) step in this direction.
 
 > L702:  shouldn't the "close ()" instead be "Unix.close fd" ?
 

@@ -13,7 +13,9 @@ Before we go into these details, we would like to discuss the high-level / non-l
 - There is probably a misunderstanding about "references to private communication", which we believe comes from the fact that we elided from our submission many *public* links to our work (PRs, issues, RFCs, etc.), due to the requirement for fully anonymous submissions. The non-anonymous version of our paper does include those links, references our (public and open-source) implementation and formalization, etc.
 
 
-## Recent formalizaliztions of fragments of OCaml: Osiris, DRFCaml
+## Recent formalizations of fragments of OCaml: Osiris, DRFCaml
+
+
 
 ### Osiris
 

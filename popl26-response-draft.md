@@ -10,12 +10,10 @@ Before we go into these details, we would like to discuss the high-level / non-l
 
   Review B also suggests giving more details on key definitions of invariants from our verified concurrent data structures. We suspect that the space required would be substantial and this sounds difficult, but we are happy to receive further guidance from our reviewers on content prioritization.
   
-- There is probably a misunderstanding about "references to private communication", which we believe comes from the fact that we elided from our submission many *public* links to our work (PRs, issues, RFCs, etc.), due to the requirement for fully anonymous submissions. The non-anonymous version of our paper does include those links, references our (public and open-source) implementation and formalization, etc.
+- There is probably a misunderstanding about "references to private communication", which we believe comes from the fact that we elided from our submission many public links to our work (PRs, issues, RFCs, etc.), due to the requirement for fully anonymous submissions. The non-anonymous version of our paper does include those links, references our (public and open-source) implementation and formalization, etc.
 
 
 ## Recent formalizations of fragments of OCaml: Osiris, DRFCaml
-
-
 
 ### Osiris
 
@@ -28,11 +26,11 @@ Our reviewers all asked for more discussions on the relation to Osiris, as publi
 
 > Is there a particular reason for defining a new Iris core language for OCaml, rather than trying to build on the Osiris work that you cite, by adding support to concurrency there?
 
-(On the last formulation from review C: one aspect to keep in mind is that the present submission represents several years of work. To understand our research methodology, one cannot compare Zoo to the current state of Osiris as will presented in a few weeks at ICFP'25, but rather one should think of the state in which Osiris was a couple years ago.)
+(On the last formulation from review C: one aspect to keep in mind is that the present submission represents several years of work. To understand our research methodology, one cannot compare Zoo to the current state of Osiris, as will be presented in a few weeks at ICFP'25, but rather one should think of the state in which Osiris was a couple years ago.)
 
 Osiris and Zoo can be described as having evolved in two separate and complementary directions:
 
-- Zoo has been designed from the start for pragmatic verification of advanced concurrent data-structures; this informed the choice of feature coverage and the semantics design. We succeeded in getting a practical verification framework for this domain, as evidenced by the vast amount of state-of-the-art examples we managed to verify.
+- Zoo has been designed from the start for pragmatic verification of advanced concurrent data-structures; this informed the choice of feature coverage and the semantics design. We succeeded in getting a practical verification framework for this domain, as evidenced by the substantial amount of state-of-the-art programs we managed to verify.
 
 - Osiris is designed to poke at the limits of language verification in general (not necessarily in a concurrent setting), and focused on order-of-evaluation issues and effect handlers as an advanced feature. On the other hand, the authors verified a relatively small amount of simple examples¹, suggesting that Osiris may not yet be ready for practical verification at scale -- certainly not for our problem domain.
 
@@ -40,11 +38,12 @@ Osiris and Zoo can be described as having evolved in two separate and complement
 
 For a concrete example of the difference in philosophy, the Osiris designers ensured that they cover all possible evaluation orders for OCaml, and in fact went above and beyond by supporting (sequential) interleavings of argument evaluations, which is not allowed by the informal OCaml specification. This is impressive, but it also makes everyday proofs about n-ary functions noticeably more difficult. In contrast Zoo makes the pragmatic choice of assuming a right-to-left evaluation order for function arguments, which coincides with the choice of all existing OCaml compilers (ocamlc, ocamlopt, `js_of_ocaml`) and simplifies verification. This means that the verified programs could break under different OCaml implementations, but (1) so would various OCaml programs in the wild, so new implementations tend to align with this historical choice whenever possible, and (2) our aim is to verify a finite amount of expert-level concurrent libraries that form basic blocks of the ecosystem, and in our experience those programs do not play dangerous games like passing two observably-effectful argument expressions in a function call -- not to suggest that they write particularly clean and easy-to-reason-about code, but they spend their complexity budget elsewhere.
 
-(Note: HeapLang also uses right-to-left evaluation order for an ergonomic reason:
-  https://gitlab.mpi-sws.org/iris/iris/-/blob/c5014d246b2cc5d1bf79d3ba362501dd7b447f74/iris_heap_lang/lang.v#L12
+(Note: HeapLang also uses right-to-left evaluation order for ergonomic reasons:  https://gitlab.mpi-sws.org/iris/iris/-/blob/c5014d246b2cc5d1bf79d3ba362501dd7b447f74/iris_heap_lang/lang.v#L12
 )
 
-We did study our semantics tradeoffs carefully and made some 'perfectionist' rather than 'pragmatist' choices for language features that are essential to our problem domain, in particular atomic record fields and physical equality -- revealing potential issues in existing programs. Osiris is designed to be perfectionist for all aspects of the language it covers so it evolves at a slower pace; even with our personal involvement, it could probably not be equipped with concurrency-support features in a reasonable timeline for our verification work. Finally, there is a risk that the resulting system would be less convenient to use in practice, which could have a substantial impact on the feasability of the verification effort in practice, for these programs that are already close to the limit of the human comfort zone in dealing with complexity. Having a simpler, more specialized system allowed us to cover more ground in term of actual real-world programs, and our scientific contributions come in part from this methodological choice.
+We did study our semantics tradeoffs carefully and made some 'perfectionist' rather than 'pragmatist' choices for language features that are essential to our problem domain, in particular atomic record fields and physical equality -- revealing potential issues in existing programs. Osiris is designed to be perfectionist for all aspects of the language it covers so it evolves at a slower pace; even with our personal involvement, it could probably not be equipped with concurrency-support features in a reasonable timeline for our verification work. Finally, there is a risk that the resulting system would be less convenient to use in practice. This could have a substantial impact on the feasability of the verification effort, for these programs that are already close to the limit of the human comfort zone in dealing with complexity.
+
+Having a simpler, more specialized system allowed us to cover more ground in term of actual real-world programs, and our scientific contributions come in part from this methodological choice.
 
 This does not mean of course that we cannot benefit from Osiris' study of OCaml semantics, and Osiris from ours. We believe that Osiris will be able to reuse many aspects our specification work when it adds wider support for physical equality. And in the future if Osiris gets within reaching distance of concurrent program verification, and economy of academic ressources suggests that merging the two efforts is the best route going forward, we could probably port our developments to this rule-them-all Iris language -- we have the experience of porting some of our developments from HeapLang to Zoo.
 
@@ -78,15 +77,17 @@ This is a trick of proof engineering: technical and also a bit hard to explain..
 
 So we use the following machinery:
 
-1. we define the whole recursive group, here `fg`, (each definition comes with its name as a string, and refers to its own name recursively or other mutual names as strings)
+1. we define the whole recursive group, here `fg` (each definition comes with its name as a string, and refers to its own name recursively or other mutual names as strings),
 
-2. we define convenient aliases `f` and `g` as these projections `proj fg 0` and `proj fg 1`; these are the names that user see.
+2. we define convenience aliases `f` and `g` as these projections `proj fg 0` and `proj fg 1`; these are the names that user see.
 
-   So far this is standard for mutual recursion. But At this point the expansion machinery could not guess that during unfolding `"f"` should be translated into `f`, as `proj fg 0` does not carry the Coq values `f` and `g` (it would require a cyclic value). So there are more steps:
+   So far this is standard for mutual recursion. But At this point the expansion machinery could not guess that during unfolding, `"f"` should be translated into `f`, as `proj fg 0` does not carry any reference to the Coq values `f` and `g` (it would require a cyclic value as they are defined after `fg`). So there are more steps:
 
-3. We use the typeclass machinery to declare a-posteriori and globally that `f` is our preferred abbreviation for the first projection of `fg`, and `g` for the second abbreviation of `fg`. Zoo defines typeclasses `AsValRecs` and `AsValRecs'`, and we register one instance per recursive function in the group, with information on its position within the group, the group iself, and the list of all "preferred abbreviations" registered for this group.
+3. We use the typeclass machinery to declare a-posteriori and globally that `f` is our preferred abbreviation for the first projection of `fg`, and `g` for the second abbreviation of `fg`. Zoo defines typeclasses `AsValRecs` and `AsValRecs'`, and we register one instance per recursive function in the group, with information on (a) its position within the group, (b) the group iself, and (c) the list of all "preferred abbreviations" registered for this group.
 
-4. Our reduction function on embedded Zoo program will query the typeclass database when reducing calls to `f` or `g`: their code is substituted, and the embedded references to `"f"` and `"g"` in the code are replaced by direct references to the preferred abbreviations `f` and `g`, as found in the typeclass instance metadata.
+4. Our reduction function on embedded Zoo program will query the typeclass database when reducing calls to some `proj fg i`: the code is substituted, and the embedded references to `"f"` and `"g"` in the code are replaced by direct references to the preferred abbreviations `f` and `g`, as found in the typeclass instance metadata.
+
+(We suspect that it will be easier for designers of embedded languages to read our Rocq code than to try to reverse-engineer this from a detailed textual description we would include in the paper.)
 
 > - Section 3.3 -- I get why SC makes it sound to translate
 >   Atomic.get/Atomic.set to just loads/stores, but what I am confused
@@ -114,7 +115,7 @@ OCaml implementations that validate the physical equality `Any false == Any 0` a
 >   examples. But you're absolutely right that it's not a good model of
 >   an efficient/idiomatic OCaml implementation.
 
-There are several ways to interpret your remark: "closer to C" could be in terms of programming style, or in term of data layout and in-memory representation. In this paragraph, and we expand a bit on this in the specific case of the Michael-Scott queue below, we emphasize that HeapLang programs have a *different* memory layout / data representation from textbook implementations in C/C++ (or Java, OCaml, etc.), due to the insertion of an *additional* pointer indirection in each node, which is specifically added to work around the restricted semantics of compare-and-swap in HeapLang.
+There are several ways to interpret this remark: "closer to C" could be in terms of programming style, or in term of data layout and in-memory representation. In this paragraph of our paper (and we expanded a bit on this in the specific case of the Michael-Scott queue afterwards), we emphasize that HeapLang programs have a *different* memory layout / data representation from textbook implementations in C/C++ (or Java, OCaml, etc.), due to the insertion of an *additional* pointer indirection in each node, which is specifically added to work around the restricted semantics of compare-and-swap in HeapLang.
 
 This is non-obvious, but clearly shown in the Figure 2 of the Vindum-Birkdel-2021 paper ( https://www.cs.au.dk/~birke/papers/2021-ms-queue.pdf ), we cite their description of this extra indirection explicitly.
 
@@ -164,7 +165,8 @@ Definition pop : val :=
 
 This program is morally correct, and it does correspond to the version that we verify in OCaml. But it is not a valid HeapLang program: the HeapLang semantics allow calling compare-and-set on a value of type `UnboxedOption<Ref<...>>`, but *not* on a value of type `UnboxedOption<Pair<...>>` (or `Pair<...>` for that matter).
 
-We do believe that adding extra indirections in the memory layout, and corresponding allocations/dereferences in the implementation (adding noise to already-tricky code), is a "flaw" of the HeapLang implementations and verifications of these structures. The change is relatively systematic, but also invasive. It makes them (less efficient and) more distant from the textbook implementation. See for example the textbook Java implementation on Wikipedia ( https://en.wikipedia.org/wiki/Treiber_stack ):
+We do believe that adding extra indirections in the memory layout, and corresponding allocations/dereferences in the implementation (adding noise to already-tricky code), is a "flaw" of the HeapLang implementations and verifications of these structures -- the implementation that is proved correct has a different computational behavior than the real-world implementation that we intend to verify, and expert authors of concurrent data structures would probably not accept to modify their code to match the verified implementation.
+The change is relatively systematic, but also invasive. It makes them (less efficient and) more distant from the textbook implementations. See for example the textbook Java implementation on Wikipedia ( https://en.wikipedia.org/wiki/Treiber_stack ):
 
 ```java
 public E pop() {
@@ -191,11 +193,11 @@ The check `oldHead == null` corresponds to the match on `!s`, but `oldHead` is d
 >    might be possibly merged, as your other proposed changes were? Or
 >    are there drawbacks/design considerations that prevent that?
 
-We have not started the upstreaming discussion yet. `[@generative]` is a much simpler change to implement than (say) atomic record fields, it suffices to ask the compiler to pretend that the fields of the constructor are mutable instead of immutable. So we hope that it could be easier to gather consensus, and feel optimistic that it could be received positively by compiler maintainers.
+We have not started the upstreaming discussion yet. `[@generative]` is a much simpler change to implement than (say) atomic record fields, it suffices to ask the optimizer to pretend that the fields of the constructor are mutable instead of immutable. So we hope that it could be easier to gather consensus, and feel optimistic that it could be received positively by compiler maintainers.
 
-(When we discussed `[@generative]` with OCaml maintainers, they pointed an interesting interaction with the `Set` and `Map` module of the standard library. The `add` function in this module check the physical equality of its output with its input on recursive call into the relevant subtree, and in this case returns the larger input tree unchanged. The documentation states that the input is returned unchanged if the element is already in the set, but in fact this guarantee may be broken by unsharing, so one might want to add `[@generative]` to their data constructors to strengthen the guarantee.)
+(When we explained our justification for `[@generative]` to OCaml maintainers, they pointed an interesting potential use-case within the `Set` and `Map` module of the standard library. The `add` function in this module check the physical equality of its output with its input on recursive call into the relevant subtree, and in this case returns the larger input tree unchanged. The documentation states that the input is returned unchanged if the element is already in the set, but in fact this guarantee may be broken by unsharing, so one might want to add `[@generative]` to their data constructors to strengthen the guarantee.)
 
-Our main non-upstreamed change currently is the support for atomic arrays. It builds on top of the now-merged machinery for atomic record fields, so it is less invasive than atomic fields were. But it will require more review work and discussion than generative constructors:
+Our most substantial non-upstreamed change currently is the support for atomic arrays. It builds on top of the now-merged machinery for atomic record fields, so it is less invasive than atomic fields were. But it will require more review work and discussion than generative constructors:
 
 - Example of non-scientific questions that will take some time to be discussed are: should this be an Atomic.Array submodule, or maybe an Array.Atomic submodule, or a first-level Atomic_Array module?  Should the new module export many helpful functions as the main Array module does, or just the bare primitives necessary to manipulate arrays in user code?
 
@@ -203,12 +205,12 @@ Our main non-upstreamed change currently is the support for atomic arrays. It bu
   
 - Some functions of the (non-atomic) Array module are implemented in C for efficiency reasons (`Array.blit`, `Array.sub`), reviewers could consider asking for the same effort on atomic arrays. On the other hand, it is unclear that these functions should be provided in the first place, as they would not operate atomically on their atomic array arguments.
 
-### Review B
 
+### Review B
 
 > - Many references to private communication
 
-As mentioned in the introduction, most of these communications happened in public, but we had to hide the references to specific issues/PRs from the present submission as they would rather directly contradict the POPL instructions to carefully preserve anonymity. For example, we followed the standard *public* RFC process to discuss the design of Atomic record fields, and our local non-anonymous version of our paper of course links to our RFC and the following discussion, but providing this link to POPL reviewers would immediately de-anonymize some of the authors. When we cite specific individuals by name in our discussion of how the design evolved over time, it is to credit their contribution and not to suggest that we interacted in private.
+As mentioned in the introduction, most of these communications happened in public, but we had to hide the references to specific issues/PRs from the present submission as they would rather directly contradict the POPL instructions to carefully preserve anonymity. For example, we followed the standard *public* RFC process to discuss the design of Atomic record fields, and our local non-anonymous version of our paper of course links to our RFC and the following discussion, but providing this link to POPL reviewers would immediately de-anonymize some of the authors. When we cite specific individuals by name in our discussion of how the design evolved over time, it is to credit their contribution, not to suggest that we interacted in private.
 
 We would of course link to those public discussions in a non-anonymous version of our work.
 
@@ -345,7 +347,7 @@ Given that `Atomic` references enforce a sequentially-consistent semantics, it m
 
 (We also believe that it would be cleaner to add a notion of relaxed memory accesses to the OCaml memory model, rather than (ab)use non-atomic locations for benign races, if only to silence the TSan instrumentation. It is however non-trivial to extend the OCaml memory model with relaxed reads, and some of the OCaml maintainers are understandably opposed to making the memory model more complex.)
 
-Note that moving to weaker memory model would not throw our work away to redo it, it would extend it. The weak-memory-model specifications are more complex, and the proofs are more complex, but they are obtained by refining the SC specifications and invariants. Our work thus provides a first (highly non-trivial) step in this direction.
+Note that moving to weaker memory model would not throw our work away, it would extend it. The weak-memory-model specifications are more complex, and the proofs are more complex, but they are obtained by refining the SC specifications and invariants. Our work thus provides a first (highly non-trivial) step in this direction.
 
 > L702:  shouldn't the "close ()" instead be "Unix.close fd" ?
 

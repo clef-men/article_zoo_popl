@@ -42,7 +42,7 @@ For a concrete example of the difference in philosophy, the Osiris designers ens
 
 We did study our semantics tradeoffs carefully and made some 'perfectionist' rather than 'pragmatist' choices for language features that are essential to our problem domain, in particular atomic record fields and physical equality -- revealing potential issues in existing programs. Osiris is designed to be perfectionist for all aspects of the language it covers so it evolves at a slower pace; even with our personal involvement, it could probably not be equipped with concurrency-support features in a reasonable timeline for our verification work. Finally, there is a risk that the resulting system would be less convenient to use in practice, which could have a substantial impact on the feasability of the verification effort in practice, for these programs that are already close to the limit of the human comfort zone in dealing with complexity. Having a simpler, more specialized system allowed us to cover more ground in term of actual real-world programs, and our scientific contributions come in part from this methodological choice.
 
-This does not mean of course that we cannot benefit from Osiris' study of OCaml semantics, and Osiris from ours. We believe that Osiris will be able to reuse many aspects our specification work when it adds support for physical equality. And in the future if Osiris gets within reaching distance of concurrent program verification, and economy of academic ressources suggests that merging the two efforts is the best route going forward, we could probably port our developments to this rule-them-all Iris language -- we have the experience of porting some of our developments from HeapLang to Zoo.
+This does not mean of course that we cannot benefit from Osiris' study of OCaml semantics, and Osiris from ours. We believe that Osiris will be able to reuse many aspects our specification work when it adds wider support for physical equality. And in the future if Osiris gets within reaching distance of concurrent program verification, and economy of academic ressources suggests that merging the two efforts is the best route going forward, we could probably port our developments to this rule-them-all Iris language -- we have the experience of porting some of our developments from HeapLang to Zoo.
 
 The same applies to HeapLang: we would be happy to contribute features back to HeapLang, and as a first step we would be delighted to contribute support for arbitrary sums/variants constructors instead of just `inL, inR` or `(tag, value)` encodings. Supporting constant and n-ary constructors would be nice, but the most impactful change would be the first step of supporting an arbitrary number of constructors with arbitrary names. We already started conversations in this direction, but modifying a widely-used (relatively speaking) verification language, whose maintainers already have a full plate of topics to work on, happens slowly and carefully.
 
@@ -268,7 +268,13 @@ It does not. None of the data-structure we considered uses algebraic effects. (T
 
 > How does the physical equality of ZooLang compare to Osiris?
 
-TODO (note: we mention lack of support for physical equality in Osiris above, to reformulate if this changed)
+Osiris currently only supports physical-equality checks between
+references and continuations. There is no physical-equality between
+pure constructors (or records (Osiris only support immutable records),
+integers, strings, arrays, etc.):
+
+https://gitlab.inria.fr/fpottier/osiris/-/blob/89cf70870fa52b92d61e828bdfd0831dafa04ae9/coq-osiris/theories/semantics/eval.v#L586
+
 
 > Also I would like to see less appeals to authority (e.g. on line 902
 > to the recommendations of Thomas Leonard), but instead technical

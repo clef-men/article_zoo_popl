@@ -112,7 +112,7 @@ In \OCaml, these expressions correspond to \ocamlinline{Zoo.proph} and \ocamlinl
 Our current formalization of \Zoo assumes sequential consistency; this
 does not faithfully model all possible behaviors of concurrent \OCaml
 programs, which uses a more relaxed memory
-model~\citep*{ocaml-memory-model}. Some concurrent algorithms, such as
+model~\citep*{DBLP:conf/pldi/DolanSM18}. Some concurrent algorithms, such as
 the Treiber stack, do not contain any data races between atomic and
 non-atomic locations, so their behavior is identical between both
 memory models. (Our specifications do not cover the synchronization

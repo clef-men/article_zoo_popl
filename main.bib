@@ -983,50 +983,64 @@
   HAL_VERSION = {v1},
 }
 
-@article{lean-pointer-optimizations,
-author = {Selsam, Daniel and Hudon, Simon and de Moura, Leonardo},
-title = {Sealing pointer-based optimizations behind pure functions},
-year = {2020},
-issue_date = {August 2020},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {4},
-number = {ICFP},
-url = {https://doi.org/10.1145/3408997},
-doi = {10.1145/3408997},
-abstract = {Functional programming languages are particularly well-suited for building automated reasoning systems, since (among other reasons) a logical term is well modeled by an inductive type, traversing a term can be implemented generically as a higher-order combinator, and backtracking search is dramatically simplified by persistent datastructures. However, existing pure functional programming languages all suffer a major limitation in these domains: traversing a term requires time proportional to the tree size of the term as opposed to its graph size. This limitation would be particularly devastating when building automation for interactive theorem provers such as Lean and Coq, for which the exponential blowup of term-tree sizes has proved to be both common and difficult to prevent. All that is needed to recover the optimal scaling is the ability to perform simple operations on the memory addresses of terms, and yet allowing these operations to be used freely would clearly violate the basic premise of referential transparency. We show how to use dependent types to seal the necessary pointer-address manipulations behind pure functional interfaces while requiring only a negligible amount of additional trust. We have implemented our approach for the upcoming version (v4) of Lean, and our approach could be adopted by other languages based on dependent type theory as well.},
-journal = {Proc. ACM Program. Lang.},
-month = aug,
-articleno = {115},
-numpages = {20},
-keywords = {interactive theorem proving, functional programming, Lean}
+@article{DBLP:journals/pacmpl/SelsamHM20,
+  author       = {Daniel Selsam and
+                  Simon Hudon and
+                  Leonardo de Moura},
+  title        = {Sealing pointer-based optimizations behind pure functions},
+  journal      = {Proc. {ACM} Program. Lang.},
+  volume       = {4},
+  number       = {{ICFP}},
+  pages        = {115:1--115:20},
+  year         = {2020},
+  url          = {https://doi.org/10.1145/3408997},
+  doi          = {10.1145/3408997},
+  timestamp    = {Thu, 29 Sep 2022 08:36:57 +0200},
+  biburl       = {https://dblp.org/rec/journals/pacmpl/SelsamHM20.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
-@article{multicore-ocaml,
-author = {Sivaramakrishnan, KC and Dolan, Stephen and White, Leo and Jaffer, Sadiq and Kelly, Tom and Sahoo, Anmol and Parimala, Sudha and Dhiman, Atul and Madhavapeddy, Anil},
-title = {Retrofitting parallelism onto OCaml},
-year = {2020},
-issue_date = {August 2020},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {4},
-number = {ICFP},
-url = {https://doi.org/10.1145/3408995},
-doi = {10.1145/3408995},
-abstract = {OCaml is an industrial-strength, multi-paradigm programming language, widely used in industry and academia. OCaml is also one of the few modern managed system programming languages to lack support for shared memory parallel programming. This paper describes the design, a full-fledged implementation and evaluation of a mostly-concurrent garbage collector (GC) for the multicore extension of the OCaml programming language. Given that we propose to add parallelism to a widely used programming language with millions of lines of existing code, we face the challenge of maintaining backwards compatibility--not just in terms of the language features but also the performance of single-threaded code running with the new GC. To this end, the paper presents a series of novel techniques and demonstrates that the new GC strikes a balance between performance and feature backwards compatibility for sequential programs and scales admirably on modern multicore processors.},
-journal = {Proc. ACM Program. Lang.},
-month = aug,
-articleno = {113},
-numpages = {30},
-keywords = {concurrent garbage collection, backwards compatibility}
+@article{DBLP:journals/pacmpl/Sivaramakrishnan20,
+  author       = {K. C. Sivaramakrishnan and
+                  Stephen Dolan and
+                  Leo White and
+                  Sadiq Jaffer and
+                  Tom Kelly and
+                  Anmol Sahoo and
+                  Sudha Parimala and
+                  Atul Dhiman and
+                  Anil Madhavapeddy},
+  title        = {Retrofitting parallelism onto OCaml},
+  journal      = {Proc. {ACM} Program. Lang.},
+  volume       = {4},
+  number       = {{ICFP}},
+  pages        = {113:1--113:30},
+  year         = {2020},
+  url          = {https://doi.org/10.1145/3408995},
+  doi          = {10.1145/3408995},
+  timestamp    = {Sat, 30 Sep 2023 10:23:24 +0200},
+  biburl       = {https://dblp.org/rec/journals/pacmpl/Sivaramakrishnan20.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
-@inproceedings{ocaml-memory-model,
-author = {Dolan, Stephen and Sivaramakrishnan, KC and Madhavapeddy, Anil},
-title = {Bounding data races in space and time},
-year = {2018},
-abstract = {We propose a new semantics for shared-memory parallel programs that gives strong guarantees even in the presence of data races. Our local data race freedom property guarantees that all data-race-free portions of programs exhibit sequential semantics. We provide a straightforward operational semantics and an equivalent axiomatic model, and evaluate an implementation for the OCaml programming language. Our evaluation demonstrates that it is possible to balance a comprehensible memory model with a reasonable (no overhead on x86, ~0.6\% on ARM) sequential performance trade-off in a mainstream programming language.},
-booktitle = {PLDI},
+@inproceedings{DBLP:conf/pldi/DolanSM18,
+  author       = {Stephen Dolan and
+                  K. C. Sivaramakrishnan and
+                  Anil Madhavapeddy},
+  editor       = {Jeffrey S. Foster and
+                  Dan Grossman},
+  title        = {Bounding data races in space and time},
+  booktitle    = {Proceedings of the 39th {ACM} {SIGPLAN} Conference on Programming
+                  Language Design and Implementation, {PLDI} 2018, Philadelphia, PA,
+                  USA, June 18-22, 2018},
+  pages        = {242--255},
+  publisher    = {{ACM}},
+  year         = {2018},
+  url          = {https://doi.org/10.1145/3192366.3192421},
+  doi          = {10.1145/3192366.3192421},
+  timestamp    = {Sun, 19 Jan 2025 13:10:49 +0100},
+  biburl       = {https://dblp.org/rec/conf/pldi/DolanSM18.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
 @inproceedings{DBLP:conf/spaa/ChaseL05,
@@ -1110,60 +1124,102 @@ booktitle = {PLDI},
   bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
+@inproceedings{DBLP:conf/pldi/Sivaramakrishnan21,
+  author       = {K. C. Sivaramakrishnan and
+                  Stephen Dolan and
+                  Leo White and
+                  Tom Kelly and
+                  Sadiq Jaffer and
+                  Anil Madhavapeddy},
+  editor       = {Stephen N. Freund and
+                  Eran Yahav},
+  title        = {Retrofitting effect handlers onto OCaml},
+  booktitle    = {{PLDI} '21: 42nd {ACM} {SIGPLAN} International Conference on Programming
+                  Language Design and Implementation, Virtual Event, Canada, June 20-25,
+                  2021},
+  pages        = {206--221},
+  publisher    = {{ACM}},
+  year         = {2021},
+  url          = {https://doi.org/10.1145/3453483.3454039},
+  doi          = {10.1145/3453483.3454039},
+  timestamp    = {Mon, 03 Mar 2025 21:20:02 +0100},
+  biburl       = {https://dblp.org/rec/conf/pldi/Sivaramakrishnan21.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{DBLP:journals/pacmpl/0002JKD18,
+  author       = {Ralf Jung and
+                  Jacques{-}Henri Jourdan and
+                  Robbert Krebbers and
+                  Derek Dreyer},
+  title        = {RustBelt: securing the foundations of the rust programming language},
+  journal      = {Proc. {ACM} Program. Lang.},
+  volume       = {2},
+  number       = {{POPL}},
+  pages        = {66:1--66:34},
+  year         = {2018},
+  url          = {https://doi.org/10.1145/3158154},
+  doi          = {10.1145/3158154},
+  timestamp    = {Sat, 30 Sep 2023 10:23:23 +0200},
+  biburl       = {https://dblp.org/rec/journals/pacmpl/0002JKD18.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+
 
 @misc{saturn,
   title = {Saturn},
   author = {Vesa Karvonen and Carine Morel},
-  date = {2025},
+  year = {2025},
   url = {https://github.com/ocaml-multicore/saturn}
 }
 
 @misc{eio,
   title = {Eio},
   author = {Anil Madhavapeddy and Thomas Leonard},
-  date = {2025},
+  year = {2025},
   url = {https://github.com/ocaml-multicore/eio}
 }
 
 @misc{kcas,
   title = {Kcas},
   author = {Vesa Karvonen},
-  date = {2025},
+  year = {2025},
   url = {https://github.com/ocaml-multicore/kcas}
 }
 
 @misc{picos,
   title = {Picos},
   author = {Vesa Karvonen},
-  date = {2025},
+  year = {2025},
   url = {https://github.com/ocaml-multicore/picos}
 }
 
 @misc{domainslib,
   title = {Domainslib},
   author = {{Multicore OCaml development team}},
-  date = {2025},
+  year = {2025},
   url = {https://github.com/ocaml-multicore/domainslib}
 }
 
 @misc{coq-of-ocaml,
   title = {coq-of-ocaml},
   author = {Guillaume Claret},
-  date = {2025},
+  year = {2025},
   url = {https://github.com/formal-land/coq-of-ocaml}
 }
 
 @misc{iris,
   title = {The Coq mechanization of Iris},
   author = {{Iris development team}},
-  date = {2025},
+  year = {2025},
   url = {https://gitlab.mpi-sws.org/iris/iris/}
 }
 
 @misc{iris-examples,
   title = {Iris examples},
   author = {{Iris development team}},
-  date = {2025},
+  year = {2025},
   url = {https://gitlab.mpi-sws.org/iris/examples/}
 }
 
@@ -1174,20 +1230,6 @@ booktitle = {PLDI},
             Fran{\c{c}}ois Pottier and
             Remy Seassau and
             Irene Yoon},
-  date = {2024},
+  year = {2024},
   url = {https://gitlab.inria.fr/fpottier/osiris}
-}
-
-@article{rustbelt,
-  author       = {Ralf Jung and
-                  Jacques{-}Henri Jourdan and
-                  Robbert Krebbers and
-                  Derek Dreyer},
-  title        = {RustBelt: securing the foundations of the rust programming language},
-  journal      = {PACMPL},
-  volume       = {2},
-  number       = {{POPL}},
-  year         = {2018},
-  url          = {https://doi.org/10.1145/3158154},
-  doi          = {10.1145/3158154},
 }

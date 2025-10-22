@@ -4,7 +4,7 @@
 OCaml 5.0 was released on December 15th 2022, the first version of the
 OCaml programming language to support parallel execution of \OCaml
 threads by merging the \MulticoreOCaml
-runtime~\citep*{multicore-ocaml}. It provided basic support in the
+runtime~\citep*{DBLP:journals/pacmpl/Sivaramakrishnan20}. It provided basic support in the
 language runtime to start and stop coarse-grained threads called
 ``domains'', and support for strongly sequential atomic references in
 the standard library. The third-party library \texttt{domainslib}
@@ -64,7 +64,7 @@ We were influenced by the \Perennial framework~\citep*{DBLP:conf/sosp/ChajedTKZ1
 As in \Perennial, we also provide a translator from (a subset of) \OCaml to \ZooLang: \texttt{ocaml2zoo}. We start from \OCaml code and call our translator to obtain a deep \ZooLang embedding inside \Rocq; we can use lightweight annotations to guide the translation. Inside \Rocq we define specifications using \Iris, and prove them correct with respect to the \ZooLang version, which is syntactically very close to the original \OCaml source.
 We call the resulting framework \Zoo.
 
-One notable current limitation of \ZooLang is that it assumes a sequentially-consistent memory model, whereas \OCaml offers a weaker memory model~\citep*{ocaml-memory-model}. We wanted to ensure that we supported practical verification in a sequentially-consistent setting first; in the future we plan to adopt the \OCaml memory model as formalized in \Cosmo~\citep*{DBLP:journals/pacmpl/MevelJP20}. We discuss the impact of this difference in \cref{subsec:memory-model}.
+One notable current limitation of \ZooLang is that it assumes a sequentially-consistent memory model, whereas \OCaml offers a weaker memory model~\citep*{DBLP:conf/pldi/DolanSM18}. We wanted to ensure that we supported practical verification in a sequentially-consistent setting first; in the future we plan to adopt the \OCaml memory model as formalized in \Cosmo~\citep*{DBLP:journals/pacmpl/MevelJP20}. We discuss the impact of this difference in \cref{subsec:memory-model}.
 
 % The formal verification of fine-grained concurrent algorithms involves finding and reasoning about non-trivial linearization points~\citep*{DBLP:journals/csur/DongolD15,DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/cpp/VindumFB22,DBLP:conf/osdi/Chang0STKZ23}. In recent years, concurrent separation logic~\citep*{DBLP:journals/siglog/BrookesO16} has enabled significant progress in this area.
 % In particular, the development of \Iris~\citep*{DBLP:journals/jfp/JungKJBBD18}, a state-of-the-art mechanized \emph{higher-order} concurrent separation logic with \emph{user-defined ghost state}, has nourished a rich and successful line of works~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/cpp/VindumFB22,DBLP:conf/osdi/Chang0STKZ23,DBLP:conf/cpp/CarbonneauxZKON22,DBLP:journals/pacmpl/JungLCKPK23,DBLP:journals/pacmpl/SomersK24,DBLP:journals/pacmpl/MevelJP20,DBLP:journals/pacmpl/MevelJ21,DBLP:conf/pldi/DangJCNMKD22,DBLP:journals/pacmpl/ParkKMJLKK24,DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}, dealing with external~\citep*{DBLP:conf/cpp/VindumFB22} and future-dependent~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/osdi/Chang0STKZ23} linearization points, relaxed memory~\citep*{DBLP:journals/pacmpl/MevelJP20,DBLP:journals/pacmpl/MevelJ21,DBLP:conf/pldi/DangJCNMKD22,DBLP:journals/pacmpl/ParkKMJLKK24} and automation~\citep*{DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}.

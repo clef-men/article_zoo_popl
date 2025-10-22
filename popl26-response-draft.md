@@ -6,9 +6,9 @@ Before we go into these details, we would like to discuss the high-level / non-l
 
 - Review B remarks that too many technical details are elided from the paper. We do plan to provide a detailed mapping from the paper to the Rocq development which comes with it, but we are of course happy to try better integrating key technical contributions in the paper itself, if we can find content to remove or shrink accordingly.
 
-  Review B suggests giving a formal definition of our physical (dis)equality predicates, in addition or replacement to our precise English prose description in lines 765-775. We are in favor of doing this.
+   Review B suggests giving a formal definition of our physical (dis)equality predicates, in addition or replacement to our precise English prose description in lines 765-775. We are in favor of doing this.
 
-  Review B also suggests giving more details on key definitions of invariants from our verified concurrent data structures. We suspect that the space required would be substantial and this sounds difficult, but we are happy to receive further guidance from our reviewers on content prioritization.
+   Review B also suggests giving more details on key definitions of invariants from our verified concurrent data structures. We suspect that the space required would be substantial and this sounds difficult, but we are happy to receive further guidance from our reviewers on content prioritization.
   
 - There is probably a misunderstanding about "references to private communication", which we believe comes from the fact that we elided from our submission many public links to our work (PRs, issues, RFCs, etc.), due to the requirement for fully anonymous submissions. The non-anonymous version of our paper does include those links, references our (public and open-source) implementation and formalization, etc.
 

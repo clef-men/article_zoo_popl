@@ -43,7 +43,7 @@ To achieve it, it exploits the same mechanism as \ocamlinline{close} --- flaggin
 
 \paragraph{Logical state.}
 Thomas Leonard, the author of \ocamlinline{Rcfd}, suggested verifying it to make sure the informal concurrent protocol he described in the \OCaml interface was correct.
-This protocol introduces a notion of monotonic logical state --- modeled in \Iris using a specific resource algebra~\cite{DBLP:conf/cpp/TimanyB21} --- to describe the evolution of a FD.
+This protocol introduces a notion of monotonic logical state --- modeled in \Iris using a specific resource algebra~\citep*{DBLP:conf/cpp/TimanyB21} --- to describe the evolution of a FD.
 Originally, there were four logical states but we found that only three are necessary for the verification: \textbf{open}, \textbf{closing/users} and \textbf{closing/no-users}.
 
 In the \textbf{open} state, the FD is available for use, meaning any thread can access it through \ocamlinline{use}.

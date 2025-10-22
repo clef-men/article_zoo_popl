@@ -18,17 +18,13 @@ Hopefully, transitioning \Zoo to relaxed memory should not be very difficult ---
 
 \paragraph{Language features.}
 
-\ZooLang currently lacks many features that we also plan to support in the future: exceptions, algebraic effects~\citep*{DBLP:conf/pldi/Sivaramakrishnan21}, modules, functors, threads%
+\ZooLang has been designed from the start for pragmatic verification of advanced concurrent data structures; this informed the choice of feature coverage and the semantics design.
+To accommodate other uses, more features are needed and therefore should be supported: exceptions, algebraic effects~\citep*{DBLP:conf/pldi/Sivaramakrishnan21}, modules, functors, threads%
 \footnote{
 \url{https://ocaml.org/manual/5.4/api/Thread.html}
 }%
 .
-Algebraic effects have been formalized by \citet*{DBLP:journals/pacmpl/VilhenaP21}, who propose an \Iris-based program logic; accordingly, it should not be difficult to introduce them in \ZooLang.
-
-\paragraph{Language features.}
-
-\ZooLang has been designed from the start for pragmatic verification of advanced concurrent data structures; this informed the choice of feature coverage and the semantics design.
-To accommodate other uses, more features are needed and therefore should be supported: exceptions, algebraic effects, modules, functors.
+Algebraic effects have been formalized by \citet*{DBLP:journals/pacmpl/VilhenaP21}, who propose an \Iris-based program logic; accordingly, we do not anticipate specific difficulties in introducing them in \ZooLang.
 
 \paragraph{Automation.}
 

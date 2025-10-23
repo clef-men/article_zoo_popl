@@ -32,7 +32,7 @@ Inductive literal :=            Inductive val :=
  | Poison.
 \end{coqcode}
 
-The value $'\texttt{Cons} (42, \texttt{§}\texttt{Nil})$ is represented in \Rocq as \coqinline{Block 1 [Lit (Int 42), Block 0 []]}. Notice that immutable blocks are represented in \Rocq using the \coqinline{Block} constructor directly, and \emph{not} as a location (\coqinline{Loc}) allocated on the heap. We use locations only for \emph{mutable} records. We would say that our representation of \ZooLang values is high-level or \emph{abstract}, as close to the surface syntax as reasonably possible. This distinction is important to make verification pleasant in practice, by reducing the number of locations and heap indirections that the programmer needs to work with during verification. A \ZooLang tuple is directly a tuple, etc., and this design decision of using high-level values is important to the verification experience --- in addition, assuming full ownership of arguments of immutable blocks would be incorrect.
+The value $\texttt{‘Cons(} 42 \texttt{, §Nil)}$ is represented in \Rocq as \coqinline{Block 1 [Lit (Int 42), Block 0 []]}. Notice that immutable blocks are represented in \Rocq using the \coqinline{Block} constructor directly, and \emph{not} as a location (\coqinline{Loc}) allocated on the heap. We use locations only for \emph{mutable} records. We would say that our representation of \ZooLang values is high-level or \emph{abstract}, as close to the surface syntax as reasonably possible. This distinction is important to make verification pleasant in practice, by reducing the number of locations and heap indirections that the programmer needs to work with during verification. A \ZooLang tuple is directly a tuple, etc., and this design decision of using high-level values is important to the verification experience --- in addition, assuming full ownership of arguments of immutable blocks would be incorrect.
 
 It is tempting to specify, as \HeapLang does, that physical equality decides equality between abstract values. This specification makes sense for immediate values (integers, booleans, constant constructors), and for mutable records which are compared by location. But it is incorrect on immutable blocks, and \HeapLang essentially does not specify its behavior on those values. Yet programmers use physical equality on immutable blocks in practice, as in our example of a Treiber stack of \cref{fig:stack}.
 
@@ -41,7 +41,7 @@ Defining physical equality as \Rocq equality of abstract values is problematic i
 \item Some distinct abstract values are physically equal in OCaml, for example \ocamlinline{0} and \ocamlinline{false}. Their type differ, but it possible to store them in an existential type where they can be compared for physical equality:
 \begin{ocamlcode}
 type any = Any : 'a -> any
-let test1 = Any false == Any 0 (* may return true *)
+let test = Any false == Any 0 (* maybe true *)
 \end{ocamlcode}
 This shows that even on immediate values, specifying physical equality as equality of abstract values is convenient but incorrect in practice.
 
@@ -89,26 +89,22 @@ At first approximation, it is tempting to say that physically equal immutable bl
 Alas, this is not true.
 To explain why, we have to recall that the \OCaml compiler may perform \emph{sharing}: immutable blocks containing physically equal fields may be shared.
 For example, the following tests may return \ocamlinline{true}:
-
 \begin{ocamlcode}
-let test1 = Some 0 == Some 0 (* true *)
-let test2 = [0;1]  == [0;1]  (* true *)
+let test1 = Some 0 == Some 0 (* maybe true *)
+let test2 = [0;1]  == [0;1]  (* maybe true *)
 \end{ocamlcode}
 
 On its own, sharing is not a problem.
 However, coupled with representation conflicts, it can be surprising.
 Indeed, consider the \ocamlinline{any} type we introduced previously:
-
 \begin{ocamlcode}
 type any = Any : 'a -> any
 \end{ocamlcode}
-
 The following tests may return \ocamlinline{true} (they do with \texttt{ocamlopt}, not \texttt{ocamlc}):
-
 \begin{ocamlcode}
-let test1 = Any false == Any 0 (* true *)
-let test2 = Any None  == Any 0 (* true *)
-let test3 = Any []    == Any 0 (* true *)
+let test1 = Any false == Any 0 (* maybe true *)
+let test2 = Any None  == Any 0 (* maybe true *)
+let test3 = Any []    == Any 0 (* maybe true *)
 \end{ocamlcode}
 
 Now, going back to the \ocamlinline{push} function of \cref{fig:stack}, we have a problem.
@@ -125,14 +121,14 @@ These generative blocks are just like regular immutable blocks, except they cann
 Hence, if physical equality on two generative blocks returns \ocamlinline{true}, these blocks are definitionally equal in \Rocq.
 At user level, this notion is materialized by \emph{generative constructors}.
 For instance, to verify the expected \ocamlinline{push} specification, we can use a generative version of lists:
-
 \begin{ocamlcode}
 type 'a glist =
   | Nil
   | Cons of 'a * 'a glist [@generative]
 \end{ocamlcode}
 
-We modified the \Zoo translator to support those generative constructors, and modified our implementation of Treiber stack to use the type \ocamlinline{'a glist} instead of \ocamlinline{'a list}, so that we could finally prove the expected, convenient specification. The \ocamlinline{[@generative]} attribute is ignored by the standard \OCaml compiler, and we have an experimental version that disables sharing for generative constructors.
+We modified the \Zoo translator to support those generative constructors, and modified our implementation of Treiber stack to use the type \ocamlinline{'a glist} instead of \ocamlinline{'a list}, so that we could finally prove the expected, convenient specification.
+The \ocamlinline{[@generative]} attribute is ignored by the standard \OCaml compiler, and we have an experimental version that disables sharing for generative constructors.
 
 \subsection{When physical equality returns \ocamlinline{false}}
 
@@ -163,10 +159,9 @@ Unfortunately, it is an immutable block, and immutable blocks are subject to mor
 In fact, something surprising but allowed\footnote{\OCaml maintainers developing the \Flambda optimiser have confirmed that it may perform unsharing in certain cases.} by \OCaml can happen: \emph{unsharing}, the dual of sharing.
 Indeed, any immutable block can be unshared, that is reallocated as if its definition was inlined.
 For example, the following test may theoretically return \ocamlinline{false}:
-
 \begin{ocamlcode}
 let x = Some 0
-let test = x == x (* false *)
+let test = x == x (* maybe false *)
 \end{ocamlcode}
 
 Going back to \ocamlinline{Rcfd}, we have a problem: in the second branch, the \ocamlinline{Open} block corresponding to \ocamlinline{prev} could be unshared, which would make \ocamlinline{Atomic.Loc.compare_and_set} fail.
@@ -180,7 +175,6 @@ Given this semantics, we can verify the \ocamlinline{close} function.
 Indeed, if \ocamlinline{Atomic.Loc.compare_and_set} fails, we now know that the identifiers of the two blocks, if any, are distinct.
 As the concurrent protocol has only one \ocamlinline{Open} block whose identifier does not change, it cannot be the case that the current state is \ocamlinline{Open}, hence it is \ocamlinline{Closing}.
 We can verify this function after adding the following annotation:
-
 \begin{ocamlcode}
 type state =
   | Open of Unix.file_descr [@generative]

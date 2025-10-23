@@ -191,13 +191,13 @@
   \vee%
 }
 \newcommand{\iSep}{%
-  \ast%
+  \mathrel{\ast}%
 }
 \newcommand{\iBigSep}{%
   \scalerel*{\iSep}{\sum}%
 }
 \newcommand{\iWand}{%
-  \mathrel{-\!\!\iSep}%
+  \mathrel{-\!\!\ast}%
 }
 \newcommand{\iBupd}{%
   |\!\!\!\Rrightarrow%
@@ -242,7 +242,7 @@
       #2
     \\ \hline
       #3 \ldotp
-      \begin{array}{c}
+      \begin{array}[t]{c}
         #4
       \end{array}
   \end{array}%

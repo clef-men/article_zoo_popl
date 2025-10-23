@@ -8,7 +8,7 @@ We worked on improving \OCaml itself to reduce these work-arounds or semantic mi
 \subsection{Atomic record fields}
 \label{sec:atomic-record-fields}
 
-\OCaml~5 offers a type \ocamlinline{'a Atomic.t} of atomic references exposing sequentially-consistent atomic operations.
+\OCaml~5 offers a type \ocamlinline{'a Atomic.t} of atomic references exposing sequentially consistent atomic operations.
 Data races on non-atomic mutable locations has a much weaker semantics and is generally considered a programming error.
 For example, the Michael-Scott concurrent queue~\citep*{DBLP:conf/podc/MichaelS96} relies on a linked list structure that could be defined as follows:
 

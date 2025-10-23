@@ -8,11 +8,11 @@ We have amply covered related work on verification of concurrent fine-grained da
 The verified program is translated, manually or in an automated way, into a representation living inside a proof assistant.
 The user has to write specifications and prove them.
 
-Translating into the native language of the proof assistant, such as Gallina for \Rocq, is challenging as it is hard to faithfully preserve the semantics of the source language, which typically has non-terminating functions for example. Monadic translations should support it, but faithfully encoding all impure behaviors is challenging, and tools typically provide a best-effort translation~\citep*{coq-of-ocaml,DBLP:conf/cpp/Spector-Zabusky18} that is only approximately sound.
+Translating into the native language of the proof assistant, such as Gallina for \Rocq, is challenging as it is hard to faithfully preserve the semantics of the source language, which typically has non-terminating functions for example. Monadic translations should support it, but faithfully encoding all impure behaviors is challenging, and tools typically provide a best-effort translation~\citep{coq-of-ocaml,DBLP:conf/cpp/Spector-Zabusky18} that is only approximately sound.
 
 The representation may be embedded, meaning the semantics of the language is formalized in the proof assistant.
-This is the path taken by some recent works (for example \citet*{DBLP:journals/pacmpl/GondelmanHPTB23}) harnessing the power of separation logic.
-In particular, \CFML~\citep*{DBLP:books/hal/Chargueraud23} and \Osiris~\citep*{osiris} target \OCaml.
+This is the path taken by some recent works (for example \citet{DBLP:journals/pacmpl/GondelmanHPTB23}) harnessing the power of separation logic.
+In particular, \CFML~\citep{DBLP:books/hal/Chargueraud23} and \Osiris~\citep{osiris} target \OCaml.
 However, \CFML does not support concurrency and is not based on \Iris.
 \Osiris, still under development, is based on \Iris but does not support concurrency.
 
@@ -27,10 +27,10 @@ Given this input, the verification tool generates proof obligations that are mos
 One may further distinguish two types of semi-automated systems: \emph{foundational} and \emph{non-foundational}.
 
 In \emph{non-foundational} automated verification, the tool and external solvers it may rely on are part of the trusted computing base.
-It is the most common approach and has been widely applied in the literature~\citep*{DBLP:journals/jfp/SwamyCFSBY13, DBLP:series/natosec/0001SS17, DBLP:conf/nfm/JacobsSPVPP11, DBLP:conf/icfem/DenisJM22, DBLP:conf/nfm/AstrauskasBFGMM22, DBLP:conf/esop/FilliatreP13, DBLP:journals/pacmpl/LattuadaHCBSZHPH23, DBLP:journals/pacmpl/PulteMSMSK23}, including to \OCaml by \Cameleer~\citep*{DBLP:conf/cav/PereiraR20}, which uses the \Gospel specification language~\citep*{DBLP:conf/fm/ChargueraudFLP19} and \WhyThree~\citep*{DBLP:conf/esop/FilliatreP13}.
+It is the most common approach and has been widely applied in the literature~\citep{DBLP:journals/jfp/SwamyCFSBY13, DBLP:series/natosec/0001SS17, DBLP:conf/nfm/JacobsSPVPP11, DBLP:conf/icfem/DenisJM22, DBLP:conf/nfm/AstrauskasBFGMM22, DBLP:conf/esop/FilliatreP13, DBLP:journals/pacmpl/LattuadaHCBSZHPH23, DBLP:journals/pacmpl/PulteMSMSK23}, including to \OCaml by \Cameleer~\citep{DBLP:conf/cav/PereiraR20}, which uses the \Gospel specification language~\citep{DBLP:conf/fm/ChargueraudFLP19} and \WhyThree~\citep{DBLP:conf/esop/FilliatreP13}.
 
 In \emph{foundational} automated verification, proofs are checked by a proof assistant so the automation does not have to be trusted.
-To our knowledge, it has been applied to \C~\citep*{DBLP:conf/pldi/SammlerLKMD021} and \Rust~\citep*{DBLP:journals/pacmpl/GaherSJKD24}.
+To our knowledge, it has been applied to \C~\citep{DBLP:conf/pldi/SammlerLKMD021} and \Rust~\citep{DBLP:journals/pacmpl/GaherSJKD24}.
 
 \Zoo is mostly non-automated --- except for our use \Diaframe for local automation of separation logic reasoning. We would be interested in moving towards more automation in the future.
 
@@ -41,13 +41,13 @@ There is some literature in proof-assistant research on reflecting physical equa
 %
 However, axiomatizing physical equality in the proof assistant is difficult, and can result in inconsistencies.
 
-The earlier discussions of this question that we know come from Jourdan's thesis~\citep*{DBLP:phd/hal/Jourdan16} (chapter 9), also presented more succintly in \citep*{DBLP:journals/jar/BraibantJM14}.
+The earlier discussions of this question that we know come from Jourdan's thesis~\citep{DBLP:phd/hal/Jourdan16} (chapter 9), also presented more succintly in \citep{DBLP:journals/jar/BraibantJM14}.
 %
 This work introduces the Jourdan condition, that physical equality implies equality of values.
 %
-\citep*{boulme:tel-03356701} extends the treatment of physical equality in \Rocq, integrating it in an ``extraction monad'' to control it more safely.
+\citep{boulme:tel-03356701} extends the treatment of physical equality in \Rocq, integrating it in an ``extraction monad'' to control it more safely.
 %
-There is also a discussion of similar optimizations in \Lean in \citep*{DBLP:journals/pacmpl/SelsamHM20}.
+There is also a discussion of similar optimizations in \Lean in \citep{DBLP:journals/pacmpl/SelsamHM20}.
 
 The correctness of the axiomatization of physical equality depends on the type of the values being compared: axiomatizations are typically polymorphic on any type \coqinline{A}, but their correctness depends on the specific \coqinline{A} being considered.
 %

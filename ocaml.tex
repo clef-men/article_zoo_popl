@@ -10,7 +10,7 @@ We worked on improving \OCaml itself to reduce these work-arounds or semantic mi
 
 \OCamlFive offers a type \ocamlinline{'a Atomic.t} of atomic references exposing sequentially consistent atomic operations.
 Data races on non-atomic mutable locations has a much weaker semantics and is generally considered a programming error.
-For example, the Michael-Scott concurrent queue~\citep*{DBLP:conf/podc/MichaelS96} relies on a linked list structure that could be defined as follows:
+For example, the Michael-Scott concurrent queue~\citep{DBLP:conf/podc/MichaelS96} relies on a linked list structure that could be defined as follows:
 \begin{ocamlcode}
 type 'a node = Nil | Cons of { value : 'a; next : 'a node Atomic.t }
 \end{ocamlcode}
@@ -32,7 +32,7 @@ It is very difficult to be confident about its usage given that it may typically
 In the example above, casting a two-fields record into a one-argument atomic reference may or may not be sound --- but it gives measurable performance improvements on concurrent queue benchmarks.
 
 It is possible to statically forbid passing \ocamlinline{Nil} to \ocamlinline{as_atomic} to avoid error handling, by turning \ocamlinline{'a node} into a GADT indexed over a type-level representation of its head constructor.
-For instance, this pattern can be found in the \Kcas~\citep*{kcas} library.
+For instance, this pattern can be found in the \Kcas~\citep{kcas} library.
 It is difficult to write and use correctly, in particular as unsafe casts can sometimes hide errors in the intended static discipline.
 
 Note that this unsafe approach only works for the first field of a record, so it is not applicable to records that hold several atomic fields, such as the toplevel record storing atomic \ocamlinline{front} and \ocamlinline{back} pointers for the concurrent queue.

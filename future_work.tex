@@ -2,23 +2,23 @@
 
 \paragraph{Relaxed memory model}
 
-Currently, the most important limitation of \ZooLang is that it assumes a sequentially consistent memory model, whereas \OCamlFive has a relaxed memory model~\citep*{DBLP:conf/pldi/DolanSM18}.
+Currently, the most important limitation of \ZooLang is that it assumes a sequentially consistent memory model, whereas \OCamlFive has a relaxed memory model~\citep{DBLP:conf/pldi/DolanSM18}.
 As a result, our semantics does not capture all observable behaviors and therefore our correctness results are compromised.
 This choice has a pragmatic justification: we wanted to ensure that we could scale up verification of concurrent algorithms in the simpler setting of sequential consistency before moving to relaxed memory.
 
 It should be noted that moving to relaxed memory is much simpler than for other languages like \C because the \OCamlFive memory model is comparatively not very relaxed.
-Indeed, \citet*{DBLP:journals/pacmpl/MevelJP20} propose an \Iris-based program logic for \MulticoreOCaml~\citep*{DBLP:journals/pacmpl/Sivaramakrishnan20} which \citet*{DBLP:journals/pacmpl/MevelJ21} use to verify a fine-grained concurrent queue; they show that it is possible to adapt specifications and proofs in non-trivial but relatively straightforward way.
+Indeed, \citet{DBLP:journals/pacmpl/MevelJP20} propose an \Iris-based program logic for \MulticoreOCaml~\citep{DBLP:journals/pacmpl/Sivaramakrishnan20} which \citet{DBLP:journals/pacmpl/MevelJ21} use to verify a fine-grained concurrent queue; they show that it is possible to adapt specifications and proofs in non-trivial but relatively straightforward way.
 This suggests that the transition is feasible and would not throw away our work; we plan to do it in the future.
 
 \paragraph{Language features}
 
 \ZooLang has been designed from the start for pragmatic verification of advanced concurrent data structures; this informed the choice of feature coverage and the semantics design.
-To accommodate other uses, more features are needed and therefore should be supported: exceptions, algebraic effects~\citep*{DBLP:conf/pldi/Sivaramakrishnan21}, modules, functors, threads%
+To accommodate other uses, more features are needed and therefore should be supported: exceptions, algebraic effects~\citep{DBLP:conf/pldi/Sivaramakrishnan21}, modules, functors, threads%
 \footnote{
 \url{https://ocaml.org/manual/5.4/api/Thread.html}
 }%
 .
-Algebraic effects have been formalized by \citet*{DBLP:journals/pacmpl/VilhenaP21}, who propose an \Iris-based program logic; accordingly, we do not anticipate specific difficulties in introducing them in \ZooLang.
+Algebraic effects have been formalized by \citet{DBLP:journals/pacmpl/VilhenaP21}, who propose an \Iris-based program logic; accordingly, we do not anticipate specific difficulties in introducing them in \ZooLang.
 
 \paragraph{Automation}
 

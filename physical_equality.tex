@@ -9,7 +9,7 @@ This primitive is commonly used to try committing an atomic operation in a retry
 
 In \HeapLang, this primitive is provided but restricted.
 Indeed, its semantics is only defined if either the expected or the desired value fits in a single memory word in the \HeapLang value representation: literals (booleans, integers and pointers\footnote{\HeapLang allows arbitrary pointer arithmetic and therefore inner pointers. This is forbidden in both \OCaml and \ZooLang, as any reachable value has to be compatible with the garbage collector.}) and literal injections\footnote{\HeapLang has no primitive notion of constructor, only pairs and injections (left and right).}; otherwise, the program is stuck.
-In practice, this restriction forces the programmer to introduce an indirection~\citep*{iris-examples,DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21} to physically compare complex values, \eg lists.
+In practice, this restriction forces the programmer to introduce an indirection~\citep{iris-examples,DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21} to physically compare complex values, \eg lists.
 Furthermore, when the semantics is defined, values are compared using their \Rocq representations; physical equality boils down to \Rocq equality.
 
 \subsection{Physical equality in \OCaml}

@@ -7,7 +7,7 @@ The third-party library \texttt{domainslib} offered a simple scheduler for a poo
 A world of parallel and concurrent software was waiting to be invented.
 
 Shared-memory concurrency is a difficult programming domain, and existing ecosystems (\Cpp, \Java, \Haskell, \Rust, \Go...) took decades to evolve comprehensive libraries of concurrent abstractions and data structures.
-In the last couple years, a handful of contributors to the \OCaml ecosystem have been implementing basic libraries for concurrent and parallel programs in \OCaml, in particular \Saturn~\citep*{saturn}, a library of lock-free parallelism-safe data structures (stacks, queues, a work-stealing queue, a skip list, a bag and a hash table), \Eio~\citep*{eio}, a library of asynchronous IO and structured concurrency, and \Kcas~\citep*{kcas}, a library offering a software-transactional-memory abstraction.
+In the last couple years, a handful of contributors to the \OCaml ecosystem have been implementing basic libraries for concurrent and parallel programs in \OCaml, in particular \Saturn~\citep*{saturn}, a library of lock-free parallelism-safe data structures (stacks, queues, a work-stealing deque, a skip list, a bag and a hash table), \Eio~\citep*{eio}, a library of asynchronous IO and structured concurrency, and \Kcas~\citep*{kcas}, a library offering a software-transactional-memory abstraction.
 
 Concurrent algorithms and data structures are extremely difficult to reason about.
 Their implementation tend to be fairly short, a few dozens of lines.
@@ -72,10 +72,10 @@ Finally, we discussed these subtleties with authors who axiomatize physical equa
 
 We verified a small library for \ZooLang (essentially a subset of the \OCaml standard library).
 It can serve as building blocks to define our concurrent data structures.
-We verified a specific component of the \Eio~library, whose author Thomas Leonard had pointed to us as being delicate to reason about and worth mechanizing.
+We verified a specific component of the \Eio~library, whose author, Thomas Leonard, had pointed to us as being delicate to reason about and worth mechanizing.
 Finally, we verified a large subset of the \Saturn library.
 Several of these data structures contained verification challenges, which we will describe in the relevant section.
-The main \Saturn concurrent structures remaining unverified are a skip-list and a hash table; we have verified its work-stealing queue~\citep*{DBLP:conf/spaa/ChaseL05} but do not discuss it here for space reasons.
+The main \Saturn concurrent structures remaining unverified are a skiplist and a hash table; we have verified its work-stealing deque~\citep*{DBLP:conf/spaa/ChaseL05} but do not discuss it here for space reasons.
 
 \paragraph{Contributions}
 

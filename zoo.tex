@@ -2,14 +2,18 @@
 \label{sec:zoo}
 
 % In this section, we give an overview of our framework.
-% We also provide a minimal example\footnote{\urlAnonymous{https://github.com/clef-men/zoo-demo}} demonstrating its use.
+%We also provide a minimal example%
+%\footnote{
+%\url{https://github.com/clef-men/zoo-demo}
+%}
+%demonstrating its use.
 
-The core of \Zoo is \ZooLang: a concurrent, imperative, untyped, functional programming language fully formalized in \Rocq. Its semantics has been designed to match \OCaml.
+The core of \Zoo is \ZooLang: a concurrent, imperative, untyped, functional programming language fully formalized in \Rocq.
+Its semantics has been designed to match \OCaml.
 
-\ZooLang comes with a program logic based on \Iris, proved correct with respect to its small-step operational semantics. The reasoning rules are expressed in separation logic (including rules for the different constructs of the language) along with \Rocq tactics that integrate into the \Iris proof mode~\citep*{% DBLP:conf/popl/KrebbersTB17,
-  DBLP:journals/pacmpl/KrebbersJ0TKTCD18}.
-In addition, it supports \Diaframe~\citep*{DBLP:conf/pldi/MulderKG22% ,DBLP:journals/pacmpl/MulderK23
-}, enabling proof automation.
+\ZooLang comes with a program logic based on \Iris, proved correct with respect to its small-step operational semantics.
+The reasoning rules are expressed in separation logic (including rules for the different constructs of the language) along with \Rocq tactics that integrate into the \Iris proof mode~\citep*{DBLP:journals/pacmpl/KrebbersJ0TKTCD18}.
+In addition, it supports \Diaframe~\citep*{DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}, enabling proof automation.
 
 \subsection{Translation from \OCaml to \ZooLang}
 
@@ -21,7 +25,8 @@ This tool can process entire \texttt{dune} projects, and supports library depend
 
 The supported \OCaml fragment includes: tuples, variants, records and inline records, shallow \ocamlinline{match}, atomic record fields, unboxed types, toplevel mutually recursive functions.
 
-In \cref{fig:stack} we include the \OCaml implementation of a simple lock-free concurrent stack~\citep*{thomas1986systems}, and its automatic translation to \ZooLang, demonstrating that readability is preserved. Readability is important as users constantly see program fragments during interactive verification.
+In \cref{fig:stack} we include the \OCaml implementation of a simple lock-free concurrent stack~\citep*{thomas1986systems}, and its automatic translation to \ZooLang, demonstrating that readability is preserved.
+Readability is important as users constantly see program fragments during interactive verification.
 
 \subsection{The full language}
 

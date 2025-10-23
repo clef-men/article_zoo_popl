@@ -69,7 +69,11 @@ from \ocamlinline{is_empty} to \ocamlinline{push} and vice versa.
 \subsection{Stack-based queues}
 
 A standard way to implement a sequential queue is to use two stacks: producers push onto the \emph{back stack} while consumers pop from the \emph{front stack}, stealing and reversing the back stack when needed.
-Based on this simple idea, Vesa Karvonen developed a new lock-free concurrent queue.
+Based on this simple idea, Vesa Karvonen%
+\footnote{
+\url{https://github.com/ocaml-multicore/saturn/pull/112}
+}
+developed a new lock-free concurrent queue.
 We verified the MPMC variant used in \Picos and the closable MPSC variant used in \Eio.
 
 As in the sequential implementation, the two stacks are mainly immutable.

@@ -4,7 +4,11 @@ Concurrency creates tensions between performance and memory-safety. The \OCaml m
 
 Performance-sensitive \OCaml libraries are sometimes written using unsafe primitives, that may break memory-safety if used incorrectly. It is the responsibility of code authors to ensure that the preconditions of those unsafe primitives are satisfied to ensure safety. Unfortunately, the addition to parallel code execution in \OCamlFive broke the safety of some existing code: it adds more possible interleaving and may invalidate safety reasoning.
 
-\subsection{Dynarray} In January 2023, Gabriel Scherer proposed the addition of \ocamlinline{Dynarray}, a module of (sequential) resizable arrays, to the \OCaml standard libary.\footnote{\url{https://github.com/ocaml/ocaml/pull/11882}} 
+\subsection{Dynarray} In January 2023, Gabriel Scherer%
+\footnote{
+\url{https://github.com/ocaml/ocaml/pull/11882}
+}
+proposed the addition of \ocamlinline{Dynarray}, a module of (sequential) resizable arrays, to the \OCaml standard library.
 
 \paragraph{A concurrent safety problem}
 
@@ -90,8 +94,6 @@ Lemma dynarray_2_push_type ty t v :
 \end{coqcode}
 
 The predicate \coqinline{ty} is the semantic type for the elements of the array --- it must hold for each value of the backing array and for the new value \ocamlinline{v}.
-
-\Xgabriel{Je crois avoir compris qu'il y a des choses intéressantes à dire sur le raisonnement sur les itérateurs (\ocamlinline{iteri} par exemple), mais je ne saurais pas quoi écrire à ce sujet.}
 
 \subsection{\Saturn: Single-producer or Single-consumer queues}
 

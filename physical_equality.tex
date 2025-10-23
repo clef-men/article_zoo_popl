@@ -114,8 +114,10 @@ To fix this discrepancy, we would need to weaken all our specifications to be fo
 
 \label{subsec:generative-constructors}
 We believe this really is a shortcoming, at least from the verification perspective.
-Therefore, we extended \OCaml with \emph{generative immutable blocks}
-%\footnote{\urlAnonymous{https://github.com/clef-men/ocaml/tree/generative_constructors}}
+Therefore, we extended \OCaml with \emph{generative immutable blocks}%
+\footnote{
+\url{https://github.com/clef-men/ocaml/tree/generative_constructors}
+}%
 .
 These generative blocks are just like regular immutable blocks, except they cannot be shared.
 Hence, if physical equality on two generative blocks returns \ocamlinline{true}, these blocks are definitionally equal in \Rocq.

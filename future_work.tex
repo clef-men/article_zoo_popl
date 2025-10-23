@@ -1,6 +1,6 @@
 \section{Future work}
 
-\paragraph{Relaxed memory model.}
+\paragraph{Relaxed memory model}
 
 Currently, the most important limitation of \ZooLang is that it assumes a sequentially consistent memory model, whereas \OCamlFive has a relaxed memory model~\citep*{DBLP:conf/pldi/DolanSM18}.
 As a result, our semantics does not capture all observable behaviors and therefore our correctness results are compromised.
@@ -10,13 +10,7 @@ It should be noted that moving to relaxed memory is much simpler than for other 
 Indeed, \citet*{DBLP:journals/pacmpl/MevelJP20} propose an \Iris-based program logic for \MulticoreOCaml~\citep*{DBLP:journals/pacmpl/Sivaramakrishnan20} which \citet*{DBLP:journals/pacmpl/MevelJ21} use to verify a fine-grained concurrent queue; they show that it is possible to adapt specifications and proofs in non-trivial but relatively straightforward way.
 This suggests that the transition is feasible and would not throw away our work; we plan to do it in the future.
 
-\paragraph{Relaxed memory model.}
-
-The main limitation of \ZooLang is currently its sequentially consistent memory model, as opposed to the relaxed memory model~\citep*{DBLP:conf/pldi/DolanSM18} of \OCamlFive.
-This simplification endangers the soundness of our specifications.
-Hopefully, transitioning \Zoo to relaxed memory should not be very difficult --- conceptually, at least --- thanks to the work of \citet*{DBLP:journals/pacmpl/MevelJP20}.
-
-\paragraph{Language features.}
+\paragraph{Language features}
 
 \ZooLang has been designed from the start for pragmatic verification of advanced concurrent data structures; this informed the choice of feature coverage and the semantics design.
 To accommodate other uses, more features are needed and therefore should be supported: exceptions, algebraic effects~\citep*{DBLP:conf/pldi/Sivaramakrishnan21}, modules, functors, threads%
@@ -26,10 +20,7 @@ To accommodate other uses, more features are needed and therefore should be supp
 .
 Algebraic effects have been formalized by \citet*{DBLP:journals/pacmpl/VilhenaP21}, who propose an \Iris-based program logic; accordingly, we do not anticipate specific difficulties in introducing them in \ZooLang.
 
-\paragraph{Automation.}
+\paragraph{Automation}
 
 Another interesting direction would be to combine \Zoo with semi-automated techniques.
 Similarly to \WhyThree, the simple parts of the verification effort would be done in a semi-automated way, while the most difficult parts would be conducted in \Rocq.
-
-%Its main weakness so far is its memory model, which is sequentially consistent as opposed to the relaxed \OCaml~5 memory model.
-%In the future we also plan to add exceptions and algebraic effects.

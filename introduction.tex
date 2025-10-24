@@ -40,7 +40,7 @@ These limitations are well-known in the \Iris community.
 We created a new \Iris language, \ZooLang, that can better express concurrent \OCaml programs.
 Its feature set grew over time as we applied it to more verification scenarios, and we now believe that it allows practical verification of fine-grained concurrent \OCamlFive programs --- including the use of our atomic record fields which were co-designed with \ZooLang.
 We were influenced by the \Perennial framework~\citep{DBLP:conf/sosp/ChajedTKZ19}, which achieved similar goals for the \Go language with a focus on crash-safety.
-As in \Perennial, we also provide a translator from (a subset of) \OCaml to \ZooLang: \texttt{ocaml2zoo}.
+As in \Perennial, we also provide a translator from (a subset of) \OCaml to \ZooLang: \ocamlToZoo.
 We start from \OCaml code and call our translator to obtain a deep \ZooLang embedding inside \Rocq; we can use lightweight annotations to guide the translation.
 Inside \Rocq we define specifications using \Iris, and prove them correct with respect to the \ZooLang version, which is syntactically very close to the original \OCaml source.
 We call the resulting framework \Zoo.
@@ -84,7 +84,7 @@ In summary, we claim the following contributions:
   \item
     \Zoo, a practical program verification framework aimed at concurrent \OCaml programs, mechanized in \Rocq.
     The language \ZooLang comes with a program logic expressed in the \Iris concurrent separation logic.
-    A translator \texttt{ocaml2zoo} generates \Rocq embeddings from source \OCaml programs, and works well with \OCaml tooling (\texttt{dune} support).
+    A translator \ocamlToZoo generates \Rocq embeddings from source \OCaml programs, and works well with \OCaml tooling (\texttt{dune} support).
   \item
     The verification (in a sequentially consistent model) of important structures coming from \Saturn, the \OCamlFive library of lock-free data structures.
     Our implementations and invariants sometimes improve over the \Iris state of the art for those data structures.
@@ -97,8 +97,8 @@ In summary, we claim the following contributions:
 
 \paragraph{Artifact}
 
-We include an anonymous artifact containing (1) our experimental fork of the OCaml compiler implementing atomic arrays (\cref{subsec:atomic-arrays}) and generative constructors (\cref{subsec:generative-constructors}), (2) the source of the \texttt{ocaml2zoo} translator, and (3) the \Zoo repository, which includes \ZooLang and its metatheory (\texttt{theories/zoo}), verified \OCaml source (in \texttt{lib/}) and corresponding proofs (in \texttt{theories/}).
-In particular, the output of \texttt{ocaml2zoo} is included; for example \text{mpmc\_stack\_1.ml} in \texttt{lib/zoo\_saturn/} is translated into \texttt{mpmc\_stack\_1\_\_code.v} in \texttt{theories/zoo\_saturn/}.
+We include an anonymous artifact containing (1) our experimental fork of the OCaml compiler implementing atomic arrays (\cref{subsec:atomic-arrays}) and generative constructors (\cref{subsec:generative-constructors}), (2) the source of the \ocamlToZoo translator, and (3) the \Zoo repository, which includes \ZooLang and its metatheory (\texttt{theories/zoo}), verified \OCaml source (in \texttt{lib/}) and corresponding proofs (in \texttt{theories/}).
+In particular, the output of \ocamlToZoo is included; for example \text{mpmc\_stack\_1.ml} in \texttt{lib/zoo\_saturn/} is translated into \texttt{mpmc\_stack\_1\_\_code.v} in \texttt{theories/zoo\_saturn/}.
 
 %%% Local Variables:
 %%% mode: LaTeX

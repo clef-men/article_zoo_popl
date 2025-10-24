@@ -2,6 +2,11 @@
 
 \RequirePackage{hyperref}
 
+\RequirePackage{mathtools}
+
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+
 \RequirePackage{xcolor}
 
 \RequirePackage{xparse}
@@ -16,12 +21,36 @@
 
 %-------------------------------------------------
 
+\newcommand{\eqdef}{%
+  \triangleq%
+}
+
+\newcommand{\eqbnf}{%
+  \vcentcolon\vcentcolon=%
+}
+
+%-------------------------------------------------
+
 \DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
 \def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
 
 \def\eg{\emph{e.g}\onedot}
 \def\ie{\emph{i.e}\onedot}
 \def\etc{\emph{etc}\onedot}
+
+%-------------------------------------------------
+
+\newenvironment{inbox}[1][]{
+  \begin{array}[#1]{@{}l@{}}
+}{
+  \end{array}
+}
+
+\newenvironment{inboxIndent}[1][]{
+  \begin{array}[#1]{@{\hskip1em}l@{}}
+}{
+  \end{array}
+}
 
 %-------------------------------------------------
 
@@ -173,11 +202,8 @@
   {\hbox{-}}%
 }
 
-\newcommand\doubleplus{%
-  +\kern-1.3ex+\kern0.8ex%
-}
-\newcommand\mdoubleplus{%
-  \ensuremath{\mathbin{+\mkern-10mu+}}%
+\newcommand{\dplus}{%
+  \mathbin{+\mkern-7mu+}%
 }
 
 %-------------------------------------------------
@@ -192,6 +218,112 @@
 
 %-------------------------------------------------
 
+\newcommand{\mykeyword}[1]{%
+  \textlog{\textbf{#1}}%
+}
+
+\newcommand{\myifOneline}[3]{%
+  \mykeyword{if}\ #1\ \mykeyword{then}\ #2\ \mykeyword{else}\ #3%
+}
+\newcommand{\myif}[3]{%
+  \begin{array}[t]{@{}l@{}}
+      \mykeyword{if}\ #1\ \mykeyword{then}
+    \\
+      \begin{array}{@{\kern1em}l@{}}
+        #2
+      \end{array}
+    \\
+      \mykeyword{else}
+    \\
+      \begin{array}{@{\kern1em}l@{}}
+        #3
+      \end{array}
+  \end{array}%
+}
+
+%-------------------------------------------------
+
+\newcommand{\@recordBegin}{%
+  \left\{\,%
+}
+\newcommand{\@recordEnd}{%
+  \,\right\}%
+}
+\newcommand{\@recordField}[2]{%
+  \textlog{#1} \kern-0.25em : #2%
+}
+\newcommand{\@recordSep}{%
+  ;\,%
+}
+\newcommand{\recordOne}[2]{%
+  \@recordBegin%
+  \@recordField{#1}{#2}%
+  \@recordEnd%
+}
+\newcommand{\recordTwo}[4]{%
+  \@recordBegin%
+  \@recordField{#1}{#2}%
+  \@recordSep%
+  \@recordField{#3}{#4}%
+  \@recordEnd%
+}
+\newcommand{\recordThree}[6]{%
+  \@recordBegin%
+  \@recordField{#1}{#2}%
+  \@recordSep%
+  \@recordField{#3}{#4}%
+  \@recordSep%
+  \@recordField{#5}{#6}%
+  \@recordEnd%
+}
+\newcommand{\recordFour}[8]{%
+  \@recordBegin%
+  \@recordField{#1}{#2}%
+  \@recordSep%
+  \@recordField{#3}{#4}%
+  \@recordSep%
+  \@recordField{#5}{#6}%
+  \@recordSep%
+  \@recordField{#7}{#8}%
+  \@recordEnd%
+}
+
+\newcommand{\recordGet}[2]{%
+  #1.\textlog{#2}%
+}
+
+%-------------------------------------------------
+
+\newcommand{\mystackrel}[2]{%
+  \stackrel{%
+    \smash{%
+      \raisebox{-.15ex}{%
+        \ensuremath{%
+          \scriptstyle \textlog{#1}%
+        }%
+      }%
+    }%
+  }{%
+    #2%
+  }%
+}
+
+\newcommand{\similar}[1][]{%
+  \mystackrel{#1}{\approx}%
+}
+
+\newcommand{\nonsimilar}[1][]{%
+  \mystackrel{#1}{\not\approx}%
+}
+
+%-------------------------------------------------
+
+\newcommand{\interp}[1]{%
+  \llbracket #1 \rrbracket%
+}
+
+%-------------------------------------------------
+
 \newcommand{\Prop}{%
   \textlog{Prop}%
 }
@@ -199,33 +331,57 @@
 \newcommand{\iProp}{%
   \textlog{iProp}%
 }
+
 \newcommand{\iOr}{%
   \vee%
 }
+
 \newcommand{\iSep}{%
   \mathrel{\ast}%
 }
+
 \newcommand{\iBigSep}{%
   \scalerel*{\iSep}{\sum}%
 }
+
 \newcommand{\iWand}{%
   \mathrel{-\!\!\ast}%
 }
+
 \newcommand{\iBupd}{%
   |\!\!\!\Rrightarrow%
 }
+
 \newcommand{\iPersistent}{%
   \square%
 }
+
 \newcommand{\iTrue}{%
   \textlog{True}%
 }
 \newcommand{\iFalse}{%
   \textlog{False}%
 }
+
 \newcommand{\iPointsto}{%
   \mapsto%
 }
+
+\newcommand{\@iInv}[2]{%
+  \tikz[baseline=(m.base)]{
+    \node[rectangle, inner sep=0.8pt, outer sep=0.2pt, anchor=base] (m) {${\,#2\,}\mathstrut$} ;
+    \draw[sharp corners, line width=0.2pt] ($(m.south west) + (0, 0.65pt)$) rectangle ($(m.north east) + (0, 0.7pt)$) ;
+  }%
+  \IfNoValueF{#1}{^{\,#1}}%
+}
+\newcommand{\iInv}[2][]{%
+  \@iInv{#1}{%
+    \begin{inbox}
+      #2
+    \end{inbox}%
+  }%
+}
+
 \newcommand{\iPred}{%
   \Phi%
 }
@@ -234,6 +390,10 @@
 }
 \newcommand{\iPredThree}{%
   \Chi%
+}
+
+\newcommand{\iType}{%
+  \tau%
 }
 
 \newcommand{\iWp}[3][]{%

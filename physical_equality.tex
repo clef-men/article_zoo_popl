@@ -52,16 +52,26 @@ This shows that even on immediate values, specifying physical equality as equali
 
 To solve these problems we treat physical equality on abstract values is \emph{non-deterministic} --- even though the comparison instruction that implements it on low-level values is perfectly deterministic.
 The question is then: what guarantees do we get when physical equality returns \ocamlinline{true} and when it returns \ocamlinline{false}?
-Given such guarantees, denoted by \coqinline{val_physeq} and \coqinline{val_physneq}, the non-deterministic semantics is reflected in the logic through the following specification:
+Given such guarantees, denoted by $v_1 \similar v_2$ and $v_1 \nonsimilar v_2$, the non-deterministic semantics is reflected in the logic through the following specification:
+\[
+  \iSpec{
+    \iTrue
+  }{
+    v_1 == v_2
+  }{
+    b
+  }{
+    \myifOneline{
+      b
+    }{
+      v_1 \similar v_2
+    }{
+      v_1 \nonsimilar v_2
+    }
+  }
+\]
 
-\begin{coqcode}
-Lemma physeq_spec v1 v2 :
-  {{{ True }}}
-    v1 == v2
-  {{{ b, RET #b; ⌜(if b then val_physeq else val_physneq) v1 v2⌝ }}}
-\end{coqcode}
-
- The \OCaml manual documents a partial specification for physical equality, which is precise for basic types such as integers or integer references, but does not clearly extend to structured values containing a mix of immutable and mutable constructors, which are present in the programs we verify.
+The \OCaml manual documents a partial specification for physical equality, which is precise for basic types such as integers or integer references, but does not clearly extend to structured values containing a mix of immutable and mutable constructors, which are present in the programs we verify.
 The only guarantee that it provides for all values is: if two values are physically equal, they are also structurally equal. For values that contain immutable constructors, we do not learn anything when they are physically distinct.
 
 We will now explore the specifications of the \ocamlinline{true} and \ocamlinline{false} return cases. We describe our program verification requirements to suggest a precise enough semantics: if it does not say enough, we cannot prove our programs correct. In the other direction we describe some optimizations that \OCaml implementations may perform (gathered through our discussion with \OCaml maintainers), in particular the current compiler, that may rule out certain stronger specifications as incorrect.

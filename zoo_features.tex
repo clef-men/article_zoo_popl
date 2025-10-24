@@ -100,7 +100,7 @@ This is because we are working in a sequentially consistent memory model: there 
 \label{sec:prophecy}
 
 Lock-free algorithms exhibit complex behaviors.
-To tackle them, \Iris provides powerful mechanisms such as \emph{prophecy variables}~\citep{DBLP:journals/pacmpl/JungLPRTDJ20}.
+To tackle them, \Iris provides powerful mechanisms such as \emph{prophecy variables}~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20}.
 Essentially, prophecy variables can be used to predict the future of the program execution and reason about it.
 They are key to handle \emph{future-dependent linearization points}: linearization points that may or may not occur at a given location in the code depending on a future observation.
 

@@ -12,8 +12,8 @@ The core of \Zoo is \ZooLang~\refTheories{zoo/language/syntax.v}: a concurrent, 
 Its semantics has been designed to match \OCaml.
 
 \ZooLang comes with an \Iris-based program logic~\refTheories{zoo/program_logic/wp.v}, proved correct with respect to its small-step operational semantics~\refTheories{zoo/language/semantics.v}.
-The reasoning rules are expressed in separation logic (including rules for the different constructs of the language) along with \Rocq tactics~\refTheories{zoo/proofmode.v} that integrate into the \Iris proof mode~\citep{DBLP:journals/pacmpl/KrebbersJ0TKTCD18}.
-In addition, it supports \Diaframe~\citep{DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}, enabling proof automation.
+The reasoning rules are expressed in separation logic (including rules for the different constructs of the language) along with \Rocq tactics~\refTheories{zoo/proofmode.v} that integrate into the \Iris proof mode~\citep*{DBLP:journals/pacmpl/KrebbersJ0TKTCD18}.
+In addition, it supports \Diaframe~\citep*{DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}, enabling proof automation.
 
 \subsection{Translation from \OCaml to \ZooLang}
 
@@ -29,7 +29,7 @@ This tool can process entire \texttt{dune} projects, and supports library depend
 
 The supported \OCaml fragment includes: tuples, variants, records and inline records, shallow \ocamlinline{match}, atomic record fields, unboxed types, toplevel mutually recursive functions.
 
-In \cref{fig:stack} we include the \OCaml implementation of a simple lock-free concurrent stack~\citep{thomas1986systems}, and its automatic translation to \ZooLang, demonstrating that readability is preserved.
+In \cref{fig:stack} we include the \OCaml implementation of a simple lock-free concurrent stack~\citep*{thomas1986systems}, and its automatic translation to \ZooLang, demonstrating that readability is preserved.
 Readability is important as users constantly see program fragments during interactive verification.
 
 \subsection{The full language}
@@ -59,7 +59,7 @@ Note that \ZooLang follows \OCaml in sometimes eschewing orthogonality to provid
 
 Parallelism is mainly supported through the \ocamlinline{Domain} standard library module, including domain-local storage. Atomic operations are provided as built-in constructs (\texttt{Xchg}, \texttt{CAS}, \texttt{FAA}; see \cref{sec:atomic}).
 
-The \texttt{Proph} and \texttt{Resolve} constructs model \emph{prophecy variables}~\citep{DBLP:journals/pacmpl/JungLPRTDJ20}, see \cref{sec:prophecy}.
+The \texttt{Proph} and \texttt{Resolve} constructs model \emph{prophecy variables}~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20}, see \cref{sec:prophecy}.
 
 \subsection{Specifications and proofs}
 \label{subsec:stack-specs-and-proofs}
@@ -76,7 +76,7 @@ Lemma stack_push_spec t ι v :
     | RET (); True >>>.
 \end{coqcode}
 
-It uses a \emph{logically atomic specification}~\citep{DBLP:conf/ecoop/PintoDG14}, which has been proven~\citep{DBLP:journals/pacmpl/BirkedalDGJST21} to be equivalent to \emph{linearizability}~\citep{DBLP:journals/toplas/HerlihyW90} in sequentially consistent memory models.
+It uses a \emph{logically atomic specification}~\citep*{DBLP:conf/ecoop/PintoDG14}, which has been proven~\citep*{DBLP:journals/pacmpl/BirkedalDGJST21} to be equivalent to \emph{linearizability}~\citep*{DBLP:journals/toplas/HerlihyW90} in sequentially consistent memory models.
 
 Similarly to \href{https://en.wikipedia.org/wiki/Hoare_logic}{Hoare triples},
 the specification is formed of a precondition and a postcondition, represented in angle brackets.

@@ -2,12 +2,12 @@
 \label{sec:persistent}
 
 To further demonstrate the practicality of \Zoo, we verified a collection of persistent data structures~\refLibTheories{zoo_persistent}.
-This includes purely functional data structures such as persistent stack~\refLibTheoriesFile{zoo_persistent/pstack} and queue~\refLibTheoriesFile{zoo_persistent/pqueue}, but also efficient imperative implementations of persistent array~\refLibTheoriesFile{zoo_persistent/parray_1} from \citet{DBLP:conf/ml/ConchonF07}, store~\refLibTheoriesFile{zoo_persistent/pstore_2} and union-find~\refLibTheoriesFile{zoo_persistent/puf} from~\citet{DBLP:journals/pacmpl/AllainC0S24}.
+This includes purely functional data structures such as persistent stack~\refLibTheoriesFile{zoo_persistent/pstack} and queue~\refLibTheoriesFile{zoo_persistent/pqueue}, but also efficient imperative implementations of persistent array~\refLibTheoriesFile{zoo_persistent/parray_1} from \citet*{DBLP:conf/ml/ConchonF07}, store~\refLibTheoriesFile{zoo_persistent/pstore_2} and union-find~\refLibTheoriesFile{zoo_persistent/puf} from~\citet*{DBLP:journals/pacmpl/AllainC0S24}.
 
 Currently, verification of purely functional programs relies on the regular \ZooLang translation, \ie on a deeply embedded representation.
 However, we found this approach is cumbersome.
 In the future, it would be desirable to be able to verify them directly in \Rocq, through a translation to \Gallina.
-Similarly to \Hacspec~\citep{DBLP:conf/cpp/HaselwarterHHWH24}, this new translation would come with a generated proof of equivalence with the \ZooLang representation.
+Similarly to \Hacspec~\citep*{DBLP:conf/cpp/HaselwarterHHWH24}, this new translation would come with a generated proof of equivalence with the \ZooLang representation.
 
 %%% Local Variables:
 %%% mode: LaTeX

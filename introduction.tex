@@ -1,13 +1,13 @@
 \section{Introduction}
 \label{sec:introduction}
 
-\OCaml 5.0 was released on December 15th 2022, the first version of the \OCaml programming language to support parallel execution of \OCaml threads by merging the \MulticoreOCaml runtime~\citep{DBLP:journals/pacmpl/Sivaramakrishnan20}.
+\OCaml 5.0 was released on December 15th 2022, the first version of the \OCaml programming language to support parallel execution of \OCaml threads by merging the \MulticoreOCaml runtime~\citep*{DBLP:journals/pacmpl/Sivaramakrishnan20}.
 It provided basic support in the language runtime to start and stop coarse-grained threads called ``domains'', and support for strongly sequential atomic references in the standard library.
 The third-party library \texttt{domainslib} offered a simple scheduler for a pool of tasks, used to benchmark the parallel runtime.
 A world of parallel and concurrent software was waiting to be invented.
 
 Shared-memory concurrency is a difficult programming domain, and existing ecosystems (\Cpp, \Java, \Haskell, \Rust, \Go...) took decades to evolve comprehensive libraries of concurrent abstractions and data structures.
-In the last couple years, a handful of contributors to the \OCaml ecosystem have been implementing basic libraries for concurrent and parallel programs in \OCaml, in particular \Saturn~\citep{saturn}, a library of lock-free parallelism-safe data structures (stacks, queues, a work-stealing deque, a skip list, a bag and a hash table), \Eio~\citep{eio}, a library of asynchronous IO and structured concurrency, and \Kcas~\citep{kcas}, a library offering a software-transactional-memory abstraction.
+In the last couple years, a handful of contributors to the \OCaml ecosystem have been implementing basic libraries for concurrent and parallel programs in \OCaml, in particular \Saturn~\citep*{saturn}, a library of lock-free parallelism-safe data structures (stacks, queues, a work-stealing deque, a skip list, a bag and a hash table), \Eio~\citep*{eio}, a library of asynchronous IO and structured concurrency, and \Kcas~\citep*{kcas}, a library offering a software-transactional-memory abstraction.
 
 Concurrent algorithms and data structures are extremely difficult to reason about.
 Their implementation tend to be fairly short, a few dozens of lines.
@@ -26,8 +26,8 @@ We designed an extension of \OCaml with atomic record fields, implemented it as 
 
 \paragraph{Verification tools for concurrent programs}
 
-The state-of-the-art approach for mechanized verification of fine-grained concurrent algorithms is \Iris~\citep{DBLP:journals/jfp/JungKJBBD18}, a mechanized \emph{higher-order} concurrent separation logic with \emph{user-defined ghost state}.
-Its expressivity allows to precisely capture delicate invariants, and to reason about the linearization points of fine-grained concurrent algorithms, including external~\citep{DBLP:conf/cpp/VindumFB22} and future-dependent~\citep{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/osdi/Chang0STKZ23} linearization.
+The state-of-the-art approach for mechanized verification of fine-grained concurrent algorithms is \Iris~\citep*{DBLP:journals/jfp/JungKJBBD18}, a mechanized \emph{higher-order} concurrent separation logic with \emph{user-defined ghost state}.
+Its expressivity allows to precisely capture delicate invariants, and to reason about the linearization points of fine-grained concurrent algorithms, including external~\citep*{DBLP:conf/cpp/VindumFB22} and future-dependent~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/osdi/Chang0STKZ23} linearization.
 \Iris provides a generic mechanism to define programming languages and program logics for them. Most existing \Iris concurrent verification work has been performed in \HeapLang, the exemplar \Iris language; a concurrent, imperative, untyped, call-by-value functional language.
 
 To the best of our knowledge, it is currently the closest language to \OCamlFive in the \Iris ecosystem --- we review the existing frameworks in \cref{sec:related}.
@@ -39,18 +39,18 @@ These limitations are well-known in the \Iris community.
 
 We created a new \Iris language, \ZooLang, that can better express concurrent \OCaml programs.
 Its feature set grew over time as we applied it to more verification scenarios, and we now believe that it allows practical verification of fine-grained concurrent \OCamlFive programs --- including the use of our atomic record fields which were co-designed with \ZooLang.
-We were influenced by the \Perennial framework~\citep{DBLP:conf/sosp/ChajedTKZ19}, which achieved similar goals for the \Go language with a focus on crash-safety.
+We were influenced by the \Perennial framework~\citep*{DBLP:conf/sosp/ChajedTKZ19}, which achieved similar goals for the \Go language with a focus on crash-safety.
 As in \Perennial, we also provide a translator from (a subset of) \OCaml to \ZooLang: \ocamlToZoo.
 We start from \OCaml code and call our translator to obtain a deep \ZooLang embedding inside \Rocq; we can use lightweight annotations to guide the translation.
 Inside \Rocq we define specifications using \Iris, and prove them correct with respect to the \ZooLang version, which is syntactically very close to the original \OCaml source.
 We call the resulting framework \Zoo.
 
-One notable current limitation of \ZooLang is that it assumes a sequentially consistent memory model, whereas \OCamlFive has a relaxed memory model~\citep{DBLP:conf/pldi/DolanSM18}.
+One notable current limitation of \ZooLang is that it assumes a sequentially consistent memory model, whereas \OCamlFive has a relaxed memory model~\citep*{DBLP:conf/pldi/DolanSM18}.
 We wanted to ensure that we supported practical verification in a sequentially consistent setting first.
-In the future, we plan to adopt the \OCaml memory model as formalized in \Cosmo~\citep{DBLP:journals/pacmpl/MevelJP20}.
+In the future, we plan to adopt the \OCaml memory model as formalized in \Cosmo~\citep*{DBLP:journals/pacmpl/MevelJP20}.
 
-% The formal verification of fine-grained concurrent algorithms involves finding and reasoning about non-trivial linearization points~\citep{DBLP:journals/csur/DongolD15,DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/cpp/VindumFB22,DBLP:conf/osdi/Chang0STKZ23}. In recent years, concurrent separation logic~\citep{DBLP:journals/siglog/BrookesO16} has enabled significant progress in this area.
-% In particular, the development of \Iris~\citep{DBLP:journals/jfp/JungKJBBD18}, a state-of-the-art mechanized \emph{higher-order} concurrent separation logic with \emph{user-defined ghost state}, has nourished a rich and successful line of works~\citep{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/cpp/VindumFB22,DBLP:conf/osdi/Chang0STKZ23,DBLP:conf/cpp/CarbonneauxZKON22,DBLP:journals/pacmpl/JungLCKPK23,DBLP:journals/pacmpl/SomersK24,DBLP:journals/pacmpl/MevelJP20,DBLP:journals/pacmpl/MevelJ21,DBLP:conf/pldi/DangJCNMKD22,DBLP:journals/pacmpl/ParkKMJLKK24,DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}, dealing with external~\citep{DBLP:conf/cpp/VindumFB22} and future-dependent~\citep{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/osdi/Chang0STKZ23} linearization points, relaxed memory~\citep{DBLP:journals/pacmpl/MevelJP20,DBLP:journals/pacmpl/MevelJ21,DBLP:conf/pldi/DangJCNMKD22,DBLP:journals/pacmpl/ParkKMJLKK24} and automation~\citep{DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}.
+% The formal verification of fine-grained concurrent algorithms involves finding and reasoning about non-trivial linearization points~\citep*{DBLP:journals/csur/DongolD15,DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/cpp/VindumFB22,DBLP:conf/osdi/Chang0STKZ23}. In recent years, concurrent separation logic~\citep*{DBLP:journals/siglog/BrookesO16} has enabled significant progress in this area.
+% In particular, the development of \Iris~\citep*{DBLP:journals/jfp/JungKJBBD18}, a state-of-the-art mechanized \emph{higher-order} concurrent separation logic with \emph{user-defined ghost state}, has nourished a rich and successful line of works~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/cpp/VindumFB22,DBLP:conf/osdi/Chang0STKZ23,DBLP:conf/cpp/CarbonneauxZKON22,DBLP:journals/pacmpl/JungLCKPK23,DBLP:journals/pacmpl/SomersK24,DBLP:journals/pacmpl/MevelJP20,DBLP:journals/pacmpl/MevelJ21,DBLP:conf/pldi/DangJCNMKD22,DBLP:journals/pacmpl/ParkKMJLKK24,DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}, dealing with external~\citep*{DBLP:conf/cpp/VindumFB22} and future-dependent~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/osdi/Chang0STKZ23} linearization points, relaxed memory~\citep*{DBLP:journals/pacmpl/MevelJP20,DBLP:journals/pacmpl/MevelJ21,DBLP:conf/pldi/DangJCNMKD22,DBLP:journals/pacmpl/ParkKMJLKK24} and automation~\citep*{DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}.
 
 \paragraph{Specified \OCaml semantics}
 
@@ -75,7 +75,7 @@ It can serve as building blocks to define our concurrent data structures.
 We verified a specific component of the \Eio~library, whose author, Thomas Leonard, had pointed to us as being delicate to reason about and worth mechanizing.
 Finally, we verified a large subset of the \Saturn library.
 Several of these data structures contained verification challenges, which we will describe in the relevant section.
-The main \Saturn concurrent structures remaining unverified are a skiplist and a hash table; we have verified its work-stealing deque~\citep{DBLP:conf/spaa/ChaseL05} but do not discuss it here for space reasons.
+The main \Saturn concurrent structures remaining unverified are a skiplist and a hash table; we have verified its work-stealing deque~\citep*{DBLP:conf/spaa/ChaseL05} but do not discuss it here for space reasons.
 
 \paragraph{Contributions}
 

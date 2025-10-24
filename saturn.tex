@@ -1,7 +1,7 @@
 \section{\Saturn: A library of standard lock-free data structures}
 \label{sec:saturn}
 
-We verified a collection of standard lock-free data structures~\refLibTheories{zoo_saturn} from the \Saturn, \Eio and \Picos~\citep{picos} libraries.
+We verified a collection of standard lock-free data structures~\refLibTheories{zoo_saturn} from the \Saturn, \Eio and \Picos~\citep*{picos} libraries.
 It includes stacks, queues (list-based, array-based and stack-based) and bags.
 These data structures are meant to be used as is or adapted to fit specific needs.
 To cover a wide range of use cases, we provide specialized variants: bounded or unbounded, single-producer (SP) or multi-producer (MP), single-consumer (SC) or multi-consumer (MC).
@@ -10,7 +10,7 @@ Due to space constraints, we focus on the most important algorithms and refrain 
 
 \subsection{Stacks}
 
-We verified three variants of the Treiber stack~\citep{thomas1986systems}: unbounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_stack_1}, bounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_bstack}, closable unbounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_stack_2}.
+We verified three variants of the Treiber stack~\citep*{thomas1986systems}: unbounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_stack_1}, bounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_bstack}, closable unbounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_stack_2}.
 This last variant features a closing mechanism: at some point, some thread can decide to close the stack, retrieving the current content and preventing others from operating on it.
 For example, we used it to represent a set of vertex successors in the context of a concurrent graph implementation (not presented in this paper).
 
@@ -20,20 +20,20 @@ From the programmer's perspective, this is unsatisfactory because (1) the compil
 From the verification perspective, this is also unsatisfactory because the mutable representation is more complex to write and reason about: pointers and points-to assertions versus pure \Rocq list.
 
 Although verified stacks may seem like a not-so-new contribution, it is, as far as we know, the first verification of realistic \OCaml implementations.
-For comparison, the exemplary concurrent stacks verified in \Iris~\citep{iris-examples} all suffer from the same flaw: they need to introduce indirections (pointers) to be able to use the compare-and-set primitive.
+For comparison, the exemplary concurrent stacks verified in \Iris~\citep*{iris-examples} all suffer from the same flaw: they need to introduce indirections (pointers) to be able to use the compare-and-set primitive.
 
 \subsection{List-based queues}
 
-We verified four variants of the Michael-Scott queue~\citep{DBLP:conf/podc/MichaelS96}: unbounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_queue_1}, bounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_bqueue}, unbounded MPSC~\refLibTheoriesFile{zoo_saturn/mpsc_queue_1} and unbounded SPMC~\refLibTheoriesFile{zoo_saturn/spmc_queue}.
+We verified four variants of the Michael-Scott queue~\citep*{DBLP:conf/podc/MichaelS96}: unbounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_queue_1}, bounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_bqueue}, unbounded MPSC~\refLibTheoriesFile{zoo_saturn/mpsc_queue_1} and unbounded SPMC~\refLibTheoriesFile{zoo_saturn/spmc_queue}.
 The SPMC queue is used to implement one of the bags --- a relaxed queue guaranteeing only per-producer ordering.
 
-In the \Iris literature, \citet{DBLP:conf/cpp/VindumB21} established contextual refinement of the Michael-Scott queue while \citet{DBLP:journals/pacmpl/MulderK23} proved logical atomicity.
+In the \Iris literature, \citet*{DBLP:conf/cpp/VindumB21} established contextual refinement of the Michael-Scott queue while \citet*{DBLP:journals/pacmpl/MulderK23} proved logical atomicity.
 However, we had to redesign and extend the invariant for several reasons.
 
 \paragraph{Efficient implementation.}\label{par:michael-scott-cleanup}
 The Michael-Scott essentially consists of a singly linked list of nodes that only grows over time.
 The previously verified implementations, implemented in \HeapLang, use a double indirection to represent the list~\citep[\figurename~2]{DBLP:conf/cpp/VindumB21}.
-Similarly to the Treiber stack, this is made so as to be able to use the compare-and-set primitive of \HeapLang. \citet{DBLP:conf/cpp/VindumB21} write:
+Similarly to the Treiber stack, this is made so as to be able to use the compare-and-set primitive of \HeapLang. \citet*{DBLP:conf/cpp/VindumB21} write:
 \begin{quotation}
   A node is a pointer to either none or some of a pair of a value and a pointer to the next node.
   The pointer serves to make nodes comparable by pointer equality such that pointers to nodes can be changed with CAS.
@@ -41,10 +41,10 @@ Similarly to the Treiber stack, this is made so as to be able to use the compare
 In \OCaml, this would correspond to introducing extra atomic references (\ocamlinline{Atomic.t}) between the nodes.
 Using atomic record fields, we can represent the list more efficiently, without the extra indirection.
 However, there is one subtlety: in this new representation, we need to clear the outdated nodes so that their value is no longer reachable and can be garbage-collected, in other words to prevent a memory leak.
-This subtlety is not discussed in the original implementation~\citep{DBLP:conf/podc/MichaelS96} designed for non-garbage-collected languages, but it is folklore; it is implemented in \Saturn (\href{https://github.com/ocaml-multicore/saturn/pull/64}{saturn\#64}) and we verified that it preserves correctness.
+This subtlety is not discussed in the original implementation~\citep*{DBLP:conf/podc/MichaelS96} designed for non-garbage-collected languages, but it is folklore; it is implemented in \Saturn (\href{https://github.com/ocaml-multicore/saturn/pull/64}{saturn\#64}) and we verified that it preserves correctness.
 
 To deal with this representation in separation logic, we introduce the notion of \emph{explicit chain} that allows decoupling the chain structure formed by the nodes and the content of the nodes.
-Concretely, the assertion $\textlog{xchain}\ \textit{dq}\ \loc{}s\ \textit{dst}$~\refTheories{zoo_std/xchain.v} represents a chain linking locations $\loc{}s$ and ending at value $\textit{dst}$; $\textit{dq}$ is a discardable fraction~\citep{DBLP:conf/cpp/VindumB21} that controls the ownership of the chain.
+Concretely, the assertion $\textlog{xchain}\ \textit{dq}\ \loc{}s\ \textit{dst}$~\refTheories{zoo_std/xchain.v} represents a chain linking locations $\loc{}s$ and ending at value $\textit{dst}$; $\textit{dq}$ is a discardable fraction~\citep*{DBLP:conf/cpp/VindumB21} that controls the ownership of the chain.
 This notion is very flexible as it is independent of the rest of the structure.
 As a matter of fact, we used it and its generalization to doubly linked list more broadly, to verify other algorithms.
 All the variants of Michael-Scott we verified rely on it.
@@ -62,7 +62,7 @@ In other words, the linearization point of \ocamlinline{is_empty} is triggered b
 To handle this in the proof, we introduced a mechanism in the invariant to transfer the \Iris resource materializing the linearization point%
 \footnote{
 This resource is known as an \emph{atomic update}.
-\citet{DBLP:journals/pacmpl/MulderK23} provide a good description.
+\citet*{DBLP:journals/pacmpl/MulderK23} provide a good description.
 }
 from \ocamlinline{is_empty} to \ocamlinline{push} and vice versa.
 

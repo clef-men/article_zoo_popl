@@ -8,11 +8,11 @@
 %}
 %demonstrating its use.
 
-The core of \Zoo is \ZooLang: a concurrent, imperative, untyped, functional programming language fully formalized in \Rocq.
+The core of \Zoo is \ZooLang~\refTheories{zoo/language/syntax.v}: a concurrent, imperative, untyped, functional programming language fully formalized in \Rocq.
 Its semantics has been designed to match \OCaml.
 
-\ZooLang comes with a program logic based on \Iris, proved correct with respect to its small-step operational semantics.
-The reasoning rules are expressed in separation logic (including rules for the different constructs of the language) along with \Rocq tactics that integrate into the \Iris proof mode~\citep{DBLP:journals/pacmpl/KrebbersJ0TKTCD18}.
+\ZooLang comes with an \Iris-based program logic~\refTheories{zoo/program_logic/wp.v}, proved correct with respect to its small-step operational semantics~\refTheories{zoo/language/semantics.v}.
+The reasoning rules are expressed in separation logic (including rules for the different constructs of the language) along with \Rocq tactics~\refTheories{zoo/proofmode.v} that integrate into the \Iris proof mode~\citep{DBLP:journals/pacmpl/KrebbersJ0TKTCD18}.
 In addition, it supports \Diaframe~\citep{DBLP:conf/pldi/MulderKG22,DBLP:journals/pacmpl/MulderK23}, enabling proof automation.
 
 \subsection{Translation from \OCaml to \ZooLang}
@@ -20,7 +20,11 @@ In addition, it supports \Diaframe~\citep{DBLP:conf/pldi/MulderKG22,DBLP:journal
 \input{figures/stack}
 
 While \ZooLang lives in \Rocq, we want to verify \OCaml programs.
-To connect them we provide the tool \ocamlToZoo to translate \OCaml source files\footnote{Actually, \ocamlToZoo processes binary annotation files (\texttt{.cmt} files).} into \Rocq files containing \ZooLang code.
+To connect them we provide the tool \ocamlToZoo to translate \OCaml source files%
+\footnote{
+Actually, \ocamlToZoo processes binary annotation files (\texttt{.cmt} files).
+}
+into \Rocq files containing \ZooLang code.
 This tool can process entire \texttt{dune} projects, and supports library dependencies.
 
 The supported \OCaml fragment includes: tuples, variants, records and inline records, shallow \ocamlinline{match}, atomic record fields, unboxed types, toplevel mutually recursive functions.
@@ -32,7 +36,11 @@ Readability is important as users constantly see program fragments during intera
 
 \input{figures/zoo}
 
-The \ZooLang syntax is given in \cref{fig:zoo}\footnote{More precisely, it is the syntax of the surface language, including \Rocq notations.}, omitting mutually recursive toplevel functions that are treated specially.
+The \ZooLang syntax~\refTheories{zoo/language/notations.v} is given in \cref{fig:zoo}%
+\footnote{
+More precisely, it is the syntax of the surface language, including \Rocq notations.
+}%
+, omitting mutually recursive toplevel functions that are treated specially.
 Expressions include standard constructs like booleans, integers, anonymous functions (that may be recursive), applications, \ocamlinline{let} bindings, sequence, unary and binary operators, conditionals, \ocamlinline{for} loops, tuples.
 In any expression, one can refer to a \Rocq term representing a \ZooLang value (of type \coqinline{val}) using its \Rocq identifier.
 \ZooLang is deeply embedded: variables (bound by functions and \ocamlinline{let}) are quoted as strings.

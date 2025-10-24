@@ -1,7 +1,7 @@
 \section{Standard data structures}
 \label{sec:std}
 
-To save users from reinventing the wheel, we provide a library of verified standard data structures --- more or less a subset of the \OCaml standard library.
+To save users from reinventing the wheel, we provide a library of verified standard data structures~\refLibTheories{zoo_std} --- more or less a subset of the \OCaml standard library.
 Most of these data structures%
 \footnote{
 For practical reasons, to make them completely opaque, we chose to axiomatize a few functions from the \ocamlinline{Domain} and \ocamlinline{Random} modules.
@@ -16,7 +16,7 @@ module.
 
 \paragraph{Sequential data structures.}
 
-We provide verified implementations of various sequential data structures: array, dynamic array (vector), list, stack, queue (bounded and unbounded), double-ended queue.
+We provide verified implementations of various sequential data structures: array~\refLibTheoriesFile{zoo_std/array}, dynamic array~\refLibTheoriesFile{zoo_std/dynarray_1} (vector), list~\refLibTheoriesFile{zoo_std/lst}, stack~\refLibTheoriesFile{zoo_std/stack}, queue (bounded~\refLibTheoriesFile{zoo_std/bqueue} and unbounded~\refLibTheoriesFile{zoo_std/queue_1}), double-ended queue~\refLibTheoriesFile{zoo_std/deque}.
 We claim that the proven specifications are modular and practical.
 In fact, most of these data structures have already been used to verify more complex ones --- we present some in \cref{sec:persistent} and \cref{sec:saturn}.
 Especially, we developed an extensive collection of flexible specifications for the iterators of the \ocamlinline{Array} and \ocamlinline{List} modules.
@@ -27,6 +27,7 @@ Remarkably, our formalization of \ocamlinline{Array} features different (fractio
 We provide verified implementations of various concurrent data structures: domain%
 \footnote{
 Domains are the units of parallelism in \OCamlFive.
-}
-(including domain-local storage), mutex, semaphore, condition variable, write-once variable (also known as \emph{ivar}), atomic array.
+}%
+~\refLibTheoriesFile{zoo_std/domain}
+(including domain-local storage), mutex~\refLibTheoriesFile{zoo_std/mutex}, semaphore~\refLibTheoriesFile{zoo_std/semaphore}, condition variable~\refLibTheoriesFile{zoo_std/condition}, write-once variable~\refLibTheoriesFile{zoo_std/ivar_3} (also known as \emph{ivar}), atomic array~\refLibTheoriesFile{zoo_std/atomic_array}.
 Note that there is currently no \ocamlinline{Atomic_array} module in the \OCaml standard library, but we are planning to propose it.

@@ -1,8 +1,8 @@
 \section{Persistent data structures}
 \label{sec:persistent}
 
-To further demonstrate the practicality of \Zoo, we verified a collection of persistent data structures.
-This includes purely functional data structures such as persistent stack and queue, but also efficient imperative implementations of persistent array from \citet{DBLP:conf/ml/ConchonF07}, \texttt{store} and union-find from~\citet{DBLP:journals/pacmpl/AllainC0S24}.
+To further demonstrate the practicality of \Zoo, we verified a collection of persistent data structures~\refLibTheories{zoo_persistent}.
+This includes purely functional data structures such as persistent stack~\refLibTheoriesFile{zoo_persistent/pstack} and queue~\refLibTheoriesFile{zoo_persistent/pqueue}, but also efficient imperative implementations of persistent array~\refLibTheoriesFile{zoo_persistent/parray_1} from \citet{DBLP:conf/ml/ConchonF07}, store~\refLibTheoriesFile{zoo_persistent/pstore_2} and union-find~\refLibTheoriesFile{zoo_persistent/puf} from~\citet{DBLP:journals/pacmpl/AllainC0S24}.
 
 Currently, verification of purely functional programs relies on the regular \ZooLang translation, \ie on a deeply embedded representation.
 However, we found this approach is cumbersome.

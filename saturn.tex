@@ -1,7 +1,7 @@
 \section{\Saturn: A library of standard lock-free data structures}
 \label{sec:saturn}
 
-We verified a collection of standard lock-free data structures from the \Saturn, \Eio and \Picos~\citep{picos} libraries.
+We verified a collection of standard lock-free data structures~\refLibTheories{zoo_saturn} from the \Saturn, \Eio and \Picos~\citep{picos} libraries.
 It includes stacks, queues (list-based, array-based and stack-based) and bags.
 These data structures are meant to be used as is or adapted to fit specific needs.
 To cover a wide range of use cases, we provide specialized variants: bounded or unbounded, single-producer (SP) or multi-producer (MP), single-consumer (SC) or multi-consumer (MC).
@@ -10,7 +10,7 @@ Due to space constraints, we focus on the most important algorithms and refrain 
 
 \subsection{Stacks}
 
-We verified three variants of the Treiber stack~\citep{thomas1986systems}: (1) unbounded MPMC (the standard one), (2) bounded MPMC, (3) closable unbounded MPMC.
+We verified three variants of the Treiber stack~\citep{thomas1986systems}: unbounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_stack_1}, bounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_bstack}, closable unbounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_stack_2}.
 This last variant features a closing mechanism: at some point, some thread can decide to close the stack, retrieving the current content and preventing others from operating on it.
 For example, we used it to represent a set of vertex successors in the context of a concurrent graph implementation (not presented in this paper).
 
@@ -24,7 +24,7 @@ For comparison, the exemplary concurrent stacks verified in \Iris~\citep{iris-ex
 
 \subsection{List-based queues}
 
-We verified four variants of the Michael-Scott queue~\citep{DBLP:conf/podc/MichaelS96}: unbounded MPMC (the standard one), bounded MPMC, unbounded MPSC and unbounded SPMC.
+We verified four variants of the Michael-Scott queue~\citep{DBLP:conf/podc/MichaelS96}: unbounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_queue_1}, bounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_bqueue}, unbounded MPSC~\refLibTheoriesFile{zoo_saturn/mpsc_queue_1} and unbounded SPMC~\refLibTheoriesFile{zoo_saturn/spmc_queue}.
 The SPMC queue is used to implement one of the bags --- a relaxed queue guaranteeing only per-producer ordering.
 
 In the \Iris literature, \citet{DBLP:conf/cpp/VindumB21} established contextual refinement of the Michael-Scott queue while \citet{DBLP:journals/pacmpl/MulderK23} proved logical atomicity.
@@ -44,7 +44,7 @@ However, there is one subtlety: in this new representation, we need to clear the
 This subtlety is not discussed in the original implementation~\citep{DBLP:conf/podc/MichaelS96} designed for non-garbage-collected languages, but it is folklore; it is implemented in \Saturn (\href{https://github.com/ocaml-multicore/saturn/pull/64}{saturn\#64}) and we verified that it preserves correctness.
 
 To deal with this representation in separation logic, we introduce the notion of \emph{explicit chain} that allows decoupling the chain structure formed by the nodes and the content of the nodes.
-Concretely, the assertion $\textlog{xchain}\ \textit{dq}\ \loc{}s\ \textit{dst}$ represents a chain linking locations $\loc{}s$ and ending at value $\textit{dst}$; $\textit{dq}$ is a discardable fraction~\citep{DBLP:conf/cpp/VindumB21} that controls the ownership of the chain.
+Concretely, the assertion $\textlog{xchain}\ \textit{dq}\ \loc{}s\ \textit{dst}$~\refTheories{zoo_std/xchain.v} represents a chain linking locations $\loc{}s$ and ending at value $\textit{dst}$; $\textit{dq}$ is a discardable fraction~\citep{DBLP:conf/cpp/VindumB21} that controls the ownership of the chain.
 This notion is very flexible as it is independent of the rest of the structure.
 As a matter of fact, we used it and its generalization to doubly linked list more broadly, to verify other algorithms.
 All the variants of Michael-Scott we verified rely on it.
@@ -74,7 +74,7 @@ Based on this simple idea, Vesa Karvonen%
 \url{https://github.com/ocaml-multicore/saturn/pull/112}
 }
 developed a new lock-free concurrent queue.
-We verified the MPMC variant used in \Picos and the closable MPSC variant used in \Eio.
+We verified the MPMC variant~\refLibTheoriesFile{zoo_saturn/mpmc_queue_2} used in \Picos and the closable MPSC variant~\refLibTheoriesFile{zoo_saturn/mpsc_queue_3} used in \Eio.
 
 As in the sequential implementation, the two stacks are mainly immutable.
 Both stacks are updated using compare-and-set so we use generative constructors to reason about physical equality.

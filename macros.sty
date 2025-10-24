@@ -1,8 +1,12 @@
-\RequirePackage{xspace}
+\RequirePackage{graphicx}
+
+\RequirePackage{hyperref}
 
 \RequirePackage{xcolor}
 
-\RequirePackage{hyperref}
+\RequirePackage{xparse}
+
+\RequirePackage{xspace}
 
 %-------------------------------------------------
 
@@ -254,4 +258,47 @@
         #4
       \end{array}
   \end{array}%
+}
+
+%-------------------------------------------------
+
+\newlength\@inlinegraphicsHeight
+\newlength\@inlinegraphicsDepth
+\newcommand{\inlinegraphics}[2][1]{%
+  \settototalheight\@inlinegraphicsHeight{Xygp}%
+  \settodepth\@inlinegraphicsDepth{Xygp}%
+  \raisebox{-#1\@inlinegraphicsDepth}{\includegraphics[height=\@inlinegraphicsHeight]{#2}}%
+}
+
+%-------------------------------------------------
+
+\newcommand{\refLib}[1]{%
+  \href{%
+    https://github.com/clef-men/zoo/tree/popl26/lib/\detokenize{#1}%
+  }{%
+    \inlinegraphics[.5]{images/ocaml.png}%
+  }%
+}
+
+\newcommand{\refTheories}[1]{%
+  \ifx \relax#1\relax%
+    \href{%
+      https://github.com/clef-men/zoo/tree/popl26/theories/%
+    }{%
+      \inlinegraphics{images/rocq.png}%
+    }%
+  \else%
+    \href{%
+      https://github.com/clef-men/zoo/tree/popl26/theories/\string#1%
+    }{%
+      \inlinegraphics{images/rocq.png}%
+    }%
+  \fi%
+}
+
+\NewDocumentCommand\refLibTheories{O{} O{} m}{%
+  \refLib{#3#1}~\refTheories{#3#2}%
+}
+\newcommand{\refLibTheoriesFile}[1]{%
+  \refLibTheories[.ml][.v]{#1}%
 }

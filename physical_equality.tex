@@ -194,8 +194,6 @@ type state =
 
 \subsection{Summary}
 
-\input{figures/physical_equality}
-
 In summary, we extended our abstract values with generative immutable blocks, and give the following specification to physical equality in \ZooLang. It can also serves as a precise specification of physical equality of a practical fragment of \OCaml. 
 
 \begin{itemize}
@@ -205,6 +203,8 @@ In summary, we extended our abstract values with generative immutable blocks, an
 \item On immutable blocks, physical-equality is under-specified, but it implies that the blocks have the same tags and their arguments are in turn physically equal.
 \item Two values that fall into different categories above are never physically equal.
 \end{itemize}
+
+\input{figures/physical_equality}
 
 These informal rules are described precisely in \cref{fig:vals-lowvals-physeq}. We introduce the grammar $v$ of \ZooLang values, and a grammar $\vlow$ of \emph{low-level} values. We describe the lowering $\Lower v$ of values into low-level values: integers, booleans and constant constructors are lowered into ``immediate'' machine integers. We introduce two predicates on low-level values: $\vlow_1 \physeq vlow_2$ holds when $\vlow_1$ and $\vlow_2$ \emph{must} be physically equal, and $\vlow_1 \similar \vlow_2$ when they \emph{may} be physically equal (depending on under-specified representation choices). Generative constructors must be physically equal when they have the same generative identifier.\footnote{In this case we also ask that their tags and arguments be equal as Rocq values, to avoid having to establish this invariant in the operational semantics before we can reason about these relations.} Non-generative constructors may be physically equal (or not) when they have the same tag and their arguments may be physically equal.
 

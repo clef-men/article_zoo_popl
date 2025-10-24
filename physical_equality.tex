@@ -27,9 +27,8 @@ This difficulty can result in dangerous gaps between the programming language us
 Inductive literal :=            Inductive val :=
  | Bool (b : bool)                | Lit (lit : literal)
  | Int (n : nat)                  | Recs (i : nat)
- | Loc (l : location)                    (recs : list (binder * binder * expr))
- | Proph (pid : prophet_id)       | Block (tag : nat) (vs : list val).
- | Poison.
+ | Loc (l : location).                   (recs : list (binder * binder * expr))
+                                  | Block (tag : nat) (vs : list val).
 \end{coqcode}
 
 The value $\texttt{‘Cons(} 42 \texttt{, §Nil)}$ is represented in \Rocq as \coqinline{Block 1 [Lit (Int 42), Block 0 []]}. Notice that immutable blocks are represented in \Rocq using the \coqinline{Block} constructor directly, and \emph{not} as a location (\coqinline{Loc}) allocated on the heap. We use locations only for \emph{mutable} records. We would say that our representation of \ZooLang values is high-level or \emph{abstract}, as close to the surface syntax as reasonably possible. This distinction is important to make verification pleasant in practice, by reducing the number of locations and heap indirections that the programmer needs to work with during verification. A \ZooLang tuple is directly a tuple, etc., and this design decision of using high-level values is important to the verification experience --- in addition, assuming full ownership of arguments of immutable blocks would be incorrect.
@@ -208,6 +207,13 @@ In summary, we extended our abstract values with generative immutable blocks, an
 We reflect this specification in the \Zoo program logic, while keeping a reasonably high-level definition of abstract values.
 
 Our verification work uncovered correctness bugs in existing \OCaml concurrent code due to unsharing. We propose to extend the language with a \ocamlinline{[@generative]} annotation for immutable constructors whose physical identity we want to reason about when implementing a fine-grained concurrent data structure. A rule of thumb would be to use it for all non-constant constructors involved in \ocamlinline{Atomic.compare_and_set} operations.
+
+\subsection{Formalization}
+
+\input{figures/physical_equality}
+
+Formally, we define two relations~\refTheories{zoo/language/physical_equality.v} $v_1 \similar v_2$ and $v_1 \nonsimilar v_2$ that respectively satisfy the rules of \cref{fig:similarity} and \cref{fig:nonsimilarity}.
+In the \Rocq mechanization, we developed a tactic~\refTheories{zoo/language/tactics.v} that automatically simplifies physical equality assumptions using these rules; in practice, we found it to be very effective.
 
 %%% Local Variables:
 %%% mode: LaTeX

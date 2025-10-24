@@ -31,6 +31,32 @@
 
 %-------------------------------------------------
 
+\newcommand{\textlog}[1]{%
+  \textsf{\upshape #1}%
+}
+
+\newcommand{\loc}{%
+  \ell%
+}
+
+%-------------------------------------------------
+
+\newcommand{\logTrue}{%
+  \textlog{True}%
+}
+\newcommand{\logFalse}{%
+  \textlog{False}%
+}
+
+\newcommand{\logAnd}{%
+  \mathrel{\wedge}%
+}
+\newcommand{\logOr}{%
+  \mathrel{\vee}%
+}
+
+%-------------------------------------------------
+
 \DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
 \def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
 
@@ -54,166 +80,23 @@
 
 %-------------------------------------------------
 
-\newcommand{\C}{%
-  C\xspace%
+\newcommand{\seq}[1]{%
+  \overline{#1}%
 }
-
-\newcommand{\Cameleer}{%
-  Cameleer\xspace%
-}
-
-\newcommand{\CFML}{%
-  CFML\xspace%
-}
-
-\newcommand{\Cosmo}{%
-  Cosmo\xspace%
-}
-
-\newcommand{\Cpp}{%
-  C\texttt{++}\xspace%
-}
-
-\newcommand{\Diaframe}{%
-  Diaframe\xspace%
-}
-
-\newcommand{\DRFCaml}{%
-  DRFCaml\xspace%
-}
-
-\newcommand{\Flambda}{%
-  Flambda\xspace%
-}
-
-\newcommand{\Gallina}{%
-  Gallina\xspace%
-}
-
-\newcommand{\Go}{%
-  Go\xspace%
-}
-
-\newcommand{\Gospel}{%
-  Gospel\xspace%
-}
-
-\newcommand{\Hacspec}{%
-  Hacspec\xspace%
-}
-
-\newcommand{\Haskell}{%
-  Haskell\xspace%
-}
-
-\newcommand{\HeapLang}{%
-  HeapLang\xspace%
-}
-
-\newcommand{\Iris}{%
-  Iris\xspace%
-}
-
-\newcommand{\Java}{%
-  Java\xspace%
-}
-
-\newcommand{\Lean}{%
-  Lean\xspace%
-}
-
-\newcommand{\MulticoreOCaml}{%
-  Multicore~OCaml\xspace%
-}
-
-\newcommand{\OCaml}{%
-  OCaml\xspace%
-}
-
-\newcommand{\OCamlFive}{%
-  OCaml~5\xspace%
-}
-
-\newcommand{\OCamlFour}{%
-  OCaml~4\xspace%
-}
-
-\newcommand{\Osiris}{%
-  Osiris\xspace%
-}
-
-\newcommand{\Perennial}{%
-  Perennial\xspace%
-}
-
-\newcommand{\Rocq}{%
-  Rocq\xspace%
-}
-
-\newcommand{\Rust}{%
-  Rust\xspace%
-}
-
-\newcommand{\RustBelt}{%
-  RustBelt\xspace%
-}
-
-\newcommand{\WhyThree}{%
-  Why3\xspace%
-}
-
-\newcommand{\Zoo}{%
-  Zoo\xspace%
-}
-
-\newcommand{\ZooLang}{%
-  ZooLang\xspace%
-}
-
-%-------------------------------------------------
-
-\newcommand{\Domainslib}{%
-  \texttt{Domainslib}\xspace%
-}
-
-\newcommand{\Eio}{%
-  \texttt{Eio}\xspace%
-}
-
-\newcommand{\Kcas}{%
-  \texttt{Kcas}\xspace%
-}
-
-\newcommand{\ocamlToZoo}{%
-  \texttt{ocaml2zoo}\xspace%
-}
-
-\newcommand{\Picos}{%
-  \texttt{Picos}\xspace%
-}
-
-\newcommand{\Saturn}{%
-  \texttt{Saturn}\xspace%
-}
-
-%-------------------------------------------------
 
 \newcommand{\mathhyphen}{%
   {\hbox{-}}%
 }
 
+\newcommand{\nil}{%
+  []%
+}
+\newcommand{\cons}[2]{%
+  #1 :: #2
+}
+
 \newcommand{\dplus}{%
   \mathbin{+\mkern-7mu+}%
-}
-
-%-------------------------------------------------
-
-\newcommand{\textlog}[1]{%
-  \textsf{\upshape #1}%
-}
-
-\newcommand{\loc}{%
-  \ell%
 }
 
 %-------------------------------------------------
@@ -418,6 +301,150 @@
         #4
       \end{array}
   \end{array}%
+}
+
+%-------------------------------------------------
+
+\newcommand{\C}{%
+  C\xspace%
+}
+
+\newcommand{\Cameleer}{%
+  Cameleer\xspace%
+}
+
+\newcommand{\CFML}{%
+  CFML\xspace%
+}
+
+\newcommand{\Cosmo}{%
+  Cosmo\xspace%
+}
+
+\newcommand{\Cpp}{%
+  C\texttt{++}\xspace%
+}
+
+\newcommand{\Diaframe}{%
+  Diaframe\xspace%
+}
+
+\newcommand{\DRFCaml}{%
+  DRFCaml\xspace%
+}
+
+\newcommand{\Flambda}{%
+  Flambda\xspace%
+}
+
+\newcommand{\Gallina}{%
+  Gallina\xspace%
+}
+
+\newcommand{\Go}{%
+  Go\xspace%
+}
+
+\newcommand{\Gospel}{%
+  Gospel\xspace%
+}
+
+\newcommand{\Hacspec}{%
+  Hacspec\xspace%
+}
+
+\newcommand{\Haskell}{%
+  Haskell\xspace%
+}
+
+\newcommand{\HeapLang}{%
+  HeapLang\xspace%
+}
+
+\newcommand{\Iris}{%
+  Iris\xspace%
+}
+
+\newcommand{\Java}{%
+  Java\xspace%
+}
+
+\newcommand{\Lean}{%
+  Lean\xspace%
+}
+
+\newcommand{\MulticoreOCaml}{%
+  Multicore~OCaml\xspace%
+}
+
+\newcommand{\OCaml}{%
+  OCaml\xspace%
+}
+
+\newcommand{\OCamlFive}{%
+  OCaml~5\xspace%
+}
+
+\newcommand{\OCamlFour}{%
+  OCaml~4\xspace%
+}
+
+\newcommand{\Osiris}{%
+  Osiris\xspace%
+}
+
+\newcommand{\Perennial}{%
+  Perennial\xspace%
+}
+
+\newcommand{\Rocq}{%
+  Rocq\xspace%
+}
+
+\newcommand{\Rust}{%
+  Rust\xspace%
+}
+
+\newcommand{\RustBelt}{%
+  RustBelt\xspace%
+}
+
+\newcommand{\WhyThree}{%
+  Why3\xspace%
+}
+
+\newcommand{\Zoo}{%
+  Zoo\xspace%
+}
+
+\newcommand{\ZooLang}{%
+  ZooLang\xspace%
+}
+
+%-------------------------------------------------
+
+\newcommand{\Domainslib}{%
+  \texttt{Domainslib}\xspace%
+}
+
+\newcommand{\Eio}{%
+  \texttt{Eio}\xspace%
+}
+
+\newcommand{\Kcas}{%
+  \texttt{Kcas}\xspace%
+}
+
+\newcommand{\ocamlToZoo}{%
+  \texttt{ocaml2zoo}\xspace%
+}
+
+\newcommand{\Picos}{%
+  \texttt{Picos}\xspace%
+}
+
+\newcommand{\Saturn}{%
+  \texttt{Saturn}\xspace%
 }
 
 %-------------------------------------------------

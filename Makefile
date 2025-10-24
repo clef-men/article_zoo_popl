@@ -20,7 +20,7 @@ LATEXDIFF=latexdiff --allow-spaces --type=CCHANGEBAR --config "PICTUREENV=(?:(?:
 .PHONY : diff.tex
 diff.tex :
 	if [ ! -d old_version ] ; then git clone . old_version ; fi
-	cd old_version ; git checkout c77535903640563eee6c484f7f9ee1639f6e333c
+	cd old_version ; git checkout old-version
 	$(LATEXDIFF) ./old_version/main.tex main.tex --flatten > diff.tex
 
 diff.pdf : diff.tex

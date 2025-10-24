@@ -12,11 +12,17 @@ Translating into the native language of the proof assistant, such as Gallina for
 
 The representation may be embedded, meaning the semantics of the language is formalized in the proof assistant.
 This is the path taken by some recent works (for example \citet{DBLP:journals/pacmpl/GondelmanHPTB23}) harnessing the power of separation logic.
-In particular, \CFML~\citep{DBLP:books/hal/Chargueraud23} and \Osiris~\citep{SeassauYMP25} target \OCaml.
-However, \CFML does not support concurrency and is not based on \Iris.
-\Osiris is based on \Iris but does not support concurrency.
+In particular, (1) \CFML~\citep{DBLP:books/hal/Chargueraud23}, (2) \Osiris~\citep{SeassauYMP25} and (3) \DRFCaml~\citep{DBLP:journals/pacmpl/GeorgesPEWDECPD25} target \OCaml.
+
+(1) \CFML does not support concurrency and is not based on \Iris.
+
+(2) \Osiris is based on \Iris but does not support concurrency.
 Its design philosophy is more perfectionist than pragmatic, especially in its treatment of evaluation order, at the cost of a complex program logic.
 The relatively small number of verified examples suggests that it is not yet ready for practical verification at scale.
+
+(3) \DRFCaml is based on \Iris and does support concurrency.
+It is mostly an extension of \HeapLang with features (modalities and stack regions) entirely orthogonal to our work; in particular, it also assumes a sequentially consistent memory model.
+The crucial difference is that it forbids data races on non-atomic locations, which makes it compatible with \OCamlFive thanks to the DRF property~\citep{DBLP:conf/pldi/DolanSM18} but is too restrictive to verify legal concurrent programs, including some that we verified.
 
 %Prior to our work, \HeapLang was thus the most appropriate tool to verify concurrent \OCaml programs.
 %We discussed limitations of \HeapLang in the introduction, and \ZooLang is our proposal to improve on this.

@@ -10,13 +10,13 @@ Due to space constraints, we focus on the most important algorithms and refrain 
 
 \subsection{Stacks}
 
-We verified three variants of the Treiber stack~\citep{thomas1986systems}: 1) unbounded MPMC (the standard one), 2) bounded MPMC, 3) closable unbounded MPMC.
+We verified three variants of the Treiber stack~\citep{thomas1986systems}: (1) unbounded MPMC (the standard one), (2) bounded MPMC, (3) closable unbounded MPMC.
 This last variant features a closing mechanism: at some point, some thread can decide to close the stack, retrieving the current content and preventing others from operating on it.
 For example, we used it to represent a set of vertex successors in the context of a concurrent graph implementation (not presented in this paper).
 
 As explained in \cref{sec:physical_equality}, the three verified stacks use generative constructors to prevent sharing.
 One may ask whether it would be easier to use a mutable version of lists instead.
-From the programmer's perspective, this is unsatisfactory because 1) the compiler will typically emit warnings complaining that the mutability is not exploited and 2) it does not really reflect the intent, \ie we want precise guarantees for physical equality, not modify the list.
+From the programmer's perspective, this is unsatisfactory because (1) the compiler will typically emit warnings complaining that the mutability is not exploited and (2) it does not really reflect the intent, \ie we want precise guarantees for physical equality, not modify the list.
 From the verification perspective, this is also unsatisfactory because the mutable representation is more complex to write and reason about: pointers and points-to assertions versus pure \Rocq list.
 
 Although verified stacks may seem like a not-so-new contribution, it is, as far as we know, the first verification of realistic \OCaml implementations.
@@ -56,7 +56,7 @@ None of the previously verified implementations deal with the \ocamlinline{is_em
 It it has no successor, it is necessarily the last node of the chain, hence the queue is empty.
 If it does have a successor, \ocamlinline{is_empty} returns \ocamlinline{false}, meaning we must have observed a non-empty queue.
 However, this last part is more tricky than it may seem.
-Indeed, it may happen that 1) we read the sentinel while the queue is empty, 2) other operations fill and empty again the queue so that the sentinel is outdated, 3) we read the successor of the former sentinel while the queue is still empty.
+Indeed, it may happen that (1) we read the sentinel while the queue is empty, (2) other operations fill and empty again the queue so that the sentinel is outdated, (3) we read the successor of the former sentinel while the queue is still empty.
 The crucial point here is that \ocamlinline{is_empty} is linearized when the first \ocamlinline{push} operation filled the queue.
 In other words, the linearization point of \ocamlinline{is_empty} is triggered by another operation; this is called an \emph{external linearization point}.
 To handle this in the proof, we introduced a mechanism in the invariant to transfer the \Iris resource materializing the linearization point%

@@ -15,7 +15,7 @@ watch :
 clean :
 	git clean -fX
 
-LATEXDIFF=latexdiff --allow-spaces --type=CCHANGEBAR --config "PICTUREENV=(?:(?:picture[\w\d*@]*)|(?:tikzpicture[\w\d*@]*)|(?:DIFnomarkup)|(?:mathpar)|(?:mathline)|(?:verbatim)|(?:tabular)|(?:figure)|(?:thebibliography))" --exclude-safecmd="ocaml"
+LATEXDIFF=latexdiff --allow-spaces --type=CCHANGEBAR --config "PICTUREENV=(?:(?:picture[\w\d*@]*)|(?:tikzpicture[\w\d*@]*)|(?:DIFnomarkup)|(?:mathpar)|(?:mathline)|(?:coqcode)|(?:ocamlcode)|(?:verbatim)|(?:tabular)|(?:figure)|(?:thebibliography))" --exclude-safecmd="ocaml" --exclude-safecmd="ocamlinline"
 
 .PHONY : diff.tex
 diff.tex :

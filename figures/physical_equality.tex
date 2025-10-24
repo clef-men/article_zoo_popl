@@ -1,134 +1,250 @@
-\begin{figure}[tp]
-\begin{mathpar}
-    \infer[similar-refl]{
-      v_1 = v_2
-    }{
-      v_1 \similar v_2
-    }
-  \and
-    \infer[similar-sym]{
-      v_1 \similar v_2
-    }{
-      v_2 \similar v_1
-    }
-  \and
-    \infer[similar-trans]{
-        v_1 \similar v_2
-      \\
-        v_2 \similar v_3
-    }{
-      v_1 \similar v_3
-    }
-  \\
-    \infer[similar-bool]{
-      b_1 \similar b_2
-    }{
-      b_1 = b_2
-    }
-  \and
-    \infer[similar-int]{
-      n_1 \similar n_2
-    }{
-      n_1 = n_2
-    }
-  \and
-    \infer[similar-loc]{
-      \loc_1 \similar \loc_2
-    }{
-      \loc_1 = \loc_2
-    }
-  \\
-    \infer[similar-block-nongenerative]{
-      \textlog{Block}\ \textlog{Nongenerative}\ \textit{tag}_1\ \mathit{vs}_1 \similar \textlog{Block}\ \textlog{Nongenerative}\ \textit{tag}_2\ \mathit{vs}_2
-    }{
-      \textit{tag}_1 = \textit{tag}_2 \logAnd
-      \mathit{vs}_1 \similar \mathit{vs}_2
-    }
-  \and
-    \infer[similar-block-generative]{
-        0 < | \mathit{vs}_1 | \logOr
-        0 < | \mathit{vs}_2 |
-      \\
-        \textlog{Block}\ (\textlog{Generative}\ \mathit{bid}_1)\ \textit{tag}_1\ \mathit{vs}_1 \similar \textlog{Block}\ (\textlog{Generative}\ \mathit{bid}_2)\ \textit{tag}_2\ \mathit{vs}_2
-    }{
-      \mathit{bid}_1 = \mathit{bid}_1 \logAnd
-      \textit{tag}_1 = \textit{tag}_2 \logAnd
-      \mathit{vs}_1 = \mathit{vs}_2
-    }
-  \and
-    \infer[similar-nongenerative-generative]{
-        0 < | \mathit{vs}_1 | \logOr
-        0 < | \mathit{vs}_2 |
-      \\
-        \textlog{Block}\ \textlog{Nongenerative}\ \textit{tag}_1\ \mathit{vs}_1 \similar \textlog{Block}\ (\textlog{Generative}\ \mathit{bid}_2)\ \textit{tag}_2\ \mathit{vs}_2
-    }{
-      \logFalse
-    }
-  \\
-    \infer[similar-lit-recs]{
-      \mathit{lit} \similar \textlog{Recs}\ i\ \textit{recs}
-    }{
-      \logFalse
-    }
-  \and
-    \infer[similar-lit-block]{
-        0 < | \mathit{vs} |
-      \\
-        \mathit{lit} \similar \textlog{Block}\ \textlog{gen}\ \textit{tag}\ \mathit{vs}
-    }{
-      \logFalse
-    }
-  \and
-    \infer[similar-recs-block]{
-      \textlog{Recs}\ i\ \textit{recs} \similar \textlog{Block}\ \textit{gen}\ \textit{tag}\ \mathit{vs}
-    }{
-      \logFalse
-    }
-\end{mathpar}
-\caption{Value similarity}
-\label{fig:similarity}
-\end{figure}
+\newcommand{\generative}[1]{\mathsf{gen}~#1}
+\newcommand{\nongenerative}{\mathsf{nongen}}
+\newcommand{\bid}{bid}
+\newcommand{\vtag}{tag}
+\newcommand{\vgen}{gen}
+\newcommand{\vimm}{imm}
+\newcommand{\vblock}[3]{\textlog{block}~#1~#2~#3}
+\newcommand{\vrecs}[1]{\textlog{recs}~#1}
+\newcommand{\vlow}{\hat{v}}
+\newcommand{\Lower}[1]{\lfloor #1 \rfloor}
+
+\newcommand{\vs}{vs}
+\newcommand{\vlows}{\vlow{}s}
+\newcommand{\physeq}{\mathrel{==}}
 
 \begin{figure}[tp]
+\begin{tabular}{llcl}
+    block generativity
+    & $gen$
+    & $\eqbnf$ & $\nongenerative \mid \generative \bid$
+    \\
+    block tag
+    & $\vtag$ & $\in$ & $\mathbb{Z}$
+    \\
+    values
+    & $v$
+    & $\eqbnf$ &
+    $b \in \mathbb{B} \mid n \in \mathbb{Z} \mid \loc
+                 \mid \vrecs{\ldots}
+                 \mid \vblock{\vgen}{\vtag}{vs}$
+    \\
+    low values
+    & $\vlow$
+    & $\eqbnf$ &
+    $imm \in \mathbb{Z}
+     \mid \loc
+     \mid \vrecs{\ldots}
+     \mid \vblock{\vgen}{\vtag}{\vlows} \qquad \text{with $\vlows \neq \emptyset$}$
+\end{tabular}
+
 \begin{mathpar}
-    \infer[nonsimilar-sym]{
-      v_1 \nonsimilar v_2
-    }{
-      v_2 \nonsimilar v_1
-    }
-  \and
-    \infer[nonsimilar-bool]{
-      b_1 \nonsimilar b_2
-    }{
-      b_1 \neq b_2
-    }
-  \and
-    \infer[nonsimilar-int]{
-      n_1 \nonsimilar n_2
-    }{
-      n_1 \neq n_2
-    }
-  \and
-    \infer[nonsimilar-loc]{
-      \loc_1 \nonsimilar \loc_2
-    }{
-      \loc_1 \neq \loc_2
-    }
-  \\
-    \infer[nonsimilar-block-empty]{
-      \textlog{Block}\ \textlog{gen}_1\ \textit{tag}_1\ \nil \nonsimilar \textlog{Block}\ \textlog{gen}_2\ \textit{tag}_2\ \nil
-    }{
-      \textit{tag}_1 \neq \textit{tag}_2
-    }
-  \and
-    \infer[nonsimilar-block-generative]{
-        0 < | \mathit{vs} |
-      \\
-        \textlog{Block}\ (\textlog{Generative}\ \mathit{bid}_1)\ \textit{tag}\ \mathit{vs} \nonsimilar \textlog{Block}\ (\textlog{Generative}\ \mathit{bid}_2)\ \textit{tag}\ \mathit{vs}
-    }{
-      \mathit{bid}_1 \neq \mathit{bid}_2
-    }
+  \begin{array}{lcl}
+    \Lower n & := & n \\
+    \Lower {\mathtt{true}} & := & 1 \\
+    \Lower {\mathtt{false}} & := & 0 \\
+  \end{array}
+
+  \begin{array}{lcl}
+    \Lower {\vrecs \ldots} & := & \vrecs \ldots \\
+    \Lower {\vblock \vgen \vtag \emptyset} & := & \vtag \\
+    \Lower {\vblock \vgen \vtag vs} & := & \vblock \vgen \vtag {\Lower{vs}} \qquad \text{when $vs \neq \emptyset$}\\
+  \end{array}
+
+    \infer%
+      {\vimm_1 = \vimm_2}
+      {\vimm_1 \physeq \vimm_2}
+
+    \infer%
+      {\bid_1 = \bid_2 \\ \vtag_1 = \vtag_2 \\ \vs_1 = \vs_2}
+      {\vblock {(\generative \bid_1)} {\vtag_1} {\vs_1}
+       \physeq
+       \vblock {(\generative \bid_2)} {\vtag_2} {\vs_2}}
+\\
+   \infer%
+     {\vlow_1 \physeq \vlow_2}
+     {\vlow_1 \similar \vlow_2}
+
+    \infer%
+      {~}
+      {\vrecs \ldots \similar \vrecs \ldots}
+
+    \infer%
+      {\vtag_1 = \vtag_2 \\ \vs_1 \similar \vs_2}
+      {\vblock \nongenerative {\vtag_1} {\vs_1}
+       \similar
+       \vblock \nongenerative {\vtag_2} {\vs_2}}
+
+  \begin{array}{lcl}
+    v_1 \similar v_2 & := & \Lower{v_1} \similar \Lower{v_2} \\
+    v_1 \nonsimilar v_2 & := & \neg {(\Lower{v_1} \physeq \Lower{v_2})} \\
+  \end{array}
 \end{mathpar}
-\caption{Value non-similarity}
-\label{fig:nonsimilarity}
+\caption{Values, low-level values, physical equality}
+\label{fig:vals-lowvals-physeq}
+\end{figure}
+
+% \begin{figure}[tp]
+%   \begin{mathpar}
+%     \infer%
+%       {\vimm_1 = \vimm_2}
+%       {\vimm_1 \physeq \vimm_2}
+
+%     \infer%
+%       {\bid_1 = \bid_2 \\ \vtag_1 = \vtag_2 \\ \vs_1 = \vs_2}
+%       {\vblock {\generative \bid_1} {\vtag_1} {\vs_1}
+%        \physeq
+%        \vblock {\generative \bid_2} {\vtag_2} {\vs_2}}
+% \\
+%    \infer%
+%      {\vlow_1 \physeq \vlow_2}
+%      {\vlow_1 \similar \vlow_2}
+
+%     \infer%
+%       {~}
+%       {\vrecs \ldots \similar \vrecs \ldots}
+
+%     \infer%
+%       {\vtag_1 = \vtag_2 \\ \vs_1 \similar \vs_2}
+%       {\vblock \nongenerative {\vtag_1} {\vs_1}
+%        \similar
+%        \vblock \nongenerative {\vtag_2} {\vs_2}}
+%   \end{mathpar}
+% \caption{Must-equal and May-equal relations on low-level values}
+% \label{fig:must-may-equal}
+% \end{figure}
+
+% \begin{figure}[tp]
+%   \begin{mathpar}
+%     \infer[similar-refl]{
+%       v_1 = v_2
+%     }{
+%       v_1 \similar v_2
+%     }
+%   \and
+%     \infer[similar-sym]{
+%       v_1 \similar v_2
+%     }{
+%       v_2 \similar v_1
+%     }
+%   \and
+%     \infer[similar-trans]{
+%         v_1 \similar v_2
+%       \\
+%         v_2 \similar v_3
+%     }{
+%       v_1 \similar v_3
+%     }
+%   \\
+%     \infer[similar-bool]{
+%       b_1 \similar b_2
+%     }{
+%       b_1 = b_2
+%     }
+%   \and
+%     \infer[similar-int]{
+%       n_1 \similar n_2
+%     }{
+%       n_1 = n_2
+%     }
+%   \and
+%     \infer[similar-loc]{
+%       \loc_1 \similar \loc_2
+%     }{
+%       \loc_1 = \loc_2
+%     }
+%   \\
+%     \infer[similar-block-nongenerative]{
+%       \textlog{Block}\ \textlog{Nongenerative}\ \textit{tag}_1\ \mathit{vs}_1 \similar \textlog{Block}\ \textlog{Nongenerative}\ \textit{tag}_2\ \mathit{vs}_2
+%     }{
+%       \textit{tag}_1 = \textit{tag}_2 \logAnd
+%       \mathit{vs}_1 \similar \mathit{vs}_2
+%     }
+%   \and
+%     \infer[similar-block-generative]{
+%         0 < | \mathit{vs}_1 | \logOr
+%         0 < | \mathit{vs}_2 |
+%       \\
+%         \textlog{Block}\ (\textlog{Generative}\ \mathit{bid}_1)\ \textit{tag}_1\ \mathit{vs}_1 \similar \textlog{Block}\ (\textlog{Generative}\ \mathit{bid}_2)\ \textit{tag}_2\ \mathit{vs}_2
+%     }{
+%       \mathit{bid}_1 = \mathit{bid}_1 \logAnd
+%       \textit{tag}_1 = \textit{tag}_2 \logAnd
+%       \mathit{vs}_1 = \mathit{vs}_2
+%     }
+%   \and
+%     \infer[similar-nongenerative-generative]{
+%         0 < | \mathit{vs}_1 | \logOr
+%         0 < | \mathit{vs}_2 |
+%       \\
+%         \textlog{Block}\ \textlog{Nongenerative}\ \textit{tag}_1\ \mathit{vs}_1 \similar \textlog{Block}\ (\textlog{Generative}\ \mathit{bid}_2)\ \textit{tag}_2\ \mathit{vs}_2
+%     }{
+%       \logFalse
+%     }
+%   \\
+%     \infer[similar-lit-recs]{
+%       \mathit{lit} \similar \textlog{Recs}\ i\ \textit{recs}
+%     }{
+%       \logFalse
+%     }
+%   \and
+%     \infer[similar-lit-block]{
+%         0 < | \mathit{vs} |
+%       \\
+%         \mathit{lit} \similar \textlog{Block}\ \textlog{gen}\ \textit{tag}\ \mathit{vs}
+%     }{
+%       \logFalse
+%     }
+%   \and
+%     \infer[similar-recs-block]{
+%       \textlog{Recs}\ i\ \textit{recs} \similar \textlog{Block}\ \textit{gen}\ \textit{tag}\ \mathit{vs}
+%     }{
+%       \logFalse
+%     }
+% \end{mathpar}
+% \caption{Value similarity}
+% \label{fig:similarity}
+% \end{figure}
+
+% \begin{figure}[tp]
+% \begin{mathpar}
+%     \infer[nonsimilar-sym]{
+%       v_1 \nonsimilar v_2
+%     }{
+%       v_2 \nonsimilar v_1
+%     }
+%   \and
+%     \infer[nonsimilar-bool]{
+%       b_1 \nonsimilar b_2
+%     }{
+%       b_1 \neq b_2
+%     }
+%   \and
+%     \infer[nonsimilar-int]{
+%       n_1 \nonsimilar n_2
+%     }{
+%       n_1 \neq n_2
+%     }
+%   \and
+%     \infer[nonsimilar-loc]{
+%       \loc_1 \nonsimilar \loc_2
+%     }{
+%       \loc_1 \neq \loc_2
+%     }
+%   \\
+%     \infer[nonsimilar-block-empty]{
+%       \textlog{Block}\ \textlog{gen}_1\ \textit{tag}_1\ \nil \nonsimilar \textlog{Block}\ \textlog{gen}_2\ \textit{tag}_2\ \nil
+%     }{
+%       \textit{tag}_1 \neq \textit{tag}_2
+%     }
+%   \and
+%     \infer[nonsimilar-block-generative]{
+%         0 < | \mathit{vs} |
+%       \\
+%         \textlog{Block}\ (\textlog{Generative}\ \mathit{bid}_1)\ \textit{tag}\ \mathit{vs} \nonsimilar \textlog{Block}\ (\textlog{Generative}\ \mathit{bid}_2)\ \textit{tag}\ \mathit{vs}
+%     }{
+%       \mathit{bid}_1 \neq \mathit{bid}_2
+%     }
+% \end{mathpar}
+% \caption{Value non-similarity}
+% \label{fig:nonsimilarity}
 \end{figure}

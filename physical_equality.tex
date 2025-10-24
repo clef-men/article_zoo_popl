@@ -194,7 +194,9 @@ type state =
 
 \subsection{Summary}
 
-In summary, we extended our abstract values with generative immutable blocks, and give the following specification to physical equality in \ZooLang. It can also serves as a precise specification of physical equality of a practical fragment of \OCaml:
+\input{figures/physical_equality}
+
+In summary, we extended our abstract values with generative immutable blocks, and give the following specification to physical equality in \ZooLang. It can also serves as a precise specification of physical equality of a practical fragment of \OCaml. 
 
 \begin{itemize}
 \item On values whose low-level representation is
@@ -204,16 +206,11 @@ In summary, we extended our abstract values with generative immutable blocks, an
 \item Two values that fall into different categories above are never physically equal.
 \end{itemize}
 
-We reflect this specification in the \Zoo program logic, while keeping a reasonably high-level definition of abstract values.
+These informal rules are described precisely in \cref{fig:vals-lowvals-physeq}. We introduce the grammar $v$ of \ZooLang values, and a grammar $\vlow$ of \emph{low-level} values. We describe the lowering $\Lower v$ of values into low-level values: integers, booleans and constant constructors are lowered into ``immediate'' machine integers. We introduce two predicates on low-level values: $\vlow_1 \physeq vlow_2$ holds when $\vlow_1$ and $\vlow_2$ \emph{must} be physically equal, and $\vlow_1 \similar \vlow_2$ when they \emph{may} be physically equal (depending on under-specified representation choices). Generative constructors must be physically equal when they have the same generative identifier.\footnote{In this case we also ask that their tags and arguments be equal as Rocq values, to avoid having to establish this invariant in the operational semantics before we can reason about these relations.} Non-generative constructors may be physically equal (or not) when they have the same tag and their arguments may be physically equal.
+
+Finally, we define similarity and non-similarity relations on (high-level) values: two values are similar $v_1 \similar v_2$ when their representations may be physically equal, and they are non-similar $v_1 \nonsimilar v_2$ when their representations cannot be physically equal. We prove~\refTheories{zoo/language/physical_equality.v} that for any $v_1, v_2$, then either $v_1 \similar v_2$ or $v_1 \nonsimilar v_2$ holds, but it may be the case that for certain values both $v_1 \similar v_2$ and $v_1 \nonsimilar v_2$ hold, namely for pure non-generative constructors, for which physical equality is underspecified.
 
 Our verification work uncovered correctness bugs in existing \OCaml concurrent code due to unsharing. We propose to extend the language with a \ocamlinline{[@generative]} annotation for immutable constructors whose physical identity we want to reason about when implementing a fine-grained concurrent data structure. A rule of thumb would be to use it for all non-constant constructors involved in \ocamlinline{Atomic.compare_and_set} operations.
-
-\subsection{Formalization}
-
-\input{figures/physical_equality}
-
-Formally, we define two relations~\refTheories{zoo/language/physical_equality.v} $v_1 \similar v_2$ and $v_1 \nonsimilar v_2$ that respectively satisfy the rules of \cref{fig:similarity} and \cref{fig:nonsimilarity}.
-In the \Rocq mechanization, we developed a tactic~\refTheories{zoo/language/tactics.v} that automatically simplifies physical equality assumptions using these rules; in practice, we found it to be very effective.
 
 %%% Local Variables:
 %%% mode: LaTeX

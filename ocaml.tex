@@ -82,7 +82,7 @@ let preincrement_front (buf : 'a bag) : int =
   \item
     An alternative ``simple'' design, which was proposed by Basile Clément%
     \footnote{
-    \url{https://github.com/ocaml/RFCs/pull/39#issuecomment-2147862938}
+    \url{https://github.com/ocaml/RFCs/pull/39\#issuecomment-2147862938}
     }%
     , introduces a built-in type \ocamlinline{'a Atomic.Loc.t} for an atomic location that holds an element of type \ocamlinline{'a}, with a syntax extension \ocamlinline{[%atomic.loc <expr>.<field>]} to construct such locations.
     Atomic primitives operate on values of type \ocamlinline{'a Atomic.Loc.t} and they are exposed as functions of the module \ocamlinline{Atomic.Loc}.
@@ -104,18 +104,34 @@ The simple design has the strong advantage of exposing simpler types to users.
 The full design involves more complex types, but a simpler data representation that does not rely on specific compiler optimizations to generate efficient code, even across abstraction boundaries.
 As remarked by Leo White%
 \footnote{
-\url{https://github.com/ocaml/RFCs/pull/39#issuecomment-2168612623}
+\url{https://github.com/ocaml/RFCs/pull/39\#issuecomment-2168612623}
 }%
 , the simpler type \ocamlinline{'a Atomic.Loc.t} can be reconstructed as a dependent pair of a \ocamlinline{'r} and a \ocamlinline{('r, 'a) Atomic.Field.t}, which is expressible in \OCaml as a GADT:
 \begin{ocamlcode}
 type 'a loc = Loc : 'r * ('r, 'a) Atomic.Field.t -> 'a loc
 \end{ocamlcode}
 
-In August and September 2024 we implemented the simple design, and submitted it for inclusion in the \OCaml compiler.\footnote{\url{https://github.com/ocaml/ocaml/pull/13404}}
-We got a full code review by Olivier Nicole.\footnote{\url{https://github.com/ocaml/ocaml/pull/13404#pullrequestreview-2291958008}}
-When we approached the \OCaml maintainers to integrate the feature upstream, they asked us to reconsider implementing the full design, based on feedback in this direction by Vesa Karvonen (author of \Kcas and \Saturn).\footnote{\url{https://github.com/ocaml/ocaml/pull/13404#issuecomment-2441751885}}
+In August and September 2024 we implemented the simple design, and submitted it for inclusion in the \OCaml compiler%
+\footnote{
+\url{https://github.com/ocaml/ocaml/pull/13404}
+}%
+.
+We got a full code review by Olivier Nicole%
+\footnote{
+\url{https://github.com/ocaml/ocaml/pull/13404\#pullrequestreview-2291958008}
+}%
+.
+When we approached the \OCaml maintainers to integrate the feature upstream, they asked us to reconsider implementing the full design, based on feedback in this direction by Vesa Karvonen (author of \Kcas and \Saturn)%
+\footnote{
+\url{https://github.com/ocaml/ocaml/pull/13404\#issuecomment-2441751885}
+}%
+.
 
-We implemented the full design between November 2024 and January 2025.\footnote{\url{https://github.com/ocaml/ocaml/pull/13404#issuecomment-2441751885}}
+We implemented the full design between November 2024 and January 2025%
+\footnote{
+\url{https://github.com/ocaml/ocaml/pull/13404\#issuecomment-2441751885}
+}%
+.
 We found that it is harder to implement in the type-checker.
 The extension form
 %
@@ -129,7 +145,11 @@ On the other hand,
 interacts in a non-trivial way with the \OCaml machinery for type-based disambiguation of record fields --- when several records exist with a field named \ocamlinline{front}.
 
 For technical reasons, there is also a non-trivial interaction with the type-checking of inline record types (record types that are not defined by themselves but only as the argument of a sum type constructor), which currently prevents from using this approach with inline records, who are unfortunately common in efficient mutable data structures.
-In February and March 2025 we worked with \OCaml maintainers experts to try to lift these limitations and proposed implementation changes for inline records,\footenote{\url{https://github.com/ocaml/ocaml/pull/13770}} but we failed to reach a consensus on the best design.
+In February and March 2025 we worked with \OCaml maintainers experts to try to lift these limitations and proposed implementation changes for inline records%
+\footnote{
+\url{https://github.com/ocaml/ocaml/pull/13770}
+}%
+, but we failed to reach a consensus on the best design.
 
 In April and May, we managed to build consensus among \OCaml maintainers that the simple design, with a simpler user-facing design and a simpler implementation, was a good compromise in view of the significant difficulties of the full design with inline records.
 Our implementation of the simple design was reviewed again, we wrote user documentation, and it was integrated upstream in May 2025, to be included in the upcoming release of \OCaml~5.4.

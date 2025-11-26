@@ -62,6 +62,8 @@ Definition f_g := (
 
 \Zoo supports concurrent primitives both on atomic references (from \ocamlinline{Atomic}) and atomic record fields (from \ocamlinline{Atomic.Loc}, see \cref{sec:atomic-record-fields}) according to the table below.
 The \OCaml expressions listed on the left translate into the \Zoo expressions on the right.
+One notable aspect of this translation is that atomic accesses (\ocamlinline{Atomic.get} and \ocamlinline{Atomic.set}) correspond to plain loads and stores.
+This is because we are working in a sequentially consistent memory model: there is no difference between atomic and non-atomic memory locations.
 \begin{center}
 \begin{tabular}{ll}
     \OCaml &
@@ -92,9 +94,6 @@ The \OCaml expressions listed on the left translate into the \Zoo expressions on
     $\texttt{FAA}\ e_1 \texttt{.[} f \texttt{]}\ e_2$
 \end{tabular}
 \end{center}
-
-One notable aspect of this translation is that atomic accesses (\ocamlinline{Atomic.get} and \ocamlinline{Atomic.set}) correspond to plain loads and stores.
-This is because we are working in a sequentially consistent memory model: there is no difference between atomic and non-atomic memory locations.
 
 \subsection{Prophecy variables}
 \label{sec:prophecy}

@@ -41,7 +41,7 @@ Similarly to the Treiber stack, this is made so as to be able to use the compare
 In \OCaml, this would correspond to introducing extra atomic references (\ocamlinline{Atomic.t}) between the nodes.
 Using atomic record fields, we can represent the list more efficiently, without the extra indirection.
 However, there is one subtlety: in this new representation, we need to clear the outdated nodes so that their value is no longer reachable and can be garbage-collected, in other words to prevent a memory leak.
-This subtlety is not discussed in the original implementation~\citep*{DBLP:conf/podc/MichaelS96} designed for non-garbage-collected languages, but it is folklore; it is implemented in \Saturn (\href{https://github.com/ocaml-multicore/saturn/pull/64}{saturn\#64}) and we verified that it preserves correctness.
+This subtlety is not discussed in the original implementation~\citep*{DBLP:conf/podc/MichaelS96} designed for non-garbage-collected languages, but it is folklore; it is implemented in \Saturn (\href{https://github.com/ocaml-multicore/saturn/pull/64}{saturn\#64}) and we verified its correctness.
 
 To deal with this representation in separation logic, we introduce the notion of \emph{explicit chain} that allows decoupling the chain structure formed by the nodes and the content of the nodes.
 Concretely, the assertion $\textlog{xchain}\ \textit{dq}\ \loc{}s\ \textit{dst}$~\refTheories{zoo_std/xchain.v} represents a chain linking locations $\loc{}s$ and ending at value $\textit{dst}$; $\textit{dq}$ is a discardable fraction~\citep*{DBLP:conf/cpp/VindumB21} that controls the ownership of the chain.
@@ -77,7 +77,7 @@ developed a new lock-free concurrent queue.
 We verified the MPMC variant~\refLibTheoriesFile{zoo_saturn/mpmc_queue_2} used in \Picos and the closable MPSC variant~\refLibTheoriesFile{zoo_saturn/mpsc_queue_3} used in \Eio.
 
 As in the sequential implementation, the two stacks are mainly immutable.
-Both stacks are updated using compare-and-set so we use generative constructors to reason about physical equality.
+Both stacks are updated using CAS so we use generative constructors to reason about physical equality.
 
 Similarly again, producers and consumers work concurrently on separate stacks, limiting interference.
 The key difference compared to the sequential version is that the algorithm has to deal with the concurrent back stack reversal in a lock-free manner.

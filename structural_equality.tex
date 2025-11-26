@@ -14,8 +14,8 @@ If it terminates, the comparison decides whether the two graphs are bisimilar (m
 In \Iris, this gives:
 \[
   \iSpec{
-    \textlog{val-traversable}\ \mathit{footprint}\ v_1 \iSep \\
-    \textlog{val-traversable}\ \mathit{footprint}\ v_2 \iSep \\
+    \textlog{val-traversable}\ \mathit{footprint}\ v_1 \iSep% \\
+    \textlog{val-traversable}\ \mathit{footprint}\ v_2 \iSep% \\
     \textlog{structeq-footprint}\ \mathit{footprint}
   }{
     v_1\ \texttt{=}\ v_2
@@ -36,7 +36,8 @@ Obviously, this general specification is not very convenient to work with.
 Fortunately, for abstract values (without any mutable part), we can prove a much simpler variant saying that structural equality coincides with physical equality in absence of generative or mutable constructors:
 \[
   \iSpec{
-    \textlog{val-abstract}\ v_1 \iSep \\
+    \textlog{val-abstract}\ v_1 \iSep
+% \\
     \textlog{val-abstract}\ v_2
   }{
     v_1\ \texttt{=}\ v_2

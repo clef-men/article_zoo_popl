@@ -16,13 +16,10 @@ In particular, (1) \CFML~\citep*{DBLP:books/hal/Chargueraud23}, (2) \Osiris~\cit
 
 (1) \CFML does not support concurrency and is not based on \Iris.
 
-(2) \Osiris is based on \Iris but does not support concurrency.
-Its design philosophy is more perfectionist than pragmatic, especially in its treatment of evaluation order, at the cost of a complex program logic.
-The relatively small number of verified examples suggests that it is not yet ready for practical verification at scale.
+(2) \Osiris is based on \Iris and concentrates on a very expressive semantics with advanced, difficult language features to formalize -- in particular it supports effect handlers following \citet*{DBLP:journals/pacmpl/VilhenaP21}. On the other hand, it does not support concurrency, and its perfectionist rather than pragmatic treatment of issues such as undetermined evaluation order make it harder to use than \HeapLang or \Zoo for program verification; it may not yet be ready for practical verification at scale -- certainly not for our problem domain.
 
 (3) \DRFCaml is based on \Iris and does support concurrency.
-It is mostly an extension of \HeapLang with features (modalities and stack regions) entirely orthogonal to our work; in particular, it also assumes a sequentially consistent memory model.
-The crucial difference is that it forbids data races on non-atomic locations, which makes it compatible with \OCamlFive thanks to the DRF property~\citep*{DBLP:conf/pldi/DolanSM18} but is too restrictive to verify legal concurrent programs, including some that we verified.
+It is mostly an extension of \HeapLang with features (modalities and stack regions) entirely orthogonal to our work. It distinguishes atomic and non-atomic locations, with a sequential memory model for atomics and undefined behavior for non-atomic races. This implies that programs whose safety can be verified in the program logic are data-race free, and thus their strongly-sequential semantics is compatible with  \OCamlFive thanks to the DRF property~\citep*{DBLP:conf/pldi/DolanSM18}. In other words, DRFCaml has a sequentially-consistent memory model, with a static discipline enforcing that programs that would allow different behaviors in \OCamlFive are rejected. But the concurrent programs that we want to verify do commonly rely on non-atomic races for performance reason (or could use relaxed atomics if those were available), so they cannot be expressed in \DRFCaml.
 
 %Prior to our work, \HeapLang was thus the most appropriate tool to verify concurrent \OCaml programs.
 %We discussed limitations of \HeapLang in the introduction, and \ZooLang is our proposal to improve on this.

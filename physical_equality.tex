@@ -37,7 +37,7 @@ It is tempting to specify, as \HeapLang does, that physical equality decides equ
 
 Defining physical equality as \Rocq equality of abstract values is problematic in opposite ways:
 \begin{enumerate}
-\item Some distinct abstract values are physically equal in OCaml, for example \ocamlinline{0} and \ocamlinline{false}. Their type differ, but it possible to store them in an existential type where they can be compared for physical equality:
+\item Some distinct abstract values are physically equal in \OCaml, for example \ocamlinline{0} and \ocamlinline{false}. Their type differ, but it possible to store them in an existential type where they can be compared for physical equality:
 \begin{ocamlcode}
 type any = Any : 'a -> any
 let test = Any false == Any 0 (* maybe true *)

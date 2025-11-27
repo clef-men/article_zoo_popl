@@ -95,10 +95,7 @@ In summary, we claim the following contributions:
     In the process we identified a potential bug in existing \OCaml programs related to \emph{unsharing}, and we propose a small language extension to let users selectively disable unsharing.
 \end{enumerate}
 
-\paragraph{Artifact}
-
-We include an anonymous artifact containing (1) our experimental fork of the OCaml compiler implementing atomic arrays (\cref{subsec:atomic-arrays}) and generative constructors (\cref{subsec:generative-constructors}), (2) the source of the \ocamlToZoo translator, and (3) the \Zoo repository, which includes \ZooLang and its metatheory (\texttt{theories/zoo}), verified \OCaml source (in \texttt{lib/}) and corresponding proofs (in \texttt{theories/}).
-In particular, the output of \ocamlToZoo is included; for example \text{mpmc\_stack\_1.ml} in \texttt{lib/zoo\_saturn/} is translated into \texttt{mpmc\_stack\_1\_\_code.v} in \texttt{theories/zoo\_saturn/}.
+\paragraph{Artifact} Our entire development (code and mechanized proofs) is publicly available at \url{https://github.com/clef-men/zoo/tree/popl26}; throughout the paper we link to them using clickable icons, for example \refLibTheoriesFile{zoo_saturn/mpmc_stack_1}.
 
 %%% Local Variables:
 %%% mode: LaTeX

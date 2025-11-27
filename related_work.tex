@@ -12,19 +12,25 @@ Translating into the native language of the proof assistant, such as Gallina for
 
 The representation may be embedded, meaning the semantics of the language is formalized in the proof assistant.
 This is the path taken by some recent works (for example \citet*{DBLP:journals/pacmpl/GondelmanHPTB23}) harnessing the power of separation logic.
-In particular, the following work target \OCaml:
+In particular, the following works target \OCaml:
 
 % (1) \CFML~\citep*{DBLP:books/hal/Chargueraud23}, (2) \Osiris~\citep*{SeassauYMP25} and (3) \DRFCaml~\citep*{DBLP:journals/pacmpl/GeorgesPEWDECPD25} target \OCaml.
 
 (1) \CFML~\citep*{DBLP:books/hal/Chargueraud23} does not support concurrency and is not based on \Iris.
 
-(2) \Osiris~\citep*{SeassauYMP25} is based on \Iris and covers algebraic datatypes but also exceptions and, in particular, effect handlers following \citet*{DBLP:journals/pacmpl/VilhenaP21}. On the other hand, it does not support concurrency, and its perfectionist rather than pragmatic treatment of undetermined evaluation order make it harder to use than \HeapLang or \Zoo for program verification; it may not yet be ready for practical verification at scale --- certainly not for our problem domain.
+(2) \Osiris~\citep*{SeassauYMP25} is based on \Iris and covers algebraic data types, exceptions and effect handlers following \citet*{DBLP:journals/pacmpl/VilhenaP21}.
+However, it does not support concurrency and its perfectionist rather than pragmatic treatment of undetermined evaluation order makes it harder to use than \HeapLang or \Zoo for program verification; it may not yet be ready for practical verification at scale --- certainly not for our problem domain.
 
 (3) \DRFCaml~\citep*{DBLP:journals/pacmpl/GeorgesPEWDECPD25} is based on \Iris and does support concurrency.
-It is mostly an extension of \HeapLang with features (modalities and stack regions) entirely orthogonal to our work. It distinguishes atomic and non-atomic locations, with a sequential memory model for atomics and undefined behavior for non-atomic races. This implies that programs whose safety can be verified in the program logic are data-race free, and thus their strongly-sequential semantics is compatible with  \OCamlFive thanks to the DRF property~\citep*[Theorem 14]{DBLP:conf/pldi/DolanSM18}. In other words, \DRFCaml has a sequentially-consistent memory model, but its program logic rejects programs that would allow extra (defined) behaviors in the \OCamlFive memory model. Many concurrent programs that we want to verify do contain non-atomic races for performance reasons (or could use relaxed atomics if those were available), so they cannot be verified directly in \DRFCaml. In contrast, we prove their functional correctness in our sequentially-consistent model.
+It is mostly an extension of \HeapLang with features (modalities and stack regions) entirely orthogonal to our work.
+It distinguishes atomic and non-atomic locations, with a sequential memory model for atomics and undefined behavior for non-atomic races.
+This implies that programs whose safety can be verified in the program logic are data-race free, and thus their strongly sequential semantics is compatible with  \OCamlFive thanks to the DRF property~\citep*[Theorem 14]{DBLP:conf/pldi/DolanSM18}.
+In other words, \DRFCaml has a sequentially consistent memory model but its program logic rejects programs that would allow extra (defined) behaviors in the \OCamlFive memory model.
+Many concurrent programs that we want to verify do contain non-atomic races for performance reasons (or could use relaxed atomics if those were available), so they cannot be verified directly in \DRFCaml.
+In contrast, we prove their functional correctness in our sequentially consistent model.
 
 %Prior to our work, \HeapLang was thus the most appropriate tool to verify concurrent \OCaml programs.
-%We discussed limitations of \HeapLang in the introduction, and \ZooLang is our proposal to improve on this.
+%We discussed limitations of \HeapLang in the introduction and \ZooLang is our proposal to improve on this.
 %Conversely, one notable limitation of \ZooLang today is its lack of support for \OCaml's relaxed memory model.
 
 \subsection{Semi-automated verification}
@@ -46,7 +52,7 @@ To our knowledge, it has been applied to \C~\citep*{DBLP:conf/pldi/SammlerLKMD02
 
 There is some literature in proof-assistant research on reflecting physical equality from the implementation language into the proof assistant, for optimization purposes: for example, exposing \OCaml's physical equality as a predicate in \Rocq lets us implement some memoization and sharing techniques in \Rocq libraries.
 %
-However, axiomatizing physical equality in the proof assistant is difficult, and can result in inconsistencies.
+However, axiomatizing physical equality in the proof assistant is difficult and can result in inconsistencies.
 
 The earlier discussions of this question that we know come from Jourdan's thesis~\citep*[chapter 9]{DBLP:phd/hal/Jourdan16}, presented more succintly in \citep*{DBLP:journals/jar/BraibantJM14}.
 %

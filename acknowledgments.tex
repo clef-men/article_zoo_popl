@@ -8,9 +8,7 @@
   Thomas Leonard (author of \Eio), Vesa Karvonnen (author of \Kcas,
   \Picos, co-author of \Saturn) and Carine Morel (co-author of
   \Saturn) visiting INRIA Paris. Clément Allain did early verification
-  work on \Dynarray, \Rcfd and \Saturn in \HeapLang, and in parallel
-  started implementing \Parabs as a simplified scheduler implemented
-  in \OCaml.
+  work on \ocamlinline{Dynarray}, \ocamlinline{Rcfd} and \Saturn in \HeapLang.
 
   The project migrated to a new \Iris language, \ZooLang, in January
   2024, with existing developments migrated and extended with better
@@ -43,18 +41,18 @@
   %
   The design RFCs and the compiler implementations received feedback
   from several other people. In particular, Basile Clément initially
-  proposed\footnote{\url{https://github.com/ocaml/RFCs/pull/39#issuecomment-2147862938}}
+  proposed\footnote{\url{https://github.com/ocaml/RFCs/pull/39\#issuecomment-2147862938}}
   the idea of packing records and their offsets together in an
   %
   \ocamlinline{[%atomic.loc buf.front]}
   %
   construction at type \ocamlinline{int Atomic.Loc.t}. The initial
   design had a more complex first-class-field-like construction
-  % 
+  %
   \ocamlinline{[%atomic.field front]}
   %
   at type \ocamlinline{('a bag, int) Atomic.Field.t}. Olivier Nicole
-  did a full review of the implementation\footnote{\url{https://github.com/ocaml/RFCs/pull/39#issuecomment-2147862938}}, a substantial amount of work.
+  did a full review of the implementation\footnote{\url{https://github.com/ocaml/RFCs/pull/39\#issuecomment-2147862938}}, a substantial amount of work.
 
   The present article was written jointly by Clément Allain and
   Gabriel Scherer, with thoughtful feedback from anonymous reviewers

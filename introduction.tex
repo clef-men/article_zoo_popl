@@ -30,7 +30,7 @@ The state-of-the-art approach for mechanized verification of fine-grained concur
 Its expressivity allows to precisely capture delicate invariants, and to reason about the linearization points of fine-grained concurrent algorithms, including external~\citep*{DBLP:conf/cpp/VindumFB22} and future-dependent~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21,DBLP:conf/osdi/Chang0STKZ23} linearization.
 \Iris provides a generic mechanism to define programming languages and program logics for them. Most existing \Iris concurrent verification work has been performed in \HeapLang, the exemplar \Iris language; a concurrent, imperative, untyped, call-by-value functional language.
 
-To the best of our knowledge, it is currently the closest language to \OCamlFive in the \Iris ecosystem --- we review the existing frameworks in \cref{sec:related}.
+To the best of our knowledge, \HeapLang is currently the most practical language to verify concurrent \OCamlFive programs in the \Iris ecosystem --- we review the existing frameworks in \cref{sec:related}.
 We started our verification effort in \HeapLang, but it eventually proved impractical to verify realistic \OCaml libraries.
 Indeed, it lacks basic abstractions such as algebraic data types (tuples, mutable and immutable records, variants) and mutually recursive functions.
 Verifying \OCaml programs in \HeapLang requires difficult translation choices and introduces various encodings, to the point that the relation between the source and verified programs can become difficult to maintain and reason about.

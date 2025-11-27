@@ -1,0 +1,67 @@
+\begin{acks}
+  The main contributions of the present work are program
+  verification work in \Rocq, and were conducted by Clément
+  Allain. The first experiments that ultimately became the \Zoo
+  project started in September 2023, as a thin layer on top of
+  \HeapLang.\footnote{\url{https://github.com/clef-men/heap_lang}}
+  Central aspects of this work came from an Autumn 2023 meeting with
+  Thomas Leonard (author of \Eio), Vesa Karvonnen (author of \Kcas,
+  \Picos, co-author of \Saturn) and Carine Morel (co-author of
+  \Saturn) visiting INRIA Paris. Clément Allain did early verification
+  work on \Dynarray, \Rcfd and \Saturn in \HeapLang, and in parallel
+  started implementing \Parabs as a simplified scheduler implemented
+  in \OCaml.
+
+  The project migrated to a new \Iris language, \ZooLang, in January
+  2024, with existing developments migrated and extended with better
+  support for \OCaml features, in particular algebraic datatypes and
+  pattern matching. A large amount of verification work was done using
+  the embedded \ZooLang syntax within \Rocq; Clément Allain
+  implemented the \ocamlToZoo translator in February 2025, and
+  migrated the developments back to OCaml.
+
+  \Zoo received welcome feedback from Robbert Krebbers and Ralf Jung,
+  and we are particularly grateful for the help and advice of Ikke
+  Mulder, the author and maintainer of the \Diaframe automation
+  framework for \Iris, who helped us improve its integration in \Zoo.
+
+  The modeling choices for the semantics of \OCaml, and physical
+  equality in particular, were discussed fruitfully with the Cambium
+  team at INRIA Paris, in particular François Pottier. Vincent Laviron
+  gave excellent feedback as an expert in the semantics assumed by
+  \OCaml optimizers, and in particular pointed at the problem of
+  unsharing when reasoning about physical equality.
+
+  The side-effect contributions of the present work are support for
+  atomic record fields in \OCamlFive, motivated by the needs of our
+  program-verification work but also and more importantly from our
+  study of concurrent code written by experts, in particular Vesa
+  Karvonnen. This is joint work of Clément Allain and Gabriel
+  Scherer.
+  %
+  % Gabriel Scherer wrote and evolved the design proposal for atomic
+  % fields in May 2024, Clément Allain and Gabriel Scherer implemented
+  % several iterations as experimental compiler versions, and Gabriel
+  % Scherer did the social work of gathering opinions and eventually
+  % a decision on this new language feature.
+  %
+  The design RFCs and the compiler implementations received feedback
+  from several other people. In particular, Basile Clément initially
+  proposed\footnote{\url{https://github.com/ocaml/RFCs/pull/39#issuecomment-2147862938}}
+  the idea of packing records and their offsets together in an
+  %
+  \ocamlinline{[%atomic.loc buf.front]}
+  %
+  construction at type \ocamlinline{int Atomic.Loc.t}. The initial
+  design had a more complex first-class-field-like construction
+  % 
+  \ocamlinline{[%atomic.field front]}
+  %
+  at type \ocamlinline{('a bag, int) Atomic.Field.t}. Olivier Nicole
+  did a full review of the implementation\footnote{\url{https://github.com/ocaml/RFCs/pull/39#issuecomment-2147862938}}, a substantial amount of work.
+
+  The present article was written jointly by Clément Allain and
+  Gabriel Scherer, with thoughtful feedback from anonymous reviewers
+  from JFLA'24, ITP'24 and POPL'25, and François Pottier.
+\end{acks}
+

@@ -20,17 +20,15 @@
   implemented the \ocamlToZoo translator in February 2025, and
   migrated the developments back to OCaml.
 
-  \Zoo received welcome feedback from Robbert Krebbers and Ralf Jung,
-  and we are particularly grateful for the help and advice of Ikke
+  We are particularly grateful for the help and advice of Ikke
   Mulder, the author and maintainer of the \Diaframe automation
   framework for \Iris, who helped us improve its integration in \Zoo.
 
   The modeling choices for the semantics of \OCaml, and physical
-  equality in particular, were discussed fruitfully with the Cambium
-  team at INRIA Paris, in particular François Pottier. Vincent Laviron
-  gave excellent feedback as an expert in the semantics assumed by
-  \OCaml optimizers, and in particular pointed at the problem of
-  unsharing when reasoning about physical equality.
+  equality in particular, benefitted from discussions with Armaël
+  Guéneau. Vincent Laviron, as an expert in the semantics assumed by
+  \OCaml optimizers, confirmed that unsharing may be performed by
+  \OCaml compilers.
 
   The side-effect contributions of the present work are support for
   atomic record fields in \OCamlFive, motivated by our study of
@@ -60,6 +58,6 @@
 
   The present article was written jointly by Clément Allain and
   Gabriel Scherer, with thoughtful feedback from anonymous reviewers
-  from JFLA'25, ITP'25 and POPL'26, and François Pottier.
+  from JFLA'25, ITP'25 and POPL'26.
 \end{acks}
 

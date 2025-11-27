@@ -4,11 +4,12 @@ Concurrency creates tensions between performance and memory-safety. The \OCaml m
 
 Performance-sensitive \OCaml libraries are sometimes written using unsafe primitives, that may break memory-safety if used incorrectly. It is the responsibility of code authors to ensure that the preconditions of those unsafe primitives are satisfied to ensure safety. Unfortunately, the addition to parallel code execution in \OCamlFive broke the safety of some existing code: it adds more possible interleaving and may invalidate safety reasoning.
 
-\subsection{Dynarray} In January 2023, Gabriel Scherer%
+\subsection{Dynarray} In January 2023, %Gabriel Scherer%
+we proposed adding (sequential) resizable arrays
 \footnote{
 \url{https://github.com/ocaml/ocaml/pull/11882}
 }
-proposed the addition of \ocamlinline{Dynarray}, a module of (sequential) resizable arrays, to the \OCaml standard library.
+to the \OCaml standard library.
 
 \paragraph{A concurrent safety problem}
 
@@ -39,18 +40,20 @@ let rec push a x = (* memory-safe under concurrency *)
 
 \paragraph{A concurrent verification problem} We verified (a representative fragment of) the proposed \ocamlinline{Dynarray} implementation~\refLibTheoriesFile{zoo_std/dynarray_2}, proving that it is functionally correct under sequential usage, and that it does preserve memory-safety even under concurrent usage. The verified fragment is now part of the \Zoo standard library, and can be used in further verification projects.
 
-Informally, the verification relies on two different invariants:
-\begin{itemize}
-\item Functional correctness relies on a \emph{strong} invariant,
+Informally, the verification relies on two different invariants.%:
+% \begin{itemize}
+% \item
+  Functional correctness relies on a \emph{strong} invariant,
   which may not be preserved under concurrent usage; for example that
   the content of the \ocamlinline{size} field is smaller than the
   size of the backing array.
-\item Memory-safety relies on a \emph{weak} invariant that does not
+% \item
+  Memory-safety relies on a \emph{weak} invariant that does not
   suffice to prove correctness, but is preserved under concurrent
   usage. For this \ocamlinline{Dynarray} implementation, the weak
   invariant is that the backing array remains well-typed and that the
   content of the \ocamlinline{size} field is non-negative.
-\end{itemize}
+% \end{itemize}
 To informally check the two desired properties, it suffices to check
 that the strong invariant is indeed a sequential invariant, and that
 implies functional correctness; and separately that the weak invariant

@@ -1,7 +1,7 @@
 \section{Related work}
 \label{sec:related}
 
-We have amply covered related work on verification of concurrent fine-grained data structures in the main body of the paper. We focus here on the related work on program verification and the question of physical equality.
+We have amply covered related work on verification of concurrent fine-grained data structures in  the paper. We focus here on program verification and the question of physical equality.
 
 \subsection{Non-automated verification}
 
@@ -12,13 +12,15 @@ Translating into the native language of the proof assistant, such as Gallina for
 
 The representation may be embedded, meaning the semantics of the language is formalized in the proof assistant.
 This is the path taken by some recent works (for example \citet*{DBLP:journals/pacmpl/GondelmanHPTB23}) harnessing the power of separation logic.
-In particular, (1) \CFML~\citep*{DBLP:books/hal/Chargueraud23}, (2) \Osiris~\citep*{SeassauYMP25} and (3) \DRFCaml~\citep*{DBLP:journals/pacmpl/GeorgesPEWDECPD25} target \OCaml.
+In particular, the following work target \OCaml:
 
-(1) \CFML does not support concurrency and is not based on \Iris.
+% (1) \CFML~\citep*{DBLP:books/hal/Chargueraud23}, (2) \Osiris~\citep*{SeassauYMP25} and (3) \DRFCaml~\citep*{DBLP:journals/pacmpl/GeorgesPEWDECPD25} target \OCaml.
 
-(2) \Osiris is based on \Iris and concentrates on a very expressive semantics with advanced, difficult language features to formalize -- exceptions and, in particular, effect handlers following \citet*{DBLP:journals/pacmpl/VilhenaP21}. On the other hand, it does not support concurrency, and its perfectionist rather than pragmatic treatment of issues such as undetermined evaluation order make it harder to use than \HeapLang or \Zoo for program verification; it may not yet be ready for practical verification at scale -- certainly not for our problem domain.
+(1) \CFML~\citep*{DBLP:books/hal/Chargueraud23} does not support concurrency and is not based on \Iris.
 
-(3) \DRFCaml is based on \Iris and does support concurrency.
+(2) \Osiris~\citep*{SeassauYMP25} is based on \Iris and concentrates on a very expressive semantics with advanced, difficult language features to formalize -- exceptions and, in particular, effect handlers following \citet*{DBLP:journals/pacmpl/VilhenaP21}. On the other hand, it does not support concurrency, and its perfectionist rather than pragmatic treatment of undetermined evaluation order make it harder to use than \HeapLang or \Zoo for program verification; it may not yet be ready for practical verification at scale -- certainly not for our problem domain.
+
+(3) \DRFCaml~\citep*{DBLP:journals/pacmpl/GeorgesPEWDECPD25} is based on \Iris and does support concurrency.
 It is mostly an extension of \HeapLang with features (modalities and stack regions) entirely orthogonal to our work. It distinguishes atomic and non-atomic locations, with a sequential memory model for atomics and undefined behavior for non-atomic races. This implies that programs whose safety can be verified in the program logic are data-race free, and thus their strongly-sequential semantics is compatible with  \OCamlFive thanks to the DRF property~\citep*{DBLP:conf/pldi/DolanSM18}. In other words, DRFCaml has a sequentially-consistent memory model, with a static discipline enforcing that programs that would allow different behaviors in \OCamlFive are rejected. But the concurrent programs that we want to verify do commonly rely on non-atomic races for performance reason (or could use relaxed atomics if those were available), so they cannot be expressed in \DRFCaml.
 
 %Prior to our work, \HeapLang was thus the most appropriate tool to verify concurrent \OCaml programs.
@@ -46,13 +48,13 @@ There is some literature in proof-assistant research on reflecting physical equa
 %
 However, axiomatizing physical equality in the proof assistant is difficult, and can result in inconsistencies.
 
-The earlier discussions of this question that we know come from Jourdan's thesis~\citep*{DBLP:phd/hal/Jourdan16} (chapter 9), also presented more succintly in \citep*{DBLP:journals/jar/BraibantJM14}.
+The earlier discussions of this question that we know come from Jourdan's thesis~\citep*[chapter 9]{DBLP:phd/hal/Jourdan16}, presented more succintly in \citep*{DBLP:journals/jar/BraibantJM14}.
 %
 This work introduces the Jourdan condition, that physical equality implies equality of values.
 %
-\citep*{boulme:tel-03356701} extends the treatment of physical equality in \Rocq, integrating it in an ``extraction monad'' to control it more safely.
+\citep*{boulme:tel-03356701} extends the treatment of physical equality in \Rocq, integrating it in an ``extraction monad'' to control it safely.
 %
-There is also a discussion of similar optimizations in \Lean in \citep*{DBLP:journals/pacmpl/SelsamHM20}.
+A similar approach for \Lean is discussed in \citep*{DBLP:journals/pacmpl/SelsamHM20}.
 
 The correctness of the axiomatization of physical equality depends on the type of the values being compared: axiomatizations are typically polymorphic on any type \coqinline{A}, but their correctness depends on the specific \coqinline{A} being considered.
 %

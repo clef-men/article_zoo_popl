@@ -13,6 +13,11 @@ watch :
 
 .PHONY : clean
 clean :
+	$(LATEXMK) -c main.tex
+	rm -f main.{aux,bbl,blg,fls,log,out}
+
+.PHONY : gitclean
+gitclean :
 	git clean -fX
 
 LATEXDIFF=latexdiff --allow-spaces --type=CCHANGEBAR --config "PICTUREENV=(?:(?:picture[\w\d*@]*)|(?:tikzpicture[\w\d*@]*)|(?:DIFnomarkup)|(?:mathpar)|(?:mathline)|(?:coqcode)|(?:ocamlcode)|(?:verbatim)|(?:tabular)|(?:figure)|(?:thebibliography))" --exclude-safecmd="ocaml" --exclude-safecmd="ocamlinline"

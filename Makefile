@@ -1,7 +1,10 @@
 LATEXMK=latexmk \
   -interaction=nonstopmode \
   -pdf -pdflatex="pdflatex --shell-escape %O %S" \
-  -bibtex
+  -bibtex -recorder-
+
+# -recorder- : disable the -recorder option, which breaks the build
+# on my (Gabriel's) machine
 
 .PHONY : all
 all :

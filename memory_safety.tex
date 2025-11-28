@@ -1,4 +1,4 @@
-\section{Memory safety}
+\section{Memory Safety}
 
 Concurrency creates tensions between performance and memory-safety. The \OCaml maintainers intend to maintain memory-safety for all \OCaml programs, including racy concurrent programs. They have tried to imprint this focus on memory-safety to library authors as well.
 
@@ -124,7 +124,7 @@ The definition of the semantic type for dynarrays, and the statement of memory s
 
 The predicate $\iType$ is the semantic type for the elements of the array --- it must hold for each value of the backing array and for the new value $v$.
 
-\subsection{\Saturn: Single-producer or Single-consumer queues}
+\subsection{\Saturn: Single-Producer or Single-Consumer Queues}
 
 Similar problems of memory-safety occur in the concurrent data structures of the \Saturn library. For example, we explained (\cref{par:michael-scott-cleanup}) that the \Saturn implementation of the Michael-Scott MPMC queue is careful to ``erase'' values stored in the queue to avoid memory leaks. This erasure is performed by writing a non-type-safe dummy value, \ocamlinline{Obj.magic ()}. We define a semantic type~\refTheories{zoo_saturn/mpmc_queue_1.v\#L962} for the MPMC queue which is essentially its concurrent invariant, and prove that this unsafe idiom does not endanger memory-safety.
 

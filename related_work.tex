@@ -1,9 +1,9 @@
-\section{Related work}
+\section{Related Work}
 \label{sec:related}
 
 We have amply covered related work on verification of concurrent fine-grained data structures in  the paper. We focus here on program verification and the question of physical equality.
 
-\subsection{Non-automated verification}
+\subsection{Non-automated Verification}
 
 The verified program is translated, manually or in an automated way, into a representation living inside a proof assistant.
 The user has to write specifications and prove them.
@@ -33,7 +33,7 @@ In contrast, we prove their functional correctness in our sequentially consisten
 %We discussed limitations of \HeapLang in the introduction and \ZooLang is our proposal to improve on this.
 %Conversely, one notable limitation of \ZooLang today is its lack of support for \OCaml's relaxed memory model.
 
-\subsection{Semi-automated verification}
+\subsection{Semi-automated Verification}
 
 In semi-automated verification approaches, the verified program is annotated by the user to guide the verification tool: preconditions, postconditions, invariants, \etc.
 Given this input, the verification tool generates proof obligations that are mostly automatically discharged.
@@ -47,7 +47,7 @@ To our knowledge, it has been applied to \C~\citep*{DBLP:conf/pldi/SammlerLKMD02
 
 \Zoo is mostly non-automated --- except for our use \Diaframe for local automation of separation logic reasoning. We would be interested in moving towards more automation in the future.
 
-\subsection{Physical equality}
+\subsection{Physical Equality}
 \label{subsec:related-work-physical-equality}
 
 There is some literature in proof-assistant research on reflecting physical equality from the implementation language into the proof assistant, for optimization purposes: for example, exposing \OCaml's physical equality as a predicate in \Rocq lets us implement some memoization and sharing techniques in \Rocq libraries.

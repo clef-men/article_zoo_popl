@@ -1,10 +1,10 @@
-\section{\Zoo features}
+\section{\Zoo Features}
 \label{sec:features}
 
 In this section, we review the salient features of \Zoo, including those that we found lacking when we attempted to use \HeapLang to verify real-world \OCaml programs.
 Providing a better \Iris language than \HeapLang for this problem domain is a contribution of our work; others are welcome to use \ZooLang for their own verification effort, or to reuse our designs by integrating specific features into their own \Iris language.
 
-\subsection{Algebraic data types}
+\subsection{Algebraic Data Types}
 
 \ZooLang is an untyped language but, to write interesting programs, it is convenient to work with abstractions like algebraic data types.
 To simulate tuples, variants and records, we designed a machinery to define projections, constructors and record fields.
@@ -42,7 +42,7 @@ Definition swap : val := fun: "t" =>
   "t" <-{f1} "t".{f2} ;; "t" <-{f2} "f1".
 \end{coqcode}
 
-\subsection{Mutually recursive functions}
+\subsection{Mutually Recursive Functions}
 
 \Zoo supports non-recursive ($\texttt{fun:}\ x_1 \dots x_n\ \texttt{=>}\ e$) and recursive ($\texttt{rec:}\ f\ x_1 \dots x_n\ \texttt{=>}\ e$) functions but only \emph{toplevel} mutually recursive functions.
 It is non-trivial to properly handle mutual recursion: when applying a mutually recursive function, a naive approach would replace calls to sibling functions by their respective bodies, but this typically makes the resulting expression unreadable and can create proof-checking performance issues during verification.
@@ -57,7 +57,7 @@ Definition f_g := (
 )%zoo_recs.
 \end{coqcode}
 
-\subsection{Fine-grained concurrent primitives}
+\subsection{Fine-grained Concurrent Primitives}
 \label{sec:atomic}
 
 \Zoo supports concurrent primitives both on atomic references (from \ocamlinline{Atomic}) and atomic record fields (from \ocamlinline{Atomic.Loc}, see \cref{sec:atomic-record-fields}) according to the table below.
@@ -95,7 +95,7 @@ This is because we are working in a sequentially consistent memory model: there 
 \end{tabular}
 \end{center}
 
-\subsection{Prophecy variables}
+\subsection{Prophecy Variables}
 \label{sec:prophecy}
 
 Lock-free algorithms exhibit complex behaviors.

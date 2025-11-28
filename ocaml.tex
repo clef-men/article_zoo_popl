@@ -1,11 +1,11 @@
-\section{\OCaml extensions for fine-grained concurrent programming}
+\section{\OCaml Extensions for Fine-grained Concurrent Programming}
 \label{sec:ocaml}
 
 Over the course of this work, we studied efficient fine-grained concurrent \OCaml programs written by experts.
 This revealed various limitations of \OCaml in these domains, that those experts would work around using unsafe casts, often at the cost of both readability and memory-safety; and also some mismatches between their mental model of the semantics of \OCaml and the mental model used by the \OCaml compiler authors.
 We worked on improving \OCaml itself to reduce these work-arounds or semantic mismatches.
 
-\subsection{Atomic record fields}
+\subsection{Atomic Record Fields}
 \label{sec:atomic-record-fields}
 
 \OCamlFive offers a type \ocamlinline{'a Atomic.t} of atomic references exposing sequentially consistent atomic operations.
@@ -84,7 +84,7 @@ val Atomic.make_contended : 'a -> 'a Atomic.t
 that ensures that the returned atomic reference is allocated with enough alignment and padding to sit alone on its cache line, to avoid performance issues caused by false sharing.
 Currently there is no such support for padding of atomic record fields (we are planning to work on this), so the less-compact atomic references remain preferable in certain scenarios.
 
-\subsection{Atomic arrays}
+\subsection{Atomic Arrays}
 \label{subsec:atomic-arrays}
 
 Our previous example of a concurrent bag of type \ocamlinline{'a bag} used a backing array of type \ocamlinline{'a Atomic.t array}, which contains more indirections than may be desirable, as each array element is a pointer to a block containing the value of type \ocamlinline{'a}, instead of storing the value of type \ocamlinline{'a} directly in the array.

@@ -1,4 +1,4 @@
-\section{\Zoo in practice}
+\section{\Zoo in Practice}
 \label{sec:zoo}
 
 % In this section, we give an overview of our framework.
@@ -32,7 +32,7 @@ The supported \OCaml fragment includes: tuples, variants, records and inline rec
 In \cref{fig:stack} we include the \OCaml implementation of a simple lock-free concurrent stack~\citep*{thomas1986systems}, and its automatic translation to \ZooLang, demonstrating that readability is preserved.
 Readability is important as users constantly see program fragments during interactive verification.
 
-\subsection{The full language}
+\subsection{The Full Language}
 
 \input{figures/zoo}
 
@@ -61,7 +61,7 @@ Parallelism is mainly supported through the \ocamlinline{Domain} standard librar
 
 The \texttt{Proph} and \texttt{Resolve} constructs model \emph{prophecy variables}~\citep*{DBLP:journals/pacmpl/JungLPRTDJ20}, see \cref{sec:prophecy}.
 
-\subsection{Specifications and proofs}
+\subsection{Specifications and Proofs}
 \label{subsec:stack-specs-and-proofs}
 
 Once the translation to \ZooLang is done, the user can write specifications and prove them in \Iris.

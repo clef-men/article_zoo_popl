@@ -1,18 +1,18 @@
-\section{Physical equality}
+\section{Physical Equality}
 \label{sec:physical_equality}
 
 The notion of \emph{physical equality} is ubiquitous in fine-grained concurrent algorithms.
 It appears not only in the semantics of the \ocamlinline{(==)} operator, but also in the semantics of the \ocamlinline{Atomic.compare_and_set} primitive, which atomically sets an atomic reference to a desired value if its current content is physically equal to an expected value.
 This primitive is commonly used to try committing an atomic operation in a retry loop, as in the \ocamlinline{push} and \ocamlinline{pop} functions of \cref{fig:stack}.
 
-\subsection{Physical equality in \HeapLang}
+\subsection{Physical Equality in \HeapLang}
 
 In \HeapLang, this primitive is provided but restricted.
 Indeed, its semantics is only defined if either the expected or the desired value fits in a single memory word in the \HeapLang value representation: literals (booleans, integers and pointers\footnote{\HeapLang allows arbitrary pointer arithmetic and therefore inner pointers. This is forbidden in both \OCaml and \ZooLang, as any reachable value has to be compatible with the garbage collector.}) and literal injections\footnote{\HeapLang has no primitive notion of constructor, only pairs and injections (left and right).}; otherwise, the program is stuck.
 In practice, this restriction forces the programmer to introduce an indirection~\citep*{iris-examples,DBLP:journals/pacmpl/JungLPRTDJ20,DBLP:conf/cpp/VindumB21} to physically compare complex values, \eg lists.
 Furthermore, when the semantics is defined, values are compared using their \Rocq representations; physical equality boils down to \Rocq equality.
 
-\subsection{Physical equality in \OCaml}
+\subsection{Physical Equality in \OCaml}
 
 In \OCaml, \emph{physical} equality is tricky.
 \emph{Structural} equality \ocamlinline{v1 = v2}, which we describe in \cref{sec:structural_equality}, would be the preferred way of comparing values, and using physical equality \ocamlinline{v1 == v2} is often an unintentional mistake.
@@ -77,7 +77,7 @@ We will now explore the specifications of the \ocamlinline{true} and \ocamlinlin
 
 \paragraph{Remark} It is tempting to state that physical equality implies equality of \Rocq representations, but incorrect in general as we have seen. Existing work on the modelling of \OCaml physical equality within proof assistants have typically made this simplification, restricting the set of supported values to preserve soundness. We discussed our examples with authors of such earlier formalizations, and this has sometimes uncovered soundness issues on their side, as we discuss in \cref{subsec:related-work-physical-equality}.
 
-\subsection{When physical equality returns \ocamlinline{true}}
+\subsection{When Physical Equality Returns \ocamlinline{true}}
 
 Let us go back to the concurrent stack of \cref{fig:stack} and more specifically the \ocamlinline{push} function. Its atomic specification, given in \cref{subsec:stack-specs-and-proofs}, states that if we push a value $v$ onto a stack whose current model is $vs$, then it atomically becomes a stack of model $v :: vs$.
 To prove this specification we rely on the fact that, if \ocamlinline{Atomic.compare_and_set} returns \ocamlinline{true}, the current list must be equal to $vs$, in the sense of \Rocq equality for \Zoo values. This equality is strictly stronger than structural equality on mutable types, so we need a more precise specification than provided by the \OCaml manual.
@@ -139,7 +139,7 @@ type 'a glist = Nil | Cons of 'a * 'a glist [@generative]
 We modified the \Zoo translator to support those generative constructors, and modified our implementation of Treiber stack to use the type \ocamlinline{'a glist} instead of \ocamlinline{'a list}, so that we could finally prove the expected, convenient specification.
 The \ocamlinline{[@generative]} attribute is ignored by the standard \OCaml compiler, and we have an experimental version that disables sharing for generative constructors.
 
-\subsection{When physical equality returns \ocamlinline{false}}
+\subsection{When Physical Equality Returns \ocamlinline{false}}
 
 \input{figures/rcfd}
 

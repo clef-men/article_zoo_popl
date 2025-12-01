@@ -1,19 +1,21 @@
 \begin{acks}
 
-The verification work was conducted by Clément Allain.
-Atomic record fields, atomic arrays and generative constructors were implemented by Clément Allain and Gabriel Scherer.
-The final design of atomic record fields was proposed by Basile Clément%
-\footnote{
-\url{https://github.com/ocaml/RFCs/pull/39\#issuecomment-2147862938}
-}
-and Olivier Nicole did a full review of the implementation\footnote{\url{https://github.com/ocaml/RFCs/pull/39\#issuecomment-2147862938}}.
-The present article was written jointly by Clément Allain and Gabriel Scherer, with feedback from anonymous reviewers from JFLA'25, ITP'25 and POPL'26.
+The design of Zoo and the entire verification work was conducted by Clément Allain.
 
-We would like to thank Vesa Karvonen and Carine Morel for their work on the \Saturn~\cite{saturn} library and the discussions it enabled and Thomas Leonard for suggesting verifying the \mintinline{ocaml}{Rcfd} module from the \href{https://github.com/ocaml-multicore/eio}{\textsc{Eio}}~\cite{eio} library.
+We would like to thank Vesa Karvonen and Carine Morel for their work on the \Saturn~\cite{saturn} library and the discussions it enabled, and Thomas Leonard for suggesting verifying the \mintinline{ocaml}{Rcfd} module from the \href{https://github.com/ocaml-multicore/eio}{\textsc{Eio}}~\cite{eio} library.
+
+The modeling choices for the semantics of \OCaml, especially physical equality, benefited from discussions with Armaël Guéneau.
+Vincent Laviron, as an expert in the semantics assumed by \OCaml optimizers, confirmed that unsharing may be performed by \OCaml compilers.
 
 We are particularly grateful for the help and advice of Ike Mulder, the author and maintainer of the \Diaframe automation framework for \Iris, who helped us improve its integration in \Zoo.
 
-The modeling choices for the semantics of \OCaml, especially physical equality, benefitted from discussions with Armaël Guéneau.
-Vincent Laviron, as an expert in the semantics assumed by \OCaml optimizers, confirmed that unsharing may be performed by \OCaml compilers.
+On the OCaml side, atomic record fields, atomic arrays and generative constructors were designed and implemented by Clément Allain and Gabriel Scherer.
+The final design of atomic record fields was suggested by Basile Clément.
+\footnote{
+\url{https://github.com/ocaml/RFCs/pull/39\#issuecomment-2147862938}
+}
+Olivier Nicole did a full review of the implementation of atomic record fields.\footnote{\url{https://github.com/ocaml/RFCs/pull/39\#issuecomment-2147862938}}
+
+The present article was written jointly by Clément Allain and Gabriel Scherer, with feedback from anonymous reviewers from JFLA'25, ITP'25 and POPL'26.
   
 \end{acks}

@@ -31,12 +31,12 @@ Once it is created, a wrapped FD can be accessed through the \ocamlinline{use} o
 
 \ocamlinline{use} requires the invariant along with the weakest preconditions of the $\mathit{closed}$ function, that is called if the FD has been flagged as closed, and $\mathit{open}$ function, that is called if the FD is still open.
 To control the postconditions and the weakest preconditions, the user can choose an arbitrary predicate $\iPredThree$ parameterized by a boolean indicating whether the $\mathit{closed}$ (\ocamlinline{false}) or the $\mathit{open}$ (\ocamlinline{true}) was called.
-The $\mathit{open}$ function is given a fraction of $\iPredTwo$ to access the FD.
+The $\mathit{open}$ function is given a fraction of $\iPredTwo$, thereby accessing the FD.
 
 \ocamlinline{close} requires the invariant and proving that the full ownership of $\iPredTwo$ entails the full ownership of the FD $\mathit{fd}$, which is necessary to call \ocamlinline{Unix.close}.
 It yields $\closing\ t$, a persistent witness that $t$ has been flagged as closed.
-The wrapped FD is not closed immediately.
-It will be closed only once possible, meaning all ongoing \ocamlinline{use} calls owning a fraction of the FD end.
+Actually, the wrapped FD is not closed immediately.
+It will be closed only once it is possible, meaning all ongoing \ocamlinline{use} calls owning a fraction of the FD end.
 
 Alternatively, instead of closing the FD, \ocamlinline{remove} tries to retrieve the full ownership of $\iPredTwo$.
 To achieve it, it exploits the same mechanism as \ocamlinline{close} --- flagging $t$ as closed as witnessed by $\closing\ t$ --- but also waits until all \ocamlinline{use} calls are done.

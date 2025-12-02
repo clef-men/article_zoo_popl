@@ -23,6 +23,7 @@ mkdir arxiv || { echo "error, you need to (rmdir arxiv)"; exit 1; }
 rm -f arxiv.zip
 
 cp abstract.md arxiv/
+rm diff.tex
 cp *.tex arxiv/
 cp -r images arxiv/
 cp -r figures arxiv/

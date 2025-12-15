@@ -87,7 +87,7 @@ Currently there is no such support for padding of atomic record fields (we are p
 \subsection{Atomic Arrays}
 \label{subsec:atomic-arrays}
 
-Our previous example of a concurrent bag of type \ocamlinline{'a bag} used a backing array of type \ocamlinline{'a Atomic.t array}, which contains more indirections than may be desirable, as each array element is a pointer to a block containing the value of type \ocamlinline{'a}, instead of storing the value of type \ocamlinline{'a} directly in the array.
+Our previous example of a concurrent bag of elements of type \ocamlinline{'a bag} used a backing array of type \ocamlinline{'a Atomic.t array}, which contains more indirections than may be desirable, as each array element is a pointer to a block containing the value of type \ocamlinline{'a}, instead of storing the value of type \ocamlinline{'a} directly in the array.
 
 We have an experimental implementation of atomic arrays%
 \footnote{

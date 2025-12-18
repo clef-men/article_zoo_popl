@@ -1,4 +1,4 @@
-\section{\Saturn: A Library of Standard Lock-free Data Structures}
+\section{\Saturn: A Library of Standard Lock-Free Data Structures}
 \label{sec:saturn}
 
 We verified a collection of standard lock-free data structures~\refLibTheories{zoo_saturn} from the \Saturn, \Eio and \Picos~\citep*{picos} libraries.
@@ -22,7 +22,7 @@ From the verification perspective, this is also unsatisfactory because the mutab
 Although verified stacks may seem like a not-so-new contribution, it is, as far as we know, the first verification of realistic \OCaml implementations.
 For comparison, the exemplary concurrent stacks verified in \Iris~\citep*{iris-examples} all suffer from the same flaw: they need to introduce indirections (pointers) to be able to use the compare-and-set primitive.
 
-\subsection{List-based Queues}
+\subsection{List-Based Queues}
 
 We verified four variants of the Michael-Scott queue~\citep*{DBLP:conf/podc/MichaelS96}: unbounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_queue_1}, bounded MPMC~\refLibTheoriesFile{zoo_saturn/mpmc_bqueue}, unbounded MPSC~\refLibTheoriesFile{zoo_saturn/mpsc_queue_1} and unbounded SPMC~\refLibTheoriesFile{zoo_saturn/spmc_queue}.
 The SPMC queue is used to implement one of the bags --- a relaxed queue guaranteeing only per-producer ordering.
@@ -66,7 +66,7 @@ This resource is known as an \emph{atomic update}.
 }
 from \ocamlinline{is_empty} to \ocamlinline{push} and vice versa.
 
-\subsection{Stack-based Queues}
+\subsection{Stack-Based Queues}
 
 A standard way to implement a sequential queue is to use two stacks: producers push onto the \emph{back stack} while consumers pop from the \emph{front stack}, stealing and reversing the back stack when needed.
 Based on this simple idea, Vesa Karvonen%
